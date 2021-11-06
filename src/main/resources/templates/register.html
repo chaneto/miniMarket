@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: head"></head>
+<body>
+<header>
+     <nav th:replace="fragments/fragment :: nav"></nav>
+</header>
+<main class="p-5 align-content-center bg-blur my-register-div">
+    <h1 class="text-light border-bottom">Register</h1>
+    <h1 class="text-light border-bottom">Please enter your data</h1>
+    <div class="d-flex justify-content-center ">
+        <div class="row g-3 align-items-center">
+            <img alt="Picture of Madonna" th:src="@{/img/img2.jpg}" class="w-50 rounded">
+        </div>
+        <div class="row g-3">
+            <form th:action="@{/users/register}" method="POST" th:object="${userRegisterBindingModel}">
+                <!-- Username -->
+                <div>
+                    <div class="col-auto">
+                        <label for="inputUsername" class="col-form-label text-light">Username</label>
+                    </div>
+                    <div class="col-auto">
+                        <input th:field="*{username}" th:errorclass="is-invalid"  name="username" required minlength="5" maxlength="20"
+                               type="text"
+                               id="inputUsername"
+                               class="form-control"
+                               aria-describedby="usernameHelpInline">
+                          <small th:if="${#fields.hasErrors('username')}" th:errors="*{username}" id="usernameError"
+                               class="invalid-feedback text-light form-text bg-danger rounded">Username length must be between 5 and 20 characters!!!</small>
+                        <small th:if="${userWithUsernameIsExists}" id="usernameUniqueError"
+                               class="text-light form-text bg-danger rounded">Username is already occupied!!!</small>
+                    </div>
+                </div>
+                <!-- EO: Username -->
+
+                <!-- First name -->
+                <div>
+                    <div class="col-auto">
+                        <label for="inputFirstName" class="col-form-label text-light">First Name</label>
+                    </div>
+                    <div class="col-auto">
+                        <input th:field="*{firstName}" th:errorclass="is-invalid"  name="firstName" required minlength="5" maxlength="20"
+                               type="text"
+                               id="inputFirstName"
+                               class="form-control"
+                               aria-describedby="firstNameHelpInline">
+                        <small th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}" id="firstNameError"
+                             class="invalid-feedback text-light form-text bg-danger rounded">First name length must be between 5 and 20 characters!!!</small>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="col-auto">
+                        <label for="inputLastName" class="col-form-label text-light">Last Name</label>
+                    </div>
+                    <div class="col-auto">
+                        <input th:field="*{lastName}" th:errorclass="is-invalid"  name="lastName" required minlength="5" maxlength="30"
+                               type="text"
+                               id="inputLastName"
+                               class="form-control"
+                               aria-describedby="lastNameHelpInline">
+                        <small th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}" id="lastNameError"
+                               class="invalid-feedback text-light form-text bg-danger rounded">Last name length must be between 5 and 30 characters!!!</small>
+                    </div>
+                </div>
+                <!-- EO: First name -->
+
+                <!-- Email -->
+                <div>
+                    <div class="col-auto">
+                        <label for="inputEmail" class="col-form-label text-light">Email</label>
+                    </div>
+                    <div class="col-auto">
+                        <input th:value="*{email}" th:errorclass="is-invalid"  name="email" required minlength="3" type="email"
+                               id="inputEmail"
+                               class="form-control"
+                               aria-describedby="emailHelpInline">
+                        <small th:if="${#fields.hasErrors('email')}" th:errors="*{email}" id="emailError"
+                          class="invalid-feedback text-light form-text bg-danger rounded">Must be valid email!!!</small>
+                        <small th:if="${userWithEmailIsExists}" id="emailUniqueError"
+                               class="text-light form-text bg-danger rounded">Email is already occupied!!!</small>
+
+                    </div>
+                </div>
+                <!-- EO: Email -->
+
+                <!-- Password -->
+                <div>
+                    <div class="col-auto">
+                        <label for="inputPassword" class="col-form-label text-light">Password</label>
+                    </div>
+                    <div class="col-auto">
+                        <input th:value="*{password}" th:errorclass="is-invalid" name="password" required minlength="5" maxlength="30"
+                               type="password"
+                               id="inputPassword"
+                               class="form-control"
+                               aria-describedby="passwordHelpInline">
+                        <small th:if="${#fields.hasErrors('password')}" th:errors="*{password}" id="passwordError"
+                               class="invalid-feedback text-light form-text bg-danger rounded">Password length must be between 5 and 30 characters!!!
+                        </small>
+                        <small th:if="${passwordDontMatch}" class="text-light form-text bg-danger rounded">The passwords do not match!!!</small>
+                    </div>
+                </div>
+                <!-- EO: Password -->
+                <!-- Password confirm -->
+                <div>
+                    <div class="col-auto">
+                        <label for="inputConfirmPassword" class="col-form-label text-light">Confirm Password</label>
+                    </div>
+                    <div class="col-auto">
+                        <input th:value="*{confirmPassword}" th:errorclass="is-invalid" name="confirmPassword" required minlength="5" maxlength="30"
+                               type="password"
+                               id="inputConfirmPassword"
+                               class="form-control"
+                               aria-describedby="confirmPasswordHelpInline">
+                        <small th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}" id="confirmPasswordError"
+                               class="invalid-feedback text-light form-text bg-danger rounded">
+                            Password length must be between 5 and 30 characters!!!
+                        </small>
+                    </div>
+                </div>
+                <!-- EO: Password confirm -->
+                <div>
+                    <div class="col-auto">
+                        <label for="inputPhoneNumber" class="col-form-label text-light">Phone Number</label>
+                    </div>
+                    <div class="col-auto">
+                        <input th:value="*{phoneNumber}" th:errorclass="is-invalid" name="phoneNumber" required minlength="5" maxlength="20"
+                               type="password"
+                               id="inputPhoneNumber"
+                               class="form-control"
+                               aria-describedby="phoneNumberHelpInline">
+                        <small th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" id="phoneNumberError"
+                               class="invalid-feedback text-light form-text bg-danger rounded">
+                            Phone Number length must be between 5 and 20 characters!!!
+                        </small>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-center mt-4">
+                    <button class="btn btn-primary btn-block w-50" type="submit">Register</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</main>
+<footer th:replace="fragments/fragment :: footer" class="footer bg-blur"></footer>
+</body>
+</html>

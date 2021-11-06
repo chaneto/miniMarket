@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: head"></head>
+<body>
+<header>
+     <nav th:replace="fragments/fragment :: nav"></nav>
+</header>
+<main class="p-5 align-content-center bg-blur my-register-div">
+    <h1 class="text-light    border-bottom mb-5">Login</h1>
+    <div class="d-flex justify-content-center">
+        <div class="row g-3 align-items-center">
+            <img alt="Metallica image" src="/img/img1.jpg" class="w-50 rounded">
+        </div>
+        <div class="row g-3 align-items-center">
+            <div th:if="${bad_credentials}" class="alert alert-danger" role="alert">
+                This username and password combination does not exist!!!
+            </div>
+            <form
+                th:action="@{/users/login}"
+                method="POST" th:object="${userLoginBindingModel}">
+                <!--User name-->
+                <div>
+                    <div class="col-auto">
+                        <label for="inputUsername" class="col-form-label text-light">Username</label>
+                    </div>
+                    <div class="col-auto">
+                        <input th:field="*{username}" th:errorclass="bg-danger" required minlength="5" maxlength="20"  type="text"
+                               name="username"
+                               id="inputUsername"
+                               class="form-control"
+                               aria-describedby="usernameHelpInline">
+                        <small th:if="${#fields.hasErrors('username')}" th:errors="*{username}" id="usernameError"
+                               class="invalid-feedback text-light form-text bg-danger rounded">
+                        </small>
+                    </div>
+                </div>
+                <!--EO: User name-->
+
+                <!-- Password -->
+                <div>
+                    <div class="col-auto">
+                        <label for="inputPassword" class="col-form-label text-light">Password</label>
+                    </div>
+                    <div class="col-auto">
+                        <input th:field="*{password}" th:errorclass="bg-danger"  required minlength="5" maxlength="20" type="password" name="password" id="inputPassword" class="form-control"
+                               aria-describedby="passwordHelpInline">
+                        <small th:if="${#fields.hasErrors('password')}" th:errors="*{pssword}" id="passwordError"
+                               class="invalid-feedback text-light form-text bg-danger rounded">
+                        </small>
+
+                    </div>
+                </div>
+                <div class="d-flex justify-content-center mt-2">
+                    <button class="btn btn-primary btn-block w-50" type="submit">Login</button>
+                </div>
+                <!-- EO: Password -->
+            </form>
+        </div>
+
+    </div>
+</main>
+<footer th:replace="fragments/fragment :: footer" class="footer bg-blur"></footer>
+</body>
+</html>

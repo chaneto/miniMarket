@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: head"></head>
+<body>
+<header>
+    <nav th:replace="fragments/fragment :: nav"></nav>
+</header>
+<main class="p-5 bg-blur text-center">
+    <h1 class="text-light border-bottom">Add address</h1>
+    <div class="d-flex justify-content-center">
+        <form th:action="@{/addresses/add}" th:method="POST" th:object="${addressAddBindingModel}"
+              class="text-light">
+            <div class="form-row m-5">
+                <div class="col">
+                    <label for="inputStreetName">Street name</label>
+                    <input th:field="*{streetName}" th:errorclass="is-invalid" required minlength="1" id="inputStreetName" name="streetName" type="text" class="form-control" placeholder="Street name">
+                    <small th:if="${#fields.hasErrors('streetName')}" th:errors="*{streetName}" id="streetNameError" class="invalid-feedback form-text bg-danger rounded"></small>
+                </div>
+            </div>
+            <div class="form-row m-5">
+               <div class="col">
+                    <label for="streetNumber">Street number</label>
+                    <input th:field="*{streetNumber}" th:errorclass="is-invalid" required min="0" name="streetNumber" id="streetNumber" type="number" class="form-control" placeholder="Street number">
+                    <small th:if="${#fields.hasErrors('streetNumber')}" th:errors="*{streetNumber}" id="streetNumberError" class="invalid-feedback form-text bg-danger rounded"></small>
+                </div>
+            </div>
+            <div class="form-row m-5">
+                <div class="col">
+                    <label for="apartmentNumber">Apartment number</label>
+                    <input th:field="*{apartmentNumber}" th:errorclass="is-invalid" name="apartmentNumber" id="apartmentNumber" type="text" class="form-control" placeholder="Apartment number"></input>
+                    <small th:if="${#fields.hasErrors('apartmentNumber')}" th:errors="*{apartmentNumber}" id="apartmentNumberError" class="invalid-feedback form-text bg-danger rounded"></small>
+                </div>
+            </div>
+           <div class="form-row m-5">
+                <div class="col">
+                    <label for="city">City</label>
+                    <input th:field="*{city}" th:errorclass="is-invalid" required minlength="1" name="city" id="city" type="text" class="form-control" placeholder="City"></input>
+                    <small th:if="${#fields.hasErrors('city')}" th:errors="*{city}" id="cityError" class="invalid-feedback form-text bg-danger rounded"></small>
+                </div>
+            </div>
+            <div class="col">
+                <label for="country">Country</label>
+                <input th:field="*{country}" th:errorclass="is-invalid" required minlength="1" name="country" id="country" type="text" class="form-control" placeholder="Country">
+                <small th:if="${#fields.hasErrors('country')}" th:errors="*{country}" id="countryError" class="invalid-feedback form-text bg-danger rounded"></small>
+            </div>
+            <div class="col">
+                <label for="zipCode">Zip Code</label>
+                <input th:field="*{zipCode}" th:errorclass="is-invalid" required minlength="1" name="zipCode" id="zipCode" type="text" class="form-control" placeholder="Zip Code">
+                <small th:if="${#fields.hasErrors('zipCode')}" th:errors="*{zipCode}" id="zipCodeError" class="invalid-feedback form-text bg-danger rounded"></small>
+            </div>
+
+            <div class="d-flex justify-content-center mt-4">
+                <button class="btn btn-primary btn-block w-50" type="submit">Add</button>
+            </div>
+        </form>
+    </div>
+</main>
+<footer th:replace="fragments/fragment :: footer" class="footer bg-blur">
+</footer>
+</body>
+</html>
+
+

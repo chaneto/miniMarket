@@ -1,0 +1,26 @@
+[
+  {
+    "name":"HTC",
+    "image":"/img/htc.png"
+  },
+  {
+    "name": "Apple",
+    "image":"/img/apple.png"
+  },
+  {
+    "name": "Samsung",
+    "image":"/img/samsung.png"
+  },
+  {
+    "name": "Huawei",
+    "image":"/img/huawei.png"
+  },
+  {
+    "name": "Lenovo",
+    "image":"/img/lenovo.gif"
+  },
+  {
+    "name": "Xiaomi",
+    "image":"/img/xiaomi.png"
+  }
+]

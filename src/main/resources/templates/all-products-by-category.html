@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragments/fragment :: head"></head>
+
+<body>
+
+<header th:replace="fragments/fragment :: nav"></header>
+
+<main class="p-5 align-content-center bg-blur">
+  <div class="container">
+    <hr class="border-bottom w-75">
+    <div class="row mt-5" id="albumsList">
+      <!-- Start single album -->
+      <div th:each="p : ${getAllProductsByCategory}" th:object="${p}" class="col-md-3">
+        <div  class="card mb-4 box-shadow">
+          <img th:src="*{image}"  class="card-img-top" alt="Thumbnail [100%x225]"
+               data-holder-rendered="true"
+               style="height: 225px; width: 100%; display: block;">
+          <div class="card-body">
+            <div class="text-center">
+              <p th:text="|*{name}|" class="card-text border-bottom "></p>
+              <p th:text="|Category: *{category}|" class="card-text border-bottom "></p>
+              <p th:text="|Brand: *{brand}|" class="card-text border-bottom "></p>
+              <p th:if="*{price} > 0" th:text="|Price: *{price}|" class="card-text border-bottom "></p>
+              <p th:if="*{isAvailable}" th:text="|Product is available|" class="card-text border-bottom"></p>
+              <p th:unless="*{isAvailable}" th:text="|Product is not available|" class="card-text border-bottom"></p>
+            </div>
+            <h7 th:if="${quantityIsNotEnough} and ${productName} == *{name}" th:text="|Insufficient quantity. Available quantity:*{quantity}|" class="form-text bg-danger rounded"></h7>
+            <form th:if="*{isAvailable}" th:action="@{'/products/buy/{name}'(name = ${p.name})}" th:method="POST" th:object="${productGetBuyQuantity}">
+              <div class="form-row m-5">
+                <div class="col">
+                  <label for="quantity">Quantity</label>
+                  <input th:field="*{quantity}" th:errorclass="is-invalid"  required min="0" name="quantity" id="quantity" type="number" class="form-control" placeholder="Quantity"></input>
+                  <small th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"  id="quantityError" class="invalid-feedback form-text bg-danger rounded"></small>
+                </div>
+              </div>
+              <div  sec:authorize="isAuthenticated()" class="d-flex justify-content-center mt-4">
+                <button type="submit" class="btn btn-primary btn-block w-50">Buy</button>
+              </div>
+            </form>
+            <div class="btn-group">
+              <a th:href="@{'/products/details/{name}' (name = *{name})}" type="button" class="btn btn-sm btn-outline-secondary">Details</a>
+            </div>
+            <div sec:authorize="hasRole('ROLE_ADMIN')" class="btn-group">
+              <a th:href="@{'/products/delete/{name}'(name = *{name})}" type="button" class="btn btn-sm btn-outline-secondary">Delete</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- EO: Start single album -->
+  </div>
+  </div>
+
+</main>
+
+
+<footer th:replace="fragments/fragment :: footer"></footer>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: head"></head>
+<body>
+<header>
+    <nav th:replace="fragments/fragment :: nav"></nav>
+</header>
+<main class="p-5 bg-blur text-center">
+    <h1 class="text-light border-bottom">Add quantity</h1>
+    <div class="d-flex justify-content-center">
+        <form th:action="@{/products/addQuantity}" th:method="POST" th:object="${productAddQuantityBindingModel}"
+              class="text-light">
+            <h3 th:if="${successfullyAddedQuantity}" th:text="|Successfully added quantity *{quantity} to the product *{name}|" class="form-text bg-danger rounded"></h3>
+            <div class="form-row m-5">
+                <div class="col">
+                    <label for="name">Product name</label>
+                    <select th:field="*{name}" th:errorclass="is-invalid" required size="1" name="name" id="name" class="custom-select">
+                        <option value="" selected>Select product</option>
+                        <option th:each="a : ${allProductsName}" th:text="${a}" th:value="${a}"></option>
+                    </select>
+                    <small th:if="${#fields.hasErrors('name')}" th:errors="*{name}" id="nameError" class="invalid-feedback form-text bg-danger rounded">You must select category</small>
+                </div>
+            </div>
+            <div class="form-row m-5">
+                <div class="col">
+                    <label for="quantity">Quantity</label>
+                    <input th:field="*{quantity}" th:errorclass="is-invalid" required min="0" name="quantity" id="quantity" type="number" class="form-control" placeholder="Quantity"></input>
+                    <small th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" id="quantityError" class="invalid-feedback form-text bg-danger rounded"></small>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center mt-4">
+                <button class="btn btn-primary btn-block w-50" type="submit">Add Quantity</button>
+            </div>
+        </form>
+    </div>
+</main>
+<footer th:replace="fragments/fragment :: footer" class="footer bg-blur">
+</footer>
+</body>
+</html>
+
+

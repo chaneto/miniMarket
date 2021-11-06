@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragments/fragment :: head"></head>
+
+<body>
+
+<header th:replace="fragments/fragment :: nav"></header>
+
+<main class="p-5 align-content-center bg-blur">
+        <hr class="border-bottom w-75">
+        <div class="row mt-5" id="albumsList">
+            <!-- Start single album -->
+            <div  class="col-md-3">
+                <div class="card mb-4 box-shadow">
+                    <img src="/img/cart.png"  class="card-img-top" alt="Thumbnail [100%x225]"
+                         data-holder-rendered="true"
+                         style="height: 225px; width: 100%; display: block;">
+                    <div th:each="f : ${cart}" th:object="${f}" class="card-body">
+                        <p class="d-inline-block mb-2 text-primary">Products:</p>
+                        <div th:each="p : ${allOrders}" th:object="${p}" class="text-center">
+                            <p th:text="|*{product} - *{totalPrice}.|" class="card-text border-bottom ">
+                            <div sec:authorize="hasRole('ROLE_ADMIN')" class="btn-group">
+                                <a th:href="@{'/orders/delete/{id}'(id = *{id})}" type="button" class="btn btn-sm btn-outline-secondary">Delete</a>
+                            </div>
+                            </p>
+                        </div>
+                        <p class="d-inline-block mb-2 text-primary">Courier:</p>
+                        <p th:text="|*{courier.name} - *{courier.shippingAmount}.|" class="card-text border-bottom "></p>
+                        <p class="d-inline-block mb-2 text-primary">Shipping Address:</p>
+                        <p th:text="|*{address.zipCode}  *{address.country} *{address.city} *{address.streetNumber}.|" class="card-text border-bottom "></p>
+                        <h3 th:text="|Total Price: *{totalPrice}|" class="d-inline-block mb-2 text-primary"></h3>
+                        </div>
+                    <div class="d-flex justify-content-center mt-4">
+                        <a th:href="@{/carts/buy}" type="button" class="btn btn-primary btn-block w-50">Buy</a>
+                    </div>
+                    <div class="btn-group">
+                        <a th:href="@{'/carts/delete/{id}'(id = *{id})}" type="button" class="btn btn-sm btn-outline-secondary">Delete</a>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <!-- EO: Start single album -->
+        </div>
+    </div>
+
+</main>
+
+
+<footer th:replace="fragments/fragment :: footer"></footer>
+</body>
+</html>

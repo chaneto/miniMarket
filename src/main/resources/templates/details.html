@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: head"></head>
+<body>
+<header>
+    <nav th:replace="fragments/fragment :: nav"></nav>
+</header>
+<main class="p-5 align-content-center bg-blur">
+    <div class="justify-content-center">
+        <h1 class="text-light border-left border-white pl-4">Product Details</h1>
+    </div>
+    <div th:object="${product}" class="row rounded mb-5 mt-3">
+        <div class="col-md-6 bg-blur text-light rounded" id="details">
+            <dl class="row pt-3">
+                <dt class="col-sm-3">Name</dt>
+                <dd class="col-sm-9" th:text="*{name}" >Name</dd>
+
+                <dt class="col-sm-3">Brand</dt>
+                <dd class="col-sm-9" th:text="*{brand}">Brand
+                </dd>
+
+                <dt class="col-sm-3">Category</dt>
+                <dd class="col-sm-9" th:text="*{category}">Category</dd>
+
+                <dt class="col-sm-3">price</dt>
+                <dd class="col-sm-9" th:text="*{price}">Price</dd>
+
+                </dd>
+                <dt class="col-sm-3">Description</dt>
+                <dd class="col-sm-9" th:text="*{description}">Description
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-6 bg-transparent rounded">
+            <div class="rounded embed-responsive embed-responsive-16by9" id="image-details">
+                <img class="embed-responsive-item" th:src="*{image}" allowfullscreen></img>
+            </div>
+        </div>
+    </div>
+</main>
+<footer th:replace="fragments/fragment :: footer" class="footer bg-blur">
+</footer>
+</body>
+</html>

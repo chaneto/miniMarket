@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Ekont",
+    "rating":"6",
+    "shippingAmount":"4.50",
+    "imageUrl":"/img/ekont.jpg"
+  },
+  {
+    "name": "Speedy",
+    "rating":"5",
+    "shippingAmount":"5.50",
+    "imageUrl":"/img/speedy.jpg"
+  },
+  {
+    "name": "DHL",
+    "rating":"4",
+    "shippingAmount":"6.50",
+    "imageUrl":"/img/dhl.png"
+  }
+]

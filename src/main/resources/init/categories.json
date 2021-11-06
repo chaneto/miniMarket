@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Screen Protectors",
+    "description": "A wide range of screen protectors for your smartphone.\nThe best screen protector for the iPhone.\nThe best screen protector for the Android.\nThe best screen protector for the Tablets",
+    "image":"/img/screen-protector.jpg"
+  },
+  {
+    "name": "Cases",
+    "description": "A variety of hard and soft cases. Wide range of colors for all brands.\nWallet Phone Cases.\nSilicone Phone Cases.\nGel/TPU Phone Cases.",
+    "image": "/img/case.jpeg"
+  },
+  {
+    "name": "Chargers",
+    "description": "Chargers for phones, tablets, smartwatches. Car chargers.",
+    "image": "/img/charger.jpg"
+  },
+  {
+    "name": "Cases",
+    "description": "Headphones for all brands of smartphones.\nWireless bluetooth headphones.",
+    "image": "/img/headphone.jpg"
+  },
+  {
+    "name": "Other",
+    "description": "A wide variety of consumables for your smartphone.",
+    "image": "/img/other.jpg"
+  }
+]
