@@ -10,10 +10,11 @@
     <div class="d-flex justify-content-center">
         <form th:action="@{/categories/add}" method="POST" th:object="${categoryAddBindingModel}"
               class="text-light">
+            <h4 th:if="${successfulAddedCategory}" th:text="|Successful Added Category: *{name}|" class="form-text bg-success rounded"></h4>
             <div class="form-row">
                 <div class="col">
                     <label for="inputName">Category name</label>
-                    <input th:value="*{name}" th:errorclass="is-invalid"  id="inputName" required minlength="3" name="name" type="text" class="form-control" placeholder="Name">
+                    <input th:value="*{name}" th:errorclass="is-invalid"  id="inputName" required minlength="3" name="name" type="text" class="form-control" placeholder="Category Name">
                     <small th:if="${#fields.hasErrors('name')}" th:errors="*{name}" id="nameError" class="invalid-feedback text-light form-text bg-danger rounded">Name must be more than 3 characters</small>
                     <small th:if="${categoryIsExists}" class="form-text bg-danger rounded">This category is already exists!!!</small>
                 </div>
@@ -28,7 +29,7 @@
             <div class="form-row ">
                 <div class="col">
                     <label for="image">Image</label>
-                    <input th:field="*{image}" th:errorclass="is-invalid" required minlength="5" id="image" name="image" type="text" class="form-control" placeholder="Image">
+                    <input th:field="*{image}" th:errorclass="is-invalid" required minlength="3" id="image" name="image" type="text" class="form-control" placeholder="Image">
                     <small th:if="${#fields.hasErrors('image')}" th:errors="*{image}" id="imageError" class="invalid-feedback text-light form-text bg-danger rounded">Image url must be more than 5 characters</small>
                 </div>
             </div>

@@ -6,7 +6,9 @@ import com.example.minimarket.model.enums.UserRole;
 import com.example.minimarket.model.services.CartServiceModel;
 import com.example.minimarket.model.services.UserLoginServiceModel;
 import com.example.minimarket.model.services.UserRegisterServiceModel;
+import com.example.minimarket.model.services.UserServiceModel;
 import com.example.minimarket.model.views.CartViewModel;
+import com.example.minimarket.model.views.OrderViewModel;
 import com.example.minimarket.repositories.UserRepository;
 import com.example.minimarket.services.CartService;
 import com.example.minimarket.services.OrderService;
@@ -21,6 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -116,12 +119,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserEntity getCurrentUser(){
+    public UserServiceModel getCurrentUser(){
+        UserServiceModel userServiceModel = new UserServiceModel();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         UserDetails userDetails = (UserDetails)authentication.getPrincipal();
-       return this.userRepository.findByUsername(userDetails.getUsername());
+        userServiceModel = this.mapper.map(this.userRepository.findByUsername(userDetails.getUsername()), UserServiceModel.class);
+       return userServiceModel;
     }
 
+    @Override
     public CartServiceModel getCurrentCart(){
         CartServiceModel cartServiceModel = new CartServiceModel();
         CartEntity cartEntity = getCurrentUser().getCart();
@@ -131,4 +137,10 @@ public class UserServiceImpl implements UserService {
         }
         return cartServiceModel;
     }
+
+    @Override
+    public List<OrderViewModel> getAllUserOrderByIsPaid(Boolean isPaid, Long id){
+       return this.orderService.findAllOrderByIsPaid(isPaid, id);
+    }
+
 }

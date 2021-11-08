@@ -2,6 +2,7 @@ package com.example.minimarket.model.entities;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -17,10 +18,11 @@ public class BrandEntity {
     private String name;
 
     @Size(min = 3)
+    @Column(columnDefinition = "TEXT")
     private String image;
 
-    @OneToMany(mappedBy = "brand", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<ProductEntity> products;
+    @OneToMany(mappedBy = "brand", fetch = FetchType.EAGER, cascade = CascadeType.REFRESH, orphanRemoval = true)
+    private List<ProductEntity> products = new ArrayList<>();
 
     public BrandEntity() {
     }

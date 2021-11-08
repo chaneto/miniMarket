@@ -8,21 +8,22 @@
 <main class="p-5 bg-blur text-center">
     <h1 class="text-light border-bottom">Add brand</h1>
     <div class="d-flex justify-content-center">
-        <form th:action="@{/brands/add}" method="POST" th:object="${brandAddBindingModel}"
+        <form th:action="@{/brands/add}" method="POST" th:object="${brandAddBidingModel}"
               class="text-light">
+            <h4 th:if="${successfulAddedBrand}" th:text="|Successful Added Brand: *{name}|" class="form-text bg-success rounded"></h4>
             <div class="form-row m-5">
                 <div class="col">
                     <label for="name">Brand name</label>
-                    <input th:field="*{name}" th:errorclass="is-invalid" required minlength="1"  id="name" name="name" type="text" class="form-control" placeholder="Product name">
-                    <small th:if="${#fields.hasErrors('name')}" th:errors="*{name}" id="nameError" class="invalid-feedback form-text bg-danger rounded">Name must be more than 1 characters</small>
-                    <small th:if="${brandIsExists}" class="invalid-feedback form-text bg-danger rounded">This brand already exists!</small>
+                    <input th:field="*{name}" th:errorclass="is-invalid" required minlength="1"  id="name" name="name" type="text" class="form-control" placeholder="Brand name">
+                    <small th:if="${#fields.hasErrors('name')}" th:errors="*{name}" id="nameError" class="form-text bg-danger rounded">Name must be more than 1 characters</small>
+                    <small th:if="${brandIsExists}" class="form-text bg-danger rounded">This brand already exists!</small>
                 </div>
             </div>
             <div class="form-row m-5">
                 <div class="col">
                     <label for="image">Image</label>
                     <input th:field="*{image}" th:errorclass="is-invalid" required minlength="3"  id="image" name="image" type="text" class="form-control" placeholder="Image">
-                    <small th:if="${#fields.hasErrors('image')}" th:errors="*{image}" id="imageError" class="invalid-feedback form-text bg-danger rounded"></small>
+                    <small th:if="${#fields.hasErrors('image')}" th:errors="*{image}" id="imageError" class="form-text bg-danger rounded"></small>
                 </div>
             </div>
 

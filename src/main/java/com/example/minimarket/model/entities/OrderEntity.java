@@ -1,5 +1,7 @@
 package com.example.minimarket.model.entities;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -13,7 +15,8 @@ public class OrderEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private ProductEntity product;
 
     @Column(name = "product_count", nullable = false)
@@ -33,7 +36,7 @@ public class OrderEntity {
     @Column(name = "is_paid", nullable = false)
     private boolean isPaid;
 
-    @OneToOne
+    @ManyToOne
     private AddressEntity address;
 
     @OneToOne

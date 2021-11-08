@@ -54,7 +54,9 @@ public class CourierController {
             return "redirect:add";
         }
         this.courierService.saveCourier(courierServiceModel);
-        return "redirect:/";
+        redirectAttributes.addFlashAttribute("courierAddBindingModel", courierAddBindingModel);
+        redirectAttributes.addFlashAttribute("successfulAddedCourier", true);
+        return "redirect:add";
     }
 
     @GetMapping("/all")

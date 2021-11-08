@@ -14,6 +14,7 @@ import java.util.List;
 
 public class CartViewModel {
 
+    private Long id;
     private List<OrderEntity> orders = new ArrayList<>();
     private String user;
     private BigDecimal totalPrice;
@@ -21,6 +22,14 @@ public class CartViewModel {
     private CourierEntity courier;
 
     public CartViewModel() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public List<OrderEntity> getOrders() {

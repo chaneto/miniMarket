@@ -11,17 +11,19 @@ public class ProductAddBindingModel {
     @Size(min = 3, message = "Product name must be more than 3 characters!!!")
     private String name;
 
-    @NotNull(message = "Product name cannot be null or empty string!!!")
+    @NotNull(message = "Price cannot be null!!!")
     @DecimalMin(value = "0", message = "Тhe price must be a positive value!!!")
     private BigDecimal price;
 
-    @Size(min = 10, message = "Product name must be more than 10 characters!!!")
+    @Size(min = 10, message = "Description must be more than 10 characters!!!")
     private String description;
 
     @NotNull(message = "Quantity cannot be null!!!")
     @DecimalMin(value = "0", message = "Тhe quantity cannot be a negative value!!!")
     private BigDecimal quantity;
 
+    @NotBlank(message = "Image cannot be null or empty string!!!")
+    @Size(min = 3, message = "Image must be more than 3 characters!!!")
     private String image;
 
     @NotBlank(message = "Brand cannot be null or empty string!!!")

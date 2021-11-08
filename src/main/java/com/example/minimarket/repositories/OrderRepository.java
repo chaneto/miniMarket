@@ -1,9 +1,6 @@
 package com.example.minimarket.repositories;
 
-import com.example.minimarket.model.entities.AddressEntity;
-import com.example.minimarket.model.entities.CartEntity;
-import com.example.minimarket.model.entities.CourierEntity;
-import com.example.minimarket.model.entities.OrderEntity;
+import com.example.minimarket.model.entities.*;
 import com.example.minimarket.model.services.CartServiceModel;
 import org.hibernate.criterion.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -45,4 +42,6 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
     @Query("select o from OrderEntity as o where o.isPaid = :isPaid and o.cart.id = :id")
     List<OrderEntity> findAllOrderByIsPaid(@Param("isPaid") Boolean isPaid, @Param("id") Long id);
+
+    List<OrderEntity> findAllByProduct(ProductEntity productEntity);
 }

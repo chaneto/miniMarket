@@ -19,6 +19,7 @@
         <p th:if="${orderCount} != null" th:text="|orders: ${orderCount}|" class="text-white"></p>
         <img src="/img/cart.png" width="40px" alt="Cart picture">
         <p th:if="${getTotalPriceForAllOrders} != null" th:text="|total price: ${getTotalPriceForAllOrders}|" class="text-white"></p>
+        <h5 th:if="${emptyCart}" class="text-white">Empty Cart</h5>
     </a>
 
     <div sec:authorize="hasRole('ROLE_ADMIN')" class="dropdown">

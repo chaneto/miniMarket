@@ -17,8 +17,10 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
     ProductEntity findByName(String name);
 
+    @Modifying
     @Transactional
-    void deleteProductByName(String name);
+    //@Query("delete from ProductEntity as p where p.name = :name")
+    void deleteByName(@Param("name") String name);
 
     @Modifying
     @Transactional
@@ -38,7 +40,4 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     @Query("select p.name from ProductEntity as p")
     List<String> getAllProductsName();
 
-    List<ProductEntity> findAllByCategory(CategoryEntity categoryEntity);
-
-    List<ProductEntity> findAllByBrand(BrandEntity brandEntity);
 }

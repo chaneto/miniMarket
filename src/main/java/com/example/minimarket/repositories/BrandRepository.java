@@ -17,7 +17,7 @@ public interface BrandRepository extends JpaRepository<BrandEntity, Long> {
     @Query("select b from BrandEntity as b")
     List<BrandEntity> getAllBrands();
 
-    @Transactional
     @Modifying
+    @Transactional
     void deleteByName(String name);
 }

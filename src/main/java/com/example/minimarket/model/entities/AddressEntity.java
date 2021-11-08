@@ -24,6 +24,7 @@ public class AddressEntity {
     private int streetNumber;
 
     @Column(name = "apartment_number")
+    @Min(value = 0)
     private Integer apartmentNumber;
 
     @Column(nullable = false)

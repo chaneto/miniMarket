@@ -7,6 +7,8 @@ import com.example.minimarket.services.BrandService;
 import com.example.minimarket.services.ProductService;
 import com.example.minimarket.services.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,21 +23,19 @@ import java.math.BigDecimal;
 public class BrandController {
 
     private final BrandService brandService;
-    private final ProductService productService;
     private final ModelMapper mapper;
     private final UserService userService;
 
-    public BrandController(BrandService brandService, ProductService productService, ModelMapper mapper, UserService userService) {
+    public BrandController(BrandService brandService, ModelMapper mapper, UserService userService) {
         this.brandService = brandService;
-        this.productService = productService;
         this.mapper = mapper;
         this.userService = userService;
     }
 
     @GetMapping("/add")
     public String addBrand(Model model){
-        if(!model.containsAttribute("brandAddBindingModel")){
-            model.addAttribute("brandAddBindingModel", new BrandAddBidingModel());
+        if(!model.containsAttribute("brandAddBidingModel")){
+            model.addAttribute("brandAddBidingModel", new BrandAddBidingModel());
             model.addAttribute("brandIsExists", false);
         }
         return "add-brand";
@@ -57,7 +57,9 @@ public class BrandController {
             return "redirect:add";
         }
         this.brandService.saveBrand(brandServiceModel);
-        return "redirect:/";
+        redirectAttributes.addFlashAttribute("brandAddBidingModel", brandAddBidingModel);
+        redirectAttributes.addFlashAttribute("successfulAddedBrand", true);
+        return "redirect:add";
     }
 
     @GetMapping("/all")
@@ -74,7 +76,7 @@ public class BrandController {
 
     @GetMapping("/allByBrand/{name}")
     public String getAllProductsByCategory(@PathVariable String name, Model model){
-        model.addAttribute("getAllProductsByBrand", this.productService.findAllByBrand(name));
+        model.addAttribute("getAllProductsByBrand", this.brandService.getAllProducts(name));
         return "all-products-by-brands";
     }
 
@@ -83,20 +85,36 @@ public class BrandController {
         return new ProductGetBuyQuantity();
     }
 
-
+    public boolean isAuthenticated(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication.getPrincipal().equals("anonymousUser")){
+            return false;
+        }else {
+            return true;
+        }
+    }
 
     @ModelAttribute("orderCount")
-    public int orderCount(){
-        return this.userService.getCountAllUserOrders();
+    public int orderCount() {
+        if(isAuthenticated()){
+            return this.userService.getCountAllUserOrders();
+        }
+        return 0;
     }
 
     @ModelAttribute("getTotalPriceForAllOrders")
-    public BigDecimal getTotalPriceForAllOrders(){
-        return this.userService.getTotalPriceForAllOrders();
+    public BigDecimal getTotalPriceForAllOrders() {
+        if(isAuthenticated()){
+            return this.userService.getTotalPriceForAllOrders();
+        }
+        return null;
     }
 
     @ModelAttribute("getCardId")
-    public Long getCardId(){
-        return this.userService.getCartId();
+    public Long getCardId() {
+        if(isAuthenticated()){
+            return this.userService.getCartId();
+        }
+        return Long.valueOf(0);
     }
 }

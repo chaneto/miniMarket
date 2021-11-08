@@ -2,6 +2,7 @@ package com.example.minimarket.model.entities;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,8 +25,8 @@ public class CategoryEntity {
     @Size(min = 3)
     private String image;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<ProductEntity> products;
+    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER,cascade = CascadeType.REFRESH, orphanRemoval = true)
+    private List<ProductEntity> products = new ArrayList<>();
 
     public CategoryEntity() {
     }
@@ -60,5 +61,13 @@ public class CategoryEntity {
 
     public void setImage(String imageUrl) {
         this.image = imageUrl;
+    }
+
+    public List<ProductEntity> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<ProductEntity> products) {
+        this.products = products;
     }
 }

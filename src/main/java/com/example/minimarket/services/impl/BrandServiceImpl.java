@@ -2,7 +2,9 @@ package com.example.minimarket.services.impl;
 
 import com.example.minimarket.model.bindings.BrandAddBidingModel;
 import com.example.minimarket.model.entities.BrandEntity;
+import com.example.minimarket.model.entities.ProductEntity;
 import com.example.minimarket.model.services.BrandServiceModel;
+import com.example.minimarket.model.views.ProductViewModel;
 import com.example.minimarket.repositories.BrandRepository;
 import com.example.minimarket.services.BrandService;
 import com.google.gson.Gson;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -63,6 +66,20 @@ public class BrandServiceImpl implements BrandService {
                 .stream()
                 .map(m -> this.mapper.map(m, BrandServiceModel.class)).collect(Collectors.toList());
 
+    }
+
+    @Override
+    public List<ProductViewModel> getAllProducts(String name){
+        BrandEntity brand = this.findByNameEntity(name);
+        List<ProductEntity> products = brand.getProducts();
+        List<ProductViewModel> productsViews = new ArrayList<>();
+        for(ProductEntity product : products){
+            ProductViewModel productViewModel = this.mapper.map(product, ProductViewModel.class);
+            productViewModel.setCategory(product.getCategory().getName());
+            productViewModel.setBrand(product.getBrand().getName());
+            productsViews.add(productViewModel);
+        }
+        return productsViews;
     }
 
     @Override

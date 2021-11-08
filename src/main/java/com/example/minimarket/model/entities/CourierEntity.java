@@ -2,6 +2,7 @@ package com.example.minimarket.model.entities;
 
 import javax.persistence.*;
 import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
@@ -19,6 +20,7 @@ public class CourierEntity {
     private String name;
 
     @Min(0)
+    @Max(6)
     private int rating;
 
     @Column(nullable = false)

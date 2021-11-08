@@ -10,6 +10,7 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 import static java.math.BigDecimal.valueOf;
 
@@ -29,6 +30,7 @@ public class ProductEntity {
     @DecimalMin("0")
     private BigDecimal price;
 
+    @Column(columnDefinition = "TEXT")
     @Size(min = 10)
     private String description;
 
@@ -36,8 +38,8 @@ public class ProductEntity {
     @DecimalMin("0")
     private BigDecimal quantity;
 
+    @Column(nullable = false, columnDefinition = "TEXT")
     @Size(min = 3)
-    @Column(columnDefinition = "TEXT")
     private String image;
 
     @Column(name = "is_available", nullable = false)
@@ -47,7 +49,7 @@ public class ProductEntity {
     @JoinColumn(name = "brand_id", referencedColumnName = "id")
     private BrandEntity brand;
 
-    @ManyToOne
+    @ManyToOne//(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private CategoryEntity category;
 
@@ -126,4 +128,5 @@ public class ProductEntity {
     public void setAvailable(boolean available) {
         isAvailable = available;
     }
+
 }

@@ -10,7 +10,7 @@
     <div class="d-flex justify-content-center">
         <form th:action="@{/products/addQuantity}" th:method="POST" th:object="${productAddQuantityBindingModel}"
               class="text-light">
-            <h3 th:if="${successfullyAddedQuantity}" th:text="|Successfully added quantity *{quantity} to the product *{name}|" class="form-text bg-danger rounded"></h3>
+            <h3 th:if="${successfullyAddedQuantity}" th:text="|Successfully added quantity *{quantity} to the product *{name}|" class="form-text bg-success rounded"></h3>
             <div class="form-row m-5">
                 <div class="col">
                     <label for="name">Product name</label>

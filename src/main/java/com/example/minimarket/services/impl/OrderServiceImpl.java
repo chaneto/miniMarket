@@ -4,9 +4,9 @@ import com.example.minimarket.model.entities.*;
 import com.example.minimarket.model.services.CartServiceModel;
 import com.example.minimarket.model.views.OrderViewModel;
 import com.example.minimarket.repositories.OrderRepository;
-import com.example.minimarket.services.CartService;
 import com.example.minimarket.services.OrderService;
 import com.example.minimarket.services.ProductService;
+import com.example.minimarket.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -17,28 +17,30 @@ import java.util.List;
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    private final CartService cartService;
     private final OrderRepository orderRepository;
+    private final ProductService productService;
     private final ModelMapper mapper;
 
 
-    public OrderServiceImpl(OrderRepository orderRepository, ModelMapper mapper, CartService cartService) {
+    public OrderServiceImpl(OrderRepository orderRepository, ModelMapper mapper, ProductService productService) {
         this.orderRepository = orderRepository;
         this.mapper = mapper;
-        this.cartService = cartService;
+        this.productService = productService;
     }
 
     @Override
-    public void createOrder(ProductEntity productEntity, UserEntity userEntity, BigDecimal quantity) {
+    public OrderEntity createOrder(String productName, BigDecimal quantity, CartEntity cartEntity) {
         OrderEntity orderEntity = new OrderEntity();
+        this.productService.buyProduct(productName, quantity);
+        ProductEntity productEntity = this.productService.findByNameEntity(productName);
         orderEntity.setProduct(productEntity);
         orderEntity.setProductCount(quantity.intValue());
         orderEntity.setDateTime(LocalDateTime.now());
         orderEntity.setTotalPrice(productEntity.getPrice().multiply(quantity));
-        orderEntity.setCart(userEntity.getCart());
         orderEntity.setPaid(false);
+        orderEntity.setCart( cartEntity);
         this.orderRepository.save(orderEntity);
-        this.cartService.setTotalPrice(userEntity.getCart().getTotalPrice().add(orderEntity.getTotalPrice()), userEntity.getCart().getId());
+        return orderEntity;
     }
 
     @Override
@@ -62,6 +64,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleteOrderById(Long id){
+        OrderEntity order = this.orderRepository.findOrderById(id);
+        this.productService.addQuantity(BigDecimal.valueOf(order.getProductCount()), order.getProduct().getName());
         this.orderRepository.deleteOrderById(id);
     }
 
@@ -76,7 +80,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updateOrder(Long id) {
+    public void updateOrderToPaid(Long id) {
         for(OrderEntity order: this.orderRepository.findAllOrderByIsPaid(false,id)){
             this.orderRepository.setIsPaid(true, order.getId());
             }
@@ -94,8 +98,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteAllCartOrders(Long id){
-        for(OrderEntity order: this.cartService.getCartById(id).getOrders()){
+    public void deleteAllIsNotPaidOrders(Long cartId){
+        for(OrderEntity order: this.orderRepository.findAllOrderByIsPaid(false, cartId)){
             deleteOrderById(order.getId());
         }
     }

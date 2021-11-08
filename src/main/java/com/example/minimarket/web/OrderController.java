@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
 @Controller
@@ -30,7 +31,9 @@ public class OrderController {
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteOrder(@PathVariable Long id, Model model){
+    public String deleteOrder(@PathVariable Long id, Model model, HttpServletRequest request){
+        String referer = request.getHeader("Referer");
+
         BigDecimal orderPrice = this.orderService.findOrderById(id).getTotalPrice();
         CartServiceModel currentCart = this.userService.getCurrentCart();
         this.orderService.deleteOrderById(id);
@@ -41,7 +44,13 @@ public class OrderController {
         model.addAttribute("orderCount", this.userService.getCountAllUserOrders());
         model.addAttribute("getTotalPriceForAllOrders", this.userService.getTotalPriceForAllOrders());
         model.addAttribute("getCardId", this.userService.getCartId());
-        return "view-final-cart";
+        if(this.userService.getCurrentCart().getCourier() != null){
+             return "view-final-cart";
+        }else {
+        return "redirect:"+ referer;
+
+        }
+
     }
 
 }

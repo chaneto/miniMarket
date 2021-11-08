@@ -11,7 +11,6 @@
 <main class="p-5 align-content-center bg-blur">
         <hr class="border-bottom w-75">
         <div class="row mt-5" id="albumsList">
-            <!-- Start single album -->
             <div  class="col-md-3">
                 <div class="card mb-4 box-shadow">
                     <img src="/img/cart.png"  class="card-img-top" alt="Thumbnail [100%x225]"
@@ -19,11 +18,14 @@
                          style="height: 225px; width: 100%; display: block;">
                     <div  class="card-body">
                         <div th:each="p : ${allOrders}" th:object="${p}" class="text-center">
-                            <p th:text="|*{product} - *{totalPrice}|" class="card-text border-bottom ">
+                            <p th:text="|*{product} - *{totalPrice} - *{productCount} pieces|" class="card-text border-bottom ">
+                            <div sec:authorize="hasRole('ROLE_ADMIN')" class="btn-group">
+                                <a th:href="@{'/orders/delete/{id}'(id = *{id})}" type="button" class="btn btn-sm btn-outline-secondary">Delete</a>
+                            </div>
                             </p>
                         </div>
                         <h3 th:text="|Total Price: ${getCartTotalPrice}|" class="d-inline-block mb-2 text-primary"></h3>
-                        <form th:action="@{/couriers/get}" th:method="POST" th:object="${courierGetBindingModel}">
+                        <form th:if="${#lists.size(allOrders)} > 0" th:action="@{/couriers/get}" th:method="POST" th:object="${courierGetBindingModel}">
                             <div class="form-row m-5">
                                 <div class="col">
                                     <label for="courier">Select Courier</label>
@@ -35,7 +37,7 @@
                                 </div>
                             </div>
                             <div sec:authorize="isAuthenticated()" class="btn-group">
-                                <button type="submit" class="btn btn-sm btn-outline-secondary">Add Address</button>
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">Add Shipping Address</button>
                             </div>
                         </form>
                            <!-- <div sec:authorize="hasRole('ROLE_ADMIN')" class="btn-group">

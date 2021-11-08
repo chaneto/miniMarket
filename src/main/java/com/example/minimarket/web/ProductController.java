@@ -4,11 +4,10 @@ import com.example.minimarket.model.bindings.ProductAddBindingModel;
 import com.example.minimarket.model.bindings.ProductAddQuantityBindingModel;
 import com.example.minimarket.model.bindings.ProductGetBuyQuantity;
 import com.example.minimarket.model.services.ProductServiceModel;
-import com.example.minimarket.services.BrandService;
-import com.example.minimarket.services.CategoryService;
-import com.example.minimarket.services.ProductService;
-import com.example.minimarket.services.UserService;
+import com.example.minimarket.services.*;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -27,73 +26,78 @@ public class ProductController {
     private final CategoryService categoryService;
     private final BrandService brandService;
     private final UserService userService;
+    private final CartService cartService;
 
-    public ProductController(ProductService productService, ModelMapper mapper, CategoryService categoryService, BrandService brandService, UserService userService) {
+    public ProductController(ProductService productService, ModelMapper mapper, CategoryService categoryService, BrandService brandService, UserService userService, CartService cartService) {
         this.productService = productService;
         this.mapper = mapper;
         this.categoryService = categoryService;
         this.brandService = brandService;
         this.userService = userService;
+        this.cartService = cartService;
     }
 
     @GetMapping("/add")
-    private String addProduct(Model model){
-        if(!model.containsAttribute("productAddBindingModel")){
+    private String addProduct(Model model) {
+        if (!model.containsAttribute("productAddBindingModel")) {
             model.addAttribute("productAddBindingModel", new ProductAddBindingModel());
             model.addAttribute("productIsExists", false);
-            model.addAttribute("allCategory", this.categoryService.getAllCategoryName());
-            model.addAttribute("allBrands", this.brandService.getAllBrands());
         }
+        model.addAttribute("allCategory", this.categoryService.getAllCategoryName());
+        model.addAttribute("allBrands", this.brandService.getAllBrands());
         return "add-product";
     }
 
     @PostMapping("/add")
     public String addProductConfirm(@Valid ProductAddBindingModel productAddBindingModel,
                                     BindingResult bindingResult,
-                                    RedirectAttributes redirectAttributes){
+                                    RedirectAttributes redirectAttributes) {
 
-        if(bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("productAddBindingModel", productAddBindingModel);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.productAddBindingModel", bindingResult);
             return "redirect:add";
         }
         ProductServiceModel productServiceModel = this.mapper.map(productAddBindingModel, ProductServiceModel.class);
-        if(this.productService.findByName(productServiceModel.getName()) != null){
+        if (this.productService.findByName(productServiceModel.getName()) != null) {
             redirectAttributes.addFlashAttribute("productAddBindingModel", productAddBindingModel);
             redirectAttributes.addFlashAttribute("productIsExists", true);
             return "redirect:add";
         }
 
         this.productService.seedProduct(productServiceModel);
-        return "redirect:/";
+        redirectAttributes.addFlashAttribute("productAddBindingModel", productAddBindingModel);
+        redirectAttributes.addFlashAttribute("successfulProductAdded", true);
+        return "redirect:add";
     }
 
     @GetMapping("/all")
-    public String allProducts(Model model){
+    public String allProducts(Model model) {
         model.addAttribute("allProducts", this.productService.findAll());
         return "all-products";
     }
 
     @GetMapping("/delete/{name}")
-    public String deleteProduct(@PathVariable String name){
-        this.productService.deleteProduct(name);
+    public String deleteProduct(@PathVariable String name) {
+        this.productService.deleteProductByName(name);
         return "redirect:/";
     }
+
     @GetMapping("/addQuantity")
-        public String AddQuantity(Model model){
-        if(!model.containsAttribute("productAddQuantityBindingModel")){
+    public String AddQuantity(Model model) {
+        if (!model.containsAttribute("productAddQuantityBindingModel")) {
             model.addAttribute("productAddQuantityBindingModel", new ProductAddQuantityBindingModel());
             model.addAttribute("successfullyAddedQuantity", false);
         }
-        model.addAttribute("allProductsName", this.productService.getAllProductsName());
-            return "add-quantity";
-        }
+        model.addAttribute("allProductsName", this.productService.getAllProductsByName());
+        return "add-quantity";
+    }
 
     @PostMapping("/addQuantity")
     public String addQuantity(ProductAddQuantityBindingModel productAddQuantityBindingModel,
                               BindingResult bindingResult,
-                              RedirectAttributes redirectAttributes, Model model){
-        if(bindingResult.hasErrors()){
+                              RedirectAttributes redirectAttributes, Model model) {
+        if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("productAddQuantityBindingModel", productAddQuantityBindingModel);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.productAddQuantityBindingModel", bindingResult);
             return "redirect:addQuantity";
@@ -105,59 +109,69 @@ public class ProductController {
         return "redirect:addQuantity";
     }
 
-    @PostMapping("/buy/{name}")
-    //@RequestMapping(value = "/buy/{name}", method = RequestMethod.POST)
-    public String getBuyQuantity( @Valid ProductGetBuyQuantity productGetBuyQuantity,
-                                 BindingResult bindingResult,
-                                 RedirectAttributes redirectAttributes, @PathVariable String name, Model model,
-                                  HttpServletRequest request){
+    @PostMapping("/addProduct/{name}")
+    public String addProductToCart(@Valid ProductGetBuyQuantity productGetBuyQuantity,
+                                   BindingResult bindingResult,
+                                   RedirectAttributes redirectAttributes, @PathVariable String name,
+                                   HttpServletRequest request) {
         String referer = request.getHeader("Referer");
-        if(bindingResult.hasErrors()){
-            redirectAttributes.addFlashAttribute("productGetBuyQuantity",productGetBuyQuantity);
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("productGetBuyQuantity", productGetBuyQuantity);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.productGetBuyQuantity", bindingResult);
-            return "redirect:"+ referer;
+            return "redirect:" + referer;
         }
-        if(this.productService.quantityIsEnough(name, productGetBuyQuantity.getQuantity())){
-            this.productService.buyProduct(name, productGetBuyQuantity.getQuantity());
-            return "redirect:"+ referer;
-        }else {
-            redirectAttributes.addFlashAttribute("quantityIsNotEnough",true);
-            redirectAttributes.addFlashAttribute("productName",name);
-            return "redirect:"+ referer;
+        if (this.productService.quantityIsEnough(name, productGetBuyQuantity.getQuantity())) {
+            this.cartService.addProductToCart(name, productGetBuyQuantity.getQuantity(), this.userService.getCartId());
+            return "redirect:" + referer;
+        } else {
+            redirectAttributes.addFlashAttribute("quantityIsNotEnough", true);
+            redirectAttributes.addFlashAttribute("productName", name);
+            return "redirect:" + referer;
         }
-    }
-
-    @GetMapping("/allByCategory/{name}")
-    public String getAllProductsByCategory(@PathVariable String name, Model model){
-        model.addAttribute("getAllProductsByCategory", this.productService.findAllByCategory(name));
-        return "all-products-by-category";
     }
 
     @GetMapping("/details/{name}")
-    public String details(@PathVariable String name, Model model){
+    public String details(@PathVariable String name, Model model) {
         model.addAttribute("product", this.productService.findByName(name));
         return "details";
     }
 
     @ModelAttribute("productGetBuyQuantity")
-    public ProductGetBuyQuantity productGetBuyQuantity(){
+    public ProductGetBuyQuantity productGetBuyQuantity() {
         return new ProductGetBuyQuantity();
     }
 
+    public boolean isAuthenticated(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication.getPrincipal().equals("anonymousUser")){
+        return false;
+        }else {
+            return true;
+        }
+    }
+
     @ModelAttribute("orderCount")
-    public int orderCount(){
+    public int orderCount() {
+        if(isAuthenticated()){
         return this.userService.getCountAllUserOrders();
+        }
+        return 0;
     }
 
     @ModelAttribute("getTotalPriceForAllOrders")
-    public BigDecimal getTotalPriceForAllOrders(){
+    public BigDecimal getTotalPriceForAllOrders() {
+        if(isAuthenticated()){
         return this.userService.getTotalPriceForAllOrders();
+        }
+        return null;
     }
 
     @ModelAttribute("getCardId")
-    public Long getCardId(){
+    public Long getCardId() {
+        if(isAuthenticated()){
         return this.userService.getCartId();
+        }
+        return Long.valueOf(0);
     }
-
 
 }

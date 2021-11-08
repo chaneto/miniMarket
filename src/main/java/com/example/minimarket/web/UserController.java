@@ -99,6 +99,8 @@ public class UserController {
         }
 
         this.userService.registerUser(userRegisterServiceModel);
+        redirectAttributes.addFlashAttribute("userRegisterBindingModel", userRegisterBindingModel);
+        redirectAttributes.addFlashAttribute("successfulRegistration", true);
         return "redirect:login";
     }
 }

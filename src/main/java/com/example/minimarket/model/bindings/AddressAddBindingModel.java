@@ -15,6 +15,7 @@ public class AddressAddBindingModel {
     @Min(value = 0, message = "Street number cannot be negativ number!!!")
     private int streetNumber;
 
+    @Min(value = 0, message = "Apartment number cannot be negativ number!!!")
     private String apartmentNumber;
 
     @NotBlank(message = "City name cannot be null or empty String!!!")

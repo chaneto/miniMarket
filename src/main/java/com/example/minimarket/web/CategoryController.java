@@ -1,10 +1,13 @@
 package com.example.minimarket.web;
 
 import com.example.minimarket.model.bindings.CategoryAddBindingModel;
+import com.example.minimarket.model.bindings.ProductGetBuyQuantity;
 import com.example.minimarket.model.services.CategoryServiceModel;
 import com.example.minimarket.services.CategoryService;
 import com.example.minimarket.services.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -53,7 +56,9 @@ public class CategoryController {
             return "redirect:add";
         }
         this.categoryService.saveCategory(categoryServiceModel);
-        return "redirect:/";
+        redirectAttributes.addFlashAttribute("categoryAddBindingModel", categoryAddBindingModel);
+        redirectAttributes.addFlashAttribute("successfulAddedCategory", true);
+        return "redirect:add";
     }
 
     @GetMapping("/all")
@@ -68,19 +73,47 @@ public class CategoryController {
         return "redirect:/";
     }
 
+    @GetMapping("/allByCategory/{name}")
+    public String getAllProductsByCategory(@PathVariable String name, Model model){
+        model.addAttribute("getAllProductsByCategory", this.categoryService.getAllProducts(name));
+        return "all-products-by-category";
+    }
+
+    @ModelAttribute("productGetBuyQuantity")
+    public ProductGetBuyQuantity productGetBuyQuantity(){
+        return new ProductGetBuyQuantity();
+    }
+
+    public boolean isAuthenticated(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication.getPrincipal().equals("anonymousUser")){
+            return false;
+        }else {
+            return true;
+        }
+    }
 
     @ModelAttribute("orderCount")
-    public int orderCount(){
-        return this.userService.getCountAllUserOrders();
+    public int orderCount() {
+        if(isAuthenticated()){
+            return this.userService.getCountAllUserOrders();
+        }
+        return 0;
     }
 
     @ModelAttribute("getTotalPriceForAllOrders")
-    public BigDecimal getTotalPriceForAllOrders(){
-        return this.userService.getTotalPriceForAllOrders();
+    public BigDecimal getTotalPriceForAllOrders() {
+        if(isAuthenticated()){
+            return this.userService.getTotalPriceForAllOrders();
+        }
+        return null;
     }
 
     @ModelAttribute("getCardId")
-    public Long getCardId(){
-        return this.userService.getCartId();
+    public Long getCardId() {
+        if(isAuthenticated()){
+            return this.userService.getCartId();
+        }
+        return Long.valueOf(0);
     }
 }

@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 public interface OrderService {
-    void createOrder(ProductEntity productEntity, UserEntity userEntity, BigDecimal quantity);
+    OrderEntity createOrder(String productName, BigDecimal quantity, CartEntity cartEntity);
 
     List<OrderViewModel> findAllByCartId(Long id);
 
@@ -23,10 +23,11 @@ public interface OrderService {
 
     void setIsPaid(Boolean isPaid, Long id);
 
-    void updateOrder(Long id);
+    void updateOrderToPaid(Long id);
 
-    void deleteAllCartOrders(Long id);
+    void deleteAllIsNotPaidOrders(Long cartId);
 
     List<OrderViewModel> findAllOrderByIsPaid(Boolean isPaid, Long id);
+
 }
 

@@ -26,6 +26,9 @@ public interface CartService {
 
     void updateTotalPrice(CartEntity cart);
 
-    void updateCart(Long id);
+    void resetCart(Long id);
 
+    void addProductToCart(String name, BigDecimal quantity, Long id);
+
+    void deleteCartById(Long id);
 }

@@ -6,6 +6,8 @@ import com.example.minimarket.services.AddressService;
 import com.example.minimarket.services.OrderService;
 import com.example.minimarket.services.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -25,13 +27,11 @@ public class AddressController {
     private final AddressService addressService;
     private final ModelMapper mapper;
     private final UserService userService;
-    private final OrderService orderService;
 
-    public AddressController(AddressService addressService, ModelMapper mapper, UserService userService, OrderService orderService) {
+    public AddressController(AddressService addressService, ModelMapper mapper, UserService userService) {
         this.addressService = addressService;
         this.mapper = mapper;
         this.userService = userService;
-        this.orderService = orderService;
     }
 
     @GetMapping("/add")
@@ -53,24 +53,42 @@ public class AddressController {
         }
         AddressServiceModel addressServiceModel = this.mapper.map(addressAddBindingModel, AddressServiceModel.class);
         this.addressService.save(addressServiceModel);
-        model.addAttribute("cart", this.userService.getCurrentUser().getCart());
-        model.addAttribute("allOrders", this.orderService.findAllOrderByIsPaid(false, this.userService.getCartId()));
+        model.addAttribute("cart", this.userService.getCurrentCart());
+        model.addAttribute("allOrders", this.userService.getAllUserOrderByIsPaid(false, this.userService.getCartId()));
         return "view-final-cart";
     }
 
 
+    public boolean isAuthenticated(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication.getPrincipal().equals("anonymousUser")){
+            return false;
+        }else {
+            return true;
+        }
+    }
+
     @ModelAttribute("orderCount")
-    public int orderCount(){
-        return this.userService.getCountAllUserOrders();
+    public int orderCount() {
+        if(isAuthenticated()){
+            return this.userService.getCountAllUserOrders();
+        }
+        return 0;
     }
 
     @ModelAttribute("getTotalPriceForAllOrders")
-    public BigDecimal getTotalPriceForAllOrders(){
-        return this.userService.getTotalPriceForAllOrders();
+    public BigDecimal getTotalPriceForAllOrders() {
+        if(isAuthenticated()){
+            return this.userService.getTotalPriceForAllOrders();
+        }
+        return null;
     }
 
     @ModelAttribute("getCardId")
-    public Long getCardId(){
-        return this.userService.getCartId();
+    public Long getCardId() {
+        if(isAuthenticated()){
+            return this.userService.getCartId();
+        }
+        return Long.valueOf(0);
     }
 }

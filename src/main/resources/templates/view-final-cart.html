@@ -18,9 +18,10 @@
                          data-holder-rendered="true"
                          style="height: 225px; width: 100%; display: block;">
                     <div th:each="f : ${cart}" th:object="${f}" class="card-body">
-                        <p class="d-inline-block mb-2 text-primary">Products:</p>
+                        <p th:text="${#lists.size(allOrders)} > 0 ? 'Products:' : 'NO PRODUCT'" class="d-inline-block mb-2 text-primary">Products:</p>
+                        <br th:if="${#lists.size(allOrders)} <= 0">
                         <div th:each="p : ${allOrders}" th:object="${p}" class="text-center">
-                            <p th:text="|*{product} - *{totalPrice}.|" class="card-text border-bottom ">
+                            <p th:text="|*{product} - *{totalPrice}  - *{productCount} pieces|" class="card-text border-bottom ">
                             <div sec:authorize="hasRole('ROLE_ADMIN')" class="btn-group">
                                 <a th:href="@{'/orders/delete/{id}'(id = *{id})}" type="button" class="btn btn-sm btn-outline-secondary">Delete</a>
                             </div>
@@ -36,7 +37,7 @@
                         <a th:href="@{/carts/buy}" type="button" class="btn btn-primary btn-block w-50">Buy</a>
                     </div>
                     <div class="btn-group">
-                        <a th:href="@{'/carts/delete/{id}'(id = *{id})}" type="button" class="btn btn-sm btn-outline-secondary">Delete</a>
+                        <a th:href="@{'/carts/delete/{id}'(id = ${cart.id})}" type="button" class="btn btn-sm btn-outline-secondary">Delete</a>
                     </div>
                     </div>
                 </div>

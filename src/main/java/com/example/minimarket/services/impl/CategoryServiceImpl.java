@@ -2,8 +2,10 @@ package com.example.minimarket.services.impl;
 
 import com.example.minimarket.model.bindings.CategoryAddBindingModel;
 import com.example.minimarket.model.entities.CategoryEntity;
+import com.example.minimarket.model.entities.ProductEntity;
 import com.example.minimarket.model.services.CategoryServiceModel;
 import com.example.minimarket.model.views.CategoryViewModel;
+import com.example.minimarket.model.views.ProductViewModel;
 import com.example.minimarket.repositories.CategoryRepository;
 import com.example.minimarket.services.CategoryService;
 import com.google.gson.Gson;
@@ -81,6 +83,20 @@ public class CategoryServiceImpl implements CategoryService {
                     }
                 }
             }
+        }
+
+        @Override
+        public List<ProductViewModel> getAllProducts(String name){
+            CategoryEntity categoryEntity = this.categoryRepository.findByName(name);
+            List<ProductEntity> products = categoryEntity.getProducts();
+            List<ProductViewModel> productsViews = new ArrayList<>();
+            for(ProductEntity product : products){
+                ProductViewModel productViewModel = this.mapper.map(product, ProductViewModel.class);
+                productViewModel.setCategory(product.getCategory().getName());
+                productViewModel.setBrand(product.getBrand().getName());
+                productsViews.add(productViewModel);
+            }
+            return productsViews;
         }
 
     @Override

@@ -13,16 +13,17 @@ public class CourierAddBindingModel {
     private String name;
 
     @Expose
-    @Min(value = 0, message = "Name must be positive!!!")
+    @Min(value = 0, message = "Rating must be positive!!!")
+    @Max(value = 6, message = "Rating cannot be more than 6!!!")
     private int rating;
 
     @Expose
     @NotNull(message = "Amount cannot be empty String!!!")
-    @DecimalMin(value = "0", message = "Name must be positive!!!")
+    @DecimalMin(value = "0", message = "Shipping amount must be positive!!!")
     private BigDecimal shippingAmount;
 
     @Expose
-    @Size(min = 3,message = "Name must be more than 3 characters!!!")
+    @Size(min = 3,message = "Image must be more than 3 characters!!!")
     private String imageUrl;
 
     public CourierAddBindingModel() {

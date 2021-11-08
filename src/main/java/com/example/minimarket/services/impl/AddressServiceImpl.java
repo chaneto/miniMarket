@@ -1,6 +1,7 @@
 package com.example.minimarket.services.impl;
 
 import com.example.minimarket.model.entities.AddressEntity;
+import com.example.minimarket.model.entities.UserEntity;
 import com.example.minimarket.model.services.AddressServiceModel;
 import com.example.minimarket.repositories.AddressRepository;
 import com.example.minimarket.services.AddressService;
@@ -30,9 +31,9 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public void save(AddressServiceModel addressServiceModel) {
         AddressEntity addressEntity = this.mapper.map(addressServiceModel, AddressEntity.class);
-        addressEntity.setUser(this.userService.getCurrentUser());
+        addressEntity.setUser(this.mapper.map(this.userService.getCurrentUser(), UserEntity.class));
         this.addressRepository.save(addressEntity);
-        this.cartService.setAddress(addressEntity, this.userService.getCurrentUser().getCart().getId());
+        this.cartService.setAddress(addressEntity, this.userService.getCartId());
         this.orderService.setAddressAndCourier(this.userService.getCurrentCart());
     }
 }
