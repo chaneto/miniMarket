@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<!------ Include the above in your HEAD tag ---------->
+
+<head th:replace="fragments/fragment :: head">
+</head>
+<body>
+<header th:replace="fragments/fragment :: nav"></header>
+<div class="main-content">
+        <!-- Dark table -->
+        <div  class="row mt-5">
+            <div class="col">
+                <div class="card bg-default shadow">
+                    <div class="card-header bg-transparent border-0">
+                        <h3 class="text-white mb-0">Orders</h3>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table align-items-center table-dark table-flush">
+                            <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Product Image</th>
+                                <th scope="col">Product Name</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Total Price</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Courier</th>
+                                <th scope="col">Address</th>
+                                <th scope="col">Is Paid</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="p : ${ordersHistory}" th:object="${p}">
+                                <th scope="row">
+                                    <div class="media align-items-center">
+                                        <a th:href="@{'/products/details/{name}' (name = *{product.name})}" class="avatar">
+                                            <img alt="Image placeholder" th:src="*{product.image}">
+                                        </a>
+                                    </div>
+                                </th>
+                                <td style="font-size: 15px;" th:text="*{product.name}" ></td>
+                                <td style="font-size: 15px;" th:text="*{productCount}" ></td>
+                                <td style="font-size: 15px;" th:text="*{totalPrice}"></td>
+                                <td style="font-size: 15px;" th:utext="*{dateTime}" ></td>
+                                <td style="font-size: 15px;" th:text="*{courier} == null ? 'not specified yet' : *{courier.name}"></td>
+                                <td style="font-size: 15px;" th:if="*{address} == null" th:text="|not specified yet|"></td>
+                                <td style="font-size: 15px;" th:unless="*{address} == null">
+                                    <p th:text="|*{address.zipCode} *{address.country}|"></p>
+                                    <p th:text="|*{address.city}|"></p>
+                                    <p th:text="|*{address.streetName} *{address.streetNumber}|"></p>
+                                    <p th:if="*{address.apartmentNumber} != null" th:text="|Apartment Number: *{address.apartmentNumber}|"></p>
+                                </td>
+                                <td style="font-size: 15px;" th:text="*{isPaid} ? 'PAID' : 'NOT PAID'"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="fragments/fragment :: footer">
+</footer>
+</body>
+</html>

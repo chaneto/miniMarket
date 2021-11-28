@@ -1,0 +1,20 @@
+[
+  {
+    "username": "admin",
+    "firstName": "Admin",
+    "lastName": "Adminov",
+    "email": "admin_80@abv.bg",
+    "password": "12345",
+    "confirmPassword": "12345",
+    "phoneNumber": "0897534589"
+  },
+  {
+    "username": "user",
+    "firstName": "User",
+    "lastName": "Userov",
+    "email": "user_80@abv.bg",
+    "password": "56789",
+    "confirmPassword": "56789",
+    "phoneNumber": "0898568537"
+  }
+  ]

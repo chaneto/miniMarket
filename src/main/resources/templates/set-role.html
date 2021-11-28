@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: head"></head>
+<body>
+<header>
+    <nav th:replace="fragments/fragment :: nav"></nav>
+</header>
+<main class="p-5 bg-blur text-center">
+    <h1 class="text-light border-bottom">Set Role</h1>
+    <div class="d-flex justify-content-center">
+        <form th:action="@{/roles/set}" th:method="POST" th:object="${userSetRoleBindingModel}"
+              class="text-light">
+            <h3 th:if="${successfullyChangedRole}" th:text="|The Role of *{username} has been changed successfully.|" class="form-text bg-success rounded"></h3>
+            <div class="form-row m-5">
+                <div class="col">
+                    <label for="datalist">Select Username</label>
+                    <input list="datalist" name="username" required min="3" max="20" type="text"
+                           id="inputUsername"
+                           class="form-control"
+                           aria-describedby="usernameHelpInline">
+                    <small th:if="${#fields.hasErrors('username')}" th:errors="*{username}" id="usernameError"
+                           class="invalid-feedback text-light form-text bg-danger rounded">Username length must be between 3 and 20 characters!!!</small>
+                    <small th:if="${userNotExists}" class="text-light form-text bg-danger rounded">Such a user does not exist!!!</small>
+                    <datalist th:field="*{username}" th:errorclass="is-invalid" required size="1" name="username" id="datalist" class="custom-select">
+                        <option th:each="a : ${allUsernames}" th:text="${a}" th:value="${a}"></option>
+                    </datalist>
+                    <small th:if="${#fields.hasErrors('username')}" th:errors="*{username}" id="usernameError1" class="form-text bg-danger rounded">You must select username!</small>
+                </div>
+            </div>
+            <div class="form-row m-5">
+                <div class="col">
+                    <label for="roleName">Role Name</label>
+                    <select th:field="*{roleName}" th:errorclass="is-invalid" required size="1" name="roleName" id="roleName" class="custom-select">
+                        <option value="" selected>Select Role Name</option>
+                        <option th:each="c : ${T(com.example.minimarket.model.enums.UserRole).values()}" th:text="${c}" th:value="${c}"></option>
+                    </select>
+                    <small th:if="${#fields.hasErrors('roleName')}" th:errors="*{roleName}" id="roleNameError" class="form-text bg-danger rounded">You must select role name!</small>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center mt-4">
+                <button class="btn btn-primary btn-block w-50" type="submit">Set Role</button>
+            </div>
+        </form>
+    </div>
+</main>
+<footer th:replace="fragments/fragment :: footer" class="footer bg-blur">
+</footer>
+</body>
+</html>
+
+

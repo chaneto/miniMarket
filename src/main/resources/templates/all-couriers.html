@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="fragments/fragment :: head"></head>
+
+<body>
+
+<header th:replace="fragments/fragment :: nav"></header>
+
+<main class="p-5 align-content-center bg-blur">
+    <div class="container" id="couriers">
+        <hr class="border-bottom w-75">
+        <h3 th:if="${successfullyDeleted}" th:text="|The courier ${courierName} has been deleted!!!|" class="form-text bg-success rounded"></h3>
+        <div class="row mt-5" id="courier-list">
+            <div th:each="f : ${allCouriers}" th:object="${f}" class="col-md-3" >
+                <div class="col-md-6 px-0" id="courier">
+                    <p th:text="*{name}" class="display-4 font-italic font-weight-bold" id="courier-name"></p>
+                    <h5 th:if="${unpaidProductInCourier} and ${courierName} == *{name}" th:text="|Unpaid product in the courier!!!|" class="form-text bg-danger rounded"></h5>
+                    <h5 th:if="${courierInCart} and ${courierName} == *{name}" th:text="|Тhis courier has been added to the cart!!!|" class="form-text bg-danger rounded"></h5>
+                    <img width="250" height="200" th:src="*{imageUrl}" class="image-courier">
+                    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+                    <p th:text="|Rating:|" id="rating-value" class="display-5 font-italic text-white font-weight-bold" ></p>
+                    <span th:if="*{rating} >= 1"  class="fa fa-star checked"></span>
+                    <span th:if="*{rating} >= 2" class="fa fa-star checked"></span>
+                    <span th:if="*{rating} >= 3" class="fa fa-star checked"></span>
+                    <span th:if="*{rating} >= 4" class="fa fa-star checked"></span>
+                    <span th:if="*{rating} >= 5" class="fa fa-star checked"></span>
+                    <span th:if="*{rating} < 1"  class="fa fa-star"></span>
+                    <span th:if="*{rating} < 2" class="fa fa-star"></span>
+                    <span th:if="*{rating} < 3" class="fa fa-star"></span>
+                    <span th:if="*{rating} < 4" class="fa fa-star"></span>
+                    <span th:if="*{rating} < 5" class="fa fa-star"></span>
+                    <p th:text="|Shipping amount: *{shippingAmount}|" id="shipping-amount" class="text-white font-italic font-weight-bold" ></p>
+                    <p sec:authorize="hasRole('ROLE_ADMIN')" class="lead mb-0">
+                        <a th:href="@{'/couriers/delete/{name}'(name = *{name})}" type="button" class="text-white font-weight-bold">Delete</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</main>
+
+
+<footer th:replace="fragments/fragment :: footer"></footer>
+</body>
+</html>
