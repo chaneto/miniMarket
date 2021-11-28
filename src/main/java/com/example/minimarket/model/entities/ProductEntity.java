@@ -27,8 +27,12 @@ public class ProductEntity {
     private String name;
 
     @Column(nullable = false)
-    @DecimalMin("0")
+    @DecimalMin("0.1")
     private BigDecimal price;
+
+    @Column(nullable = false)
+    @DecimalMin("0.1")
+    private BigDecimal promotionPrice;
 
     @Column(columnDefinition = "TEXT")
     @Size(min = 10)
@@ -42,8 +46,15 @@ public class ProductEntity {
     @Size(min = 3)
     private String image;
 
+    @Column(nullable = false)
+    @DecimalMin("0")
+    private BigDecimal discountRate;
+
     @Column(name = "is_available", nullable = false)
     private boolean isAvailable;
+
+    @Column(name = "is_on_promotion", nullable = false)
+    private boolean isOnPromotion;
 
     @ManyToOne
     @JoinColumn(name = "brand_id", referencedColumnName = "id")
@@ -78,6 +89,14 @@ public class ProductEntity {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public BigDecimal getPromotionPrice() {
+        return promotionPrice;
+    }
+
+    public void setPromotionPrice(BigDecimal promotionPrice) {
+        this.promotionPrice = promotionPrice;
     }
 
     public String getDescription() {
@@ -129,4 +148,19 @@ public class ProductEntity {
         isAvailable = available;
     }
 
+    public BigDecimal getDiscountRate() {
+        return discountRate;
+    }
+
+    public void setDiscountRate(BigDecimal discountRate) {
+        this.discountRate = discountRate;
+    }
+
+    public boolean isOnPromotion() {
+        return isOnPromotion;
+    }
+
+    public void setOnPromotion(boolean onPromotion) {
+        isOnPromotion = onPromotion;
+    }
 }

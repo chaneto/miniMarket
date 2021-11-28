@@ -1,9 +1,11 @@
 package com.example.minimarket.services.impl;
 
+import com.example.minimarket.model.entities.UserEntity;
 import com.example.minimarket.model.entities.UserRoleEntity;
 import com.example.minimarket.model.enums.UserRole;
 import com.example.minimarket.repositories.UserRoleRepository;
 import com.example.minimarket.services.UserRoleService;
+import com.example.minimarket.services.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,4 +47,11 @@ public class UserRoleServiceImpl implements UserRoleService {
     public UserRoleEntity findByUserRole(UserRole userRole) {
         return this.userRoleRepository.findByUserRole(userRole);
     }
+
+    @Override
+    public void saveUserRoleEntity(UserRoleEntity userRoleEntity) {
+        this.userRoleRepository.save(userRoleEntity);
+    }
+
+
 }

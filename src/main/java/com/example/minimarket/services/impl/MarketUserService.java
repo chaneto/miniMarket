@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,11 +33,12 @@ public class MarketUserService implements UserDetailsService {
     }
 
     private UserDetails mapToUserDetail(UserEntity userEntity){
-        List<GrantedAuthority> authorities = userEntity
-                .getRoles()
-                .stream()
-                .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getUserRole().name())).collect(Collectors.toList());
-        UserDetails result = new User(userEntity.getUsername(), userEntity.getPassword(), authorities);
+        GrantedAuthority authorities = new SimpleGrantedAuthority("ROLE_" + userEntity.getRole().getUserRole().name());
+       // List<GrantedAuthority> authorities = userEntity
+              // .getRoles()
+              // .stream()
+              // .map(r -> new SimpleGrantedAuthority("ROLE_" + r.getUserRole().name())).collect(Collectors.toList());
+        UserDetails result = new User(userEntity.getUsername(), userEntity.getPassword(), Collections.singleton(authorities));
         return result;
     }
 }

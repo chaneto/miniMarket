@@ -6,25 +6,17 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 
-public class ProductAddQuantityBindingModel {
+public class ProductSetDiscountRateBindingModel {
 
     @NotBlank(message = "Product name cannot be null or empty string!!!")
     @Size(min = 3, message = "Product name must be more than 3 characters!!!")
     private String name;
 
     @NotNull(message = "Quantity cannot be null!!!")
-    @DecimalMin(value = "0.1", message = "Тhe quantity cannot be a negative value!!!")
-    private BigDecimal quantity;
+    @DecimalMin(value = "0", message = "Тhe quantity cannot be a negative value!!!")
+    private BigDecimal discountRate;
 
-    public ProductAddQuantityBindingModel() {
-    }
-
-    public BigDecimal getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(BigDecimal quantity) {
-        this.quantity = quantity;
+    public ProductSetDiscountRateBindingModel() {
     }
 
     public String getName() {
@@ -33,5 +25,13 @@ public class ProductAddQuantityBindingModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public BigDecimal getDiscountRate() {
+        return discountRate;
+    }
+
+    public void setDiscountRate(BigDecimal discountRate) {
+        this.discountRate = discountRate;
     }
 }

@@ -1,27 +1,42 @@
 [
   {
     "name": "Screen Protectors",
-    "description": "A wide range of screen protectors for your smartphone.\nThe best screen protector for the iPhone.\nThe best screen protector for the Android.\nThe best screen protector for the Tablets",
-    "image":"/img/screen-protector.jpg"
+    "description": "The Online Store GSM Accessories offers a wide variety of quality protectors, providing maximum protection for the screens of your devices. Ultra-thin protectors that protect the display from scratches or breakage. All-glass protectors are available, as well as those made of glass and ceramics, for even greater durability. You can also find liquid screen protectors, curved display protectors, 5D protectors, Nano Glass 9H - with the highest level of protection of the display, thanks to the density and hardness of the glass itself.",
+    "image":"/img/categories/screen-protector.jpg"
   },
   {
     "name": "Cases",
-    "description": "A variety of hard and soft cases. Wide range of colors for all brands.\nWallet Phone Cases.\nSilicone Phone Cases.\nGel/TPU Phone Cases.",
-    "image": "/img/case.jpeg"
+    "description": "The GSM Accessories Online Store offers a wide variety of quality cases (backs), providing maximum protection for your devices. Ultra-thin cases that protect your smartphone from breaking when dropped. We offer soft silicone cases, transparent cases, matte cases, hard backs, luxury with premium quality, with stylish designs and a variety of colors.",
+    "image": "/img/categories/case.jpeg"
   },
   {
     "name": "Chargers",
-    "description": "Chargers for phones, tablets, smartwatches. Car chargers.",
-    "image": "/img/charger.jpg"
+    "description": "The GSM Accessories Online Store offers a wide variety of chargers for your devices. For smartphones, tablets and all kinds of smart devices. Fast charging quality chargers. Car chargers. All chargers in the store have a six-month warranty.",
+    "image": "/img/categories/charger.jpg"
   },
   {
-    "name": "Cases",
-    "description": "Headphones for all brands of smartphones.\nWireless bluetooth headphones.",
-    "image": "/img/headphone.jpg"
+    "name": "Headphones",
+    "description": "Listen to music anywhere, anytime. Order headphones from the online store GSM Accessories. A variety of offers with delivery to your door !. Wireless and wired headphones, USB headphones, Bluetooth handsfree, professional headphones, gaming headphones and more.",
+    "image": "/img/categories/headphone.jpg"
   },
   {
-    "name": "Other",
-    "description": "A wide variety of consumables for your smartphone.",
-    "image": "/img/other.jpg"
+    "name": "Batteries",
+    "description": "Original batteries for Apple, Samsung, Huawei, LG, Xiaomi, ASUS, Sony, Lenovo, NOKIA, HTC. Wide selection of batteries for mobile phones at excellent prices. Buy online now! Shipment inspection. Wide range of products. Payment on delivery. All original products have a one-year warranty.",
+    "image": "/img/categories/battery.jpg"
+  },
+  {
+    "name": "Power Banks",
+    "description": "HAVE A CHARGE EVERYWHERE! Choose Your External Battery in GSM Accessories Many and different types of portable batteries at low prices. Guaranteed quality. Buy here. With our portable batteries, your devices will always be ready to use when you need them. Portable batteries with different capacity, as well as solar portable batteries.",
+    "image": "/img/categories/Power Bank.jpg"
+  },
+  {
+    "name": "Headphones",
+    "description": "If you are looking for headphones, you are in the right place. We at GSM Accessories have different types at affordable prices!\nVariety of Audio Headphones in a wide price range. Functional headphones with modern designs. With cable or Wireless. Order online and pick up with door-to-door delivery! See the offers now!",
+    "image": "/img/categories/headphone.jpg"
+  },
+  {
+    "name": "Others",
+    "description": "Various additional accessories for smartphones and tablets. Cables, terminals, adapters, power strips, selfie sticks and much more with fast delivery.",
+    "image": "/img/categories/other.jpg"
   }
 ]

@@ -1,0 +1,275 @@
+<!--<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
+
+
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head >
+    <meta charset="UTF-8">
+    <title>GSM Accessories</title>
+    <link rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'>
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css'>
+    <link rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
+    <style>
+      /*MAIN*/
+
+section {
+  margin: 4em 0;
+}
+
+section:first-child {
+  margin-top: 0;
+}
+
+/*LEFT NAV BAR*/
+
+.cf-left-nav-bar h2 {
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+.cf-left-nav-bar ul {
+  list-style: none;
+  margin-left: 0;
+  padding-left: 0;
+}
+
+.cf-left-nav-bar ul li {
+  color: #9b9b9b;
+  margin: 2em 0;
+}
+
+.cf-left-nav-bar ul li:last-child {
+  margin-bottom: 3em;
+}
+
+.cf-left-nav-bar ul li a {
+  color: #9b9b9b;
+}
+
+.cf-left-nav-bar ul li a > span, .cf-left-nav-bar ul li a > div {
+  display: inline-block;
+}
+
+
+/*CTAs*/
+
+.cf-contact-cta-box-inside {
+  box-shadow: 1px 3px 5px 0 rgba(0, 0, 0, 0.29);
+  color: #000;
+  padding: 2em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.cf-contact-cta-box a:hover {
+  text-decoration: none;
+}
+
+
+/*TRACKING & INFO*/
+
+.cf-contact-info-box {
+  background: #efefef;
+  box-shadow: 1px 1px 4px 0 rgba(0, 0, 0, 0.29);
+  color: #000;
+  font-weight: bold;
+  padding: 1.25em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.cf-contact-info-box > span, .cf-contact-info-box > div {
+  display: inline-block;
+}
+
+
+
+/*POPULAR FAQS*/
+
+.cf-contact-faqs-box-title {
+  font-size: 16px;
+  text-transform: uppercase;
+}
+
+.cf-contact-faqs-box-title h2 {
+  font-size: 16px;
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+.cf-contact-faqs-box-title a.faq-link {
+  float: right;
+}
+
+.cf-contact-faqs-info {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.tab {
+  position: relative;
+  margin-bottom: 1px;
+  width: 100%;
+  color: #000;
+  overflow: hidden;
+}
+
+.cf-contact-faqs-info input {
+  position: absolute;
+  opacity: 0;
+  z-index: -1;
+}
+
+.cf-contact-faqs-info label {
+  position: relative;
+  display: block;
+  padding: 1em 0 0.5em;
+  border-top: 1px solid #9B9B9B;
+  font-weight: bold;
+  line-height: 3;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.cf-contact-faqs-info label:last-child {
+  border-bottom: 1px solid #9B9B9B;
+}
+
+.cf-contact-faqs-info label span {
+  top: 22px;
+  position: absolute;
+  right: 6px;
+}
+
+.tab-content {
+  max-height: 0;
+  overflow: hidden;
+  -webkit-transition: max-height .350s;
+  -o-transition: max-height .35s;
+  transition: max-height .35s;
+}
+
+.tab-content > div {
+  padding: 2em 0;
+}
+
+/* :checked*/
+.cf-contact-faqs-info input:checked ~ .tab-content {
+  max-height: 30em;
+  border-top: 1px solid #9B9B9B;
+}
+    </style>
+    <script>
+  window.console = window.console || function(t) {};
+</script>
+    <script>
+  if (document.location.search.match(/type=embed/gi)) {
+    window.parent.postMessage("resize", "*");
+  }
+</script>
+</head>
+<body translate="no">
+<div class="container cf-ui-kit">
+    <div class="row">
+        <div class="col-md-3 cf-left-col-3">
+            <div class="cf-left-nav-bar">
+                <ul>
+                    <li>
+                        <a th:href="@{/}">
+                            <span><img height="48px" src="https://png.pngtree.com/png-vector/20190425/ourlarge/pngtree-vector-home-icon-png-image_991177.jpg" alt="icon Delivery Options" /></span>
+                            <h3>Home Page</h3>
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/couriers/all}">
+                            <span><img src="https://www.cityfurniture.com/media/wysiwyg/contact-us/menu-ic_local_shipping_black_24px.png" alt="icon Delivery Options" /></span>
+                            <div style="font-size: 20px;">Delivery Options</div>
+                        </a>
+                    </li>
+                    <li>
+                        <a th:href="@{/products/all}">
+                            <span><img height="24px" src="https://thumbs.dreamstime.com/z/vector-gadget-mini-icons-set-isolated-39759961.jpg" alt="icon Delivery Options" /></span>
+                            <div style="font-size: 20px;">All Products</div>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-9 cf-right-col-9">
+            <section id="cf-contact-ctas">
+                <div class="row">
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <div class="cf-contact-cta-box">
+                            <a>
+                                <div class="cf-contact-cta-box-inside">
+                                    <div class="icon-location cf-contact-icon-box">
+                                        <img height="48px" src="https://quantscience.rbind.io/project/pinsearch/featured.png" alt="icon chat with agent" />
+                                    </div>
+                                    <div class="cf-contact-liveChat-title">
+                                        <h2>Main Office:</h2>
+                                    </div>
+                                    <div class="cf-contact-breaker-line"></div>
+                                    <div>6000 Stara Zagora</div>
+                                    <div>ul. Ivan Vazov 15a</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <div class="cf-contact-cta-box">
+                            <a>
+                                <div class="cf-contact-cta-box-inside">
+                                    <div class="cf-contact-icon-box">
+                                        <img src="https://www.cityfurniture.com/media/wysiwyg/contact-us/call-us-desktop.png" alt="icon Call Us" />
+                                    </div>
+                                    <div class="cf-contact-liveChat-title">
+                                        <h2>Telephone Number</h2>
+                                    </div>
+                                    <div class="cf-contact-breaker-line"></div>
+                                    <div>+359 897 40 92 82</div>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-4 col-xs-12">
+                        <div class="cf-contact-cta-box">
+                            <a>
+                                <div  class="cf-contact-cta-box-inside">
+                                    <div class="cf-contact-icon-box">
+                                        <img src="https://www.cityfurniture.com/media/wysiwyg/contact-us/email-us-desktop.png" alt="icon Email Us" />
+                                    </div>
+                                    <div class="cf-contact-liveChat-title">
+                                        <h2>Email</h2>
+                                    </div>
+                                    <div class="cf-contact-breaker-line"></div>
+                                    <div>chaneto_80@abv.bg</div>
+                                    <br>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="cf-contact-info">
+                <div class="row">
+                    <div class="col-md-7 col-sm-7 col-xs-6">
+                        <a href="https://www.google.com/maps/place/%D0%B1%D1%83%D0%BB.+%E2%80%9E%D0%9A%D0%BD%D1%8F%D0%B7+%D0%90%D0%BB%D0%B5%D0%BA%D1%81%D0%B0%D0%BD%D0%B4%D1%8A%D1%80+%D0%91%D0%B0%D1%82%D0%B5%D0%BD%D0%B1%D0%B5%D1%80%D0%B3%E2%80%9C+5,+6003+%D0%BA%D0%B2.+%D0%A1%D0%BB%D0%B0%D0%B2%D0%B5%D0%B9%D0%BA%D0%BE%D0%B2,+%D0%A1%D1%82%D0%B0%D1%80%D0%B0+%D0%97%D0%B0%D0%B3%D0%BE%D1%80%D0%B0/@42.4223833,25.6145307,17z/data=!3m1!4b1!4m5!3m4!1s0x40a869855f67b375:0xfee6f1a100226011!8m2!3d42.4223794!4d25.6167194">
+                            <div class="cf-contact-info-box">
+                                <img src="https://www.cityfurniture.com/media/wysiwyg/contact-us/store_black_24px-desktop.png" alt="icon Store Locations and Hours" />
+                                <div>See Office Locations</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</div>
+<script src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js'></script>
+<script src='https://code.jquery.com/jquery-3.2.1.min.js'></script>
+</body>
+</html>

@@ -18,17 +18,15 @@
                          style="height: 225px; width: 100%; display: block;">
                     <div  class="card-body">
                         <div th:each="p : ${allOrders}" th:object="${p}" class="text-center">
-                            <p th:text="|*{product} - *{totalPrice} - *{productCount} pieces|" class="card-text border-bottom ">
-                            <div sec:authorize="hasRole('ROLE_ADMIN')" class="btn-group">
-                                <a th:href="@{'/orders/delete/{id}'(id = *{id})}" type="button" class="btn btn-sm btn-outline-secondary">Delete</a>
-                            </div>
-                            </p>
+                            <a th:href="@{'/orders/delete/{id}'(id = *{id})}" class="delete-order"><img src="/img/delete.png" width="20px" alt="Delete picture"></a>
+                            <p th:text="|*{product.name}: *{productCount} pieces|"></p>
+                            <p th:text="|Price: *{totalPrice}|" class="card-text border-bottom"></p>
                         </div>
                         <h3 th:text="|Total Price: ${getCartTotalPrice}|" class="d-inline-block mb-2 text-primary"></h3>
                         <form th:if="${#lists.size(allOrders)} > 0" th:action="@{/couriers/get}" th:method="POST" th:object="${courierGetBindingModel}">
-                            <div class="form-row m-5">
+                            <div>
                                 <div class="col">
-                                    <label for="courier">Select Courier</label>
+                                   <!-- <label for="courier">Select Courier</label> -->
                                     <select th:field="*{name}" th:errorclass="is-invalid" required size="1" name="courier" id="courier" class="custom-select">
                                         <option value="" selected>Select Courier</option>
                                         <option th:each="a : ${allCouriers}"  th:text="${a.name}" th:value="${a.name}"></option>
@@ -40,14 +38,10 @@
                                 <button type="submit" class="btn btn-sm btn-outline-secondary">Add Shipping Address</button>
                             </div>
                         </form>
-                           <!-- <div sec:authorize="hasRole('ROLE_ADMIN')" class="btn-group">
-                                <a th:href="@{'/products/delete/{name}'(name = *{name})}" type="button" class="btn btn-sm btn-outline-secondary">Delete</a>
-                            </div>-->
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- EO: Start single album -->
         </div>
     </div>
 

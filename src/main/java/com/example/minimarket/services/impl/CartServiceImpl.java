@@ -1,6 +1,7 @@
 package com.example.minimarket.services.impl;
 
 import com.example.minimarket.model.entities.*;
+import com.example.minimarket.model.services.CartServiceModel;
 import com.example.minimarket.model.views.CartViewModel;
 import com.example.minimarket.repositories.CartRepository;
 import com.example.minimarket.services.CartService;
@@ -24,6 +25,40 @@ public class CartServiceImpl implements CartService {
         this.mapper = mapper;
     }
 
+    @Override
+    public List<CartEntity> findByCourierIsNotNull() {
+        return this.cartRepository.findByCourierIsNotNull();
+    }
+
+    @Override
+    public boolean cartWithCourierWithUndeliveredOrder(String courierName){
+        boolean result = false;
+        for(CartEntity cart : findByCourierIsNotNull()){
+            if(cart.getCourier().getName().equals(courierName)){
+                result = true;
+                break;
+            }
+        }return result;
+    }
+
+
+    @Override
+    public List<CartEntity> findByAddressIsNotNull() {
+        List<CartEntity> fff =   this.cartRepository.findByAddressIsNotNull();
+        return this.cartRepository.findByAddressIsNotNull();
+    }
+
+    @Override
+    public boolean cartWithOrderNotDeliveredToAddress(AddressEntity address){
+        boolean result = false;
+        for(CartEntity cart : findByAddressIsNotNull()){
+            if(cart.getAddress().getId().equals(address.getId())){
+                result = true;
+                break;
+            }
+        }return result;
+    }
+
     public CartEntity createCart(UserEntity userEntity){
         CartEntity cartEntity = new CartEntity();
         cartEntity.setTotalPrice(BigDecimal.valueOf(0));
@@ -39,7 +74,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartViewModel getCartById(Long id){
-        CartViewModel cartViewModel = new CartViewModel();
+        CartViewModel cartViewModel = null;
         CartEntity cartEntity = this.cartRepository.getCartById(id);
         if(cartEntity != null){
             cartViewModel = this.mapper.map(cartEntity, CartViewModel.class);
@@ -54,8 +89,9 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void setAddress(AddressEntity addressEntity, Long id) {
-        this.cartRepository.setAddress(addressEntity, id);
+    public void setAddress(AddressEntity addressEntity, Long cartId) {
+        this.cartRepository.setAddress(addressEntity, cartId);
+        this.orderService.setAddressAndCourier(this.mapper.map(this.cartRepository.getCartById(cartId), CartServiceModel.class));
     }
 
     @Override
@@ -72,9 +108,9 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void addProductToCart(String name, BigDecimal quantity, Long id) {
-        CartEntity cartEntity = this.cartRepository.getCartById(id);
-        OrderEntity orderEntity = this.orderService.createOrder(name, quantity, cartEntity);
+    public void addProductToCart(String productName, BigDecimal quantity, Long cartId) {
+        CartEntity cartEntity = this.cartRepository.getCartById(cartId);
+        OrderEntity orderEntity = this.orderService.createOrder(productName, quantity, cartEntity);
         setTotalPrice(cartEntity.getTotalPrice().add(orderEntity.getTotalPrice()), cartEntity.getId());
     }
 

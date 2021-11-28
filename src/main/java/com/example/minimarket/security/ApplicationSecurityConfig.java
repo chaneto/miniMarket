@@ -25,7 +25,9 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
          httpSecurity.authorizeRequests()
                  .antMatchers("/js/**", "/css/**", "/img/**").permitAll()
                  .antMatchers("/", "/users/login", "/users/register", "/categories/all", "/products/all",
-                         "/couriers/all", "/brands/all", "/products/details/{name}").permitAll()
+                         "/couriers/all", "/brands/all", "/products/details/{name}",
+                         "/brands/allByBrand/{name}", "/categories/allByCategory/{name}", "/products/api",
+                         "/products/promotion", "/contacts").permitAll()
                  .antMatchers("/products/add", "/categories/add", "/brands/add", "/couriers/add"
                          , "/products/addQuantity").hasRole("ADMIN")
                  .antMatchers("/**")

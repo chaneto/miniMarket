@@ -13,8 +13,6 @@ import java.util.List;
 public interface OrderService {
     OrderEntity createOrder(String productName, BigDecimal quantity, CartEntity cartEntity);
 
-    List<OrderViewModel> findAllByCartId(Long id);
-
     void setAddressAndCourier(CartServiceModel cart);
 
     void deleteOrderById(Long id);
@@ -27,7 +25,16 @@ public interface OrderService {
 
     void deleteAllIsNotPaidOrders(Long cartId);
 
-    List<OrderViewModel> findAllOrderByIsPaid(Boolean isPaid, Long id);
+    List<OrderViewModel> findAllOrderByIsPaidAndCartId(Boolean isPaid, Long id);
 
+    boolean productInUnpaidOrder(String name);
+
+    boolean unpaidProductInBrand(String brandName);
+
+    boolean unpaidProductInCategory(String categoryName);
+
+    boolean unpaidProductInCourier(String courierName);
+
+    List<OrderViewModel> findAllByCartId(Long id);
 }
 

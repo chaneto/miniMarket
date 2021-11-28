@@ -3,7 +3,7 @@
 <head th:fragment="head">
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>My Mini Market!</title>
+    <title>GSM Accessories</title>
     <link rel="stylesheet" href="/css/reset-css.css"/>
     <link rel="stylesheet" href="/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="/css/style.css"/>
@@ -15,13 +15,14 @@
     <a class="nav-link" href="/">
         <img src="/img/logo.jpg" width="40px" alt="Logo picture">
     </a>
-    <a sec:authorize="isAuthenticated()" class="nav-link" th:href="@{'/carts/view/{id}' (id = ${getCardId})}">
-        <p th:if="${orderCount} != null" th:text="|orders: ${orderCount}|" class="text-white"></p>
+    <div>
+    <span th:if="${orderCount} != 0 and ${orderCount} != null" class='badge badge-warning' id='order-count' th:text="${orderCount}|"></span>
+    <a sec:authorize="isAuthenticated()" th:href="@{'/carts/view/{id}' (id = ${getCardId})}" class="nav-link">
         <img src="/img/cart.png" width="40px" alt="Cart picture">
-        <p th:if="${getTotalPriceForAllOrders} != null" th:text="|total price: ${getTotalPriceForAllOrders}|" class="text-white"></p>
-        <h5 th:if="${emptyCart}" class="text-white">Empty Cart</h5>
     </a>
-
+        <span th:if="${getTotalPriceForAllOrders} != 0 and ${orderCount} != null" class='badge badge-warning' id='total-sum' th:text="${getTotalPriceForAllOrders}|"></span>
+        <span th:if="${emptyCart}" class="badge badge-warning" id="empty-cart">Empty Cart</span>
+    </div>
     <div sec:authorize="hasRole('ROLE_ADMIN')" class="dropdown">
         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Admin Panel
@@ -30,28 +31,23 @@
             <a class="dropdown-item" href="/statistics">Statistics</a>
             <a class="dropdown-item" href="/products/add">Add product</a>
             <a class="dropdown-item" href="/categories/add">Add Category</a>
-            <a class="dropdown-item" href="/products/addQuantity">Add Quantity</a>
             <a class="dropdown-item" href="/couriers/add">Add Courier</a>
             <a class="dropdown-item" href="/brands/add">Add Brand</a>
-            <a class="dropdown-item" href="#">Something else here</a>
+            <a class="dropdown-item" href="/roles/set">Set Role</a>
+            <a class="dropdown-item" href="/products/productsQuantity">Products Settings-</a>
         </div>
     </div>
 
-
     <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNav">
         <ul class="navbar-nav row">
-
-            <li class="nav-item col-md-4">
-                <a class="nav-link text-white active h5" sec:authorize="!isAuthenticated()" th:href="@{/users/login}">Login</a>
-            </li>
-            <li class="nav-item col-md-4">
-                <a class="nav-link text-white active h5" sec:authorize="!isAuthenticated()" th:href="@{/users/register}">Register</a>
-            </li>
             <li class="nav-item ">
-                <a class="nav-link text-white active h5" th:href="@{/contacts}">Contacts</a>
+                <a  class="nav-link text-white active h5" th:href="@{/contacts}">Contacts</a>
             </li>
             <li class="nav-item ">
                 <a class="nav-link text-white active h5" th:href="@{/products/all}">All products</a>
+            </li>
+            <li class="nav-item ">
+                <a class="nav-link text-white active h5" th:href="@{/products/promotion}">Promotions products</a>
             </li>
             <li class="nav-item ">
                 <a class="nav-link text-white active h5" th:href="@{/brands/all}">All brands</a>
@@ -62,10 +58,21 @@
             <li class="nav-item ">
                 <a class="nav-link text-white active h5" th:href="@{/couriers/all}">All couriers</a>
             </li>
-            <li class="nav-item"  sec:authorize="isAuthenticated()">
-                <h3 th:text="|Hello ${#authentication.getName()}|" class=text-light form-text bg-danger rounded></h3>
+            <li sec:authorize="isAuthenticated()" class="nav-item ">
+                <a class="nav-link text-white active h5" th:href="@{/orders/history}">Orders History</a>
+            </li>
+                <li  sec:authorize="!isAuthenticated()" class="login">
+                    <a class="nav-link text-white active h5" th:href="@{/users/login}">Login</a>
+                </li>
+                <li  sec:authorize="!isAuthenticated()" class="register">
+                    <a class="nav-link text-white active h5" th:href="@{/users/register}">Register</a>
+                </li>
+            <li class="logout"  sec:authorize="isAuthenticated()">
                     <form th:action="@{/logout}" method="POST">
-                        <button type="submit" class="nav-link active h5">Logout</button>
+                       <!-- <h3 th:text="|Hello ${#authentication.getName()}|" class=text-light></h3> -->
+                        <script src="https://code.iconify.design/2/2.1.0/iconify.min.js"></script>
+                        <button type="submit" class="nav-link active h5">
+                            <span class="iconify" data-icon="mdi:logout-variant" data-height="23" data-width="23"></span></button>
                     </form>
             </li>
 
@@ -76,7 +83,7 @@
 <footer th:fragment="footer" class="footer bg-blur">
     <div class="container-fluid text-center">
         <div class="h5 text-white">
-            &copy;2021 Mini Market. All rights reserved.
+            &copy;2021 GSM Accessories. All rights reserved.
         </div>
     </div>
 </footer>

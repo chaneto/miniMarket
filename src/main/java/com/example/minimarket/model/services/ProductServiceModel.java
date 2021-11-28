@@ -10,11 +10,14 @@ public class ProductServiceModel {
 
     private String name;
     private BigDecimal price;
+    private BigDecimal promotionPrice;
     private String description;
     private double quantity;
     private String image;
     private String brand;
     private String category;
+    private BigDecimal discountRate;
+    private boolean isOnPromotion;
 
     public ProductServiceModel() {
     }
@@ -33,6 +36,14 @@ public class ProductServiceModel {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public BigDecimal getPromotionPrice() {
+        return promotionPrice;
+    }
+
+    public void setPromotionPrice(BigDecimal promotionPrice) {
+        this.promotionPrice = promotionPrice;
     }
 
     public String getDescription() {
@@ -73,5 +84,21 @@ public class ProductServiceModel {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public BigDecimal getDiscountRate() {
+        return discountRate;
+    }
+
+    public void setDiscountRate(BigDecimal discountRate) {
+        this.discountRate = discountRate;
+    }
+
+    public boolean isOnPromotion() {
+        return isOnPromotion;
+    }
+
+    public void setOnPromotion(boolean onPromotion) {
+        isOnPromotion = onPromotion;
     }
 }

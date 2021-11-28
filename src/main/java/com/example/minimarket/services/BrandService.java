@@ -19,7 +19,7 @@ public interface BrandService {
 
     void deleteByName(String name);
 
-    void seedBrands() throws IOException;
+    void seedBrandsFromJson() throws IOException;
 
     void saveBrand(BrandServiceModel brandServiceModel);
 }

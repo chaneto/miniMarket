@@ -1,5 +1,7 @@
 package com.example.minimarket.model.services;
 
+import java.time.LocalDateTime;
+
 public class AddressServiceModel {
 
     private String user;
@@ -9,6 +11,7 @@ public class AddressServiceModel {
     private String city;
     private String country;
     private String zipCode;
+    private LocalDateTime dateTime;
 
     public AddressServiceModel() {
     }
@@ -67,5 +70,13 @@ public class AddressServiceModel {
 
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 }

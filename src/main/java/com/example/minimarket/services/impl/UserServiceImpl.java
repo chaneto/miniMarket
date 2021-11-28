@@ -1,20 +1,24 @@
 package com.example.minimarket.services.impl;
 
+import com.example.minimarket.model.bindings.UserRegisterBindingModel;
 import com.example.minimarket.model.entities.CartEntity;
 import com.example.minimarket.model.entities.UserEntity;
+import com.example.minimarket.model.entities.UserRoleEntity;
 import com.example.minimarket.model.enums.UserRole;
 import com.example.minimarket.model.services.CartServiceModel;
 import com.example.minimarket.model.services.UserLoginServiceModel;
 import com.example.minimarket.model.services.UserRegisterServiceModel;
 import com.example.minimarket.model.services.UserServiceModel;
-import com.example.minimarket.model.views.CartViewModel;
 import com.example.minimarket.model.views.OrderViewModel;
 import com.example.minimarket.repositories.UserRepository;
 import com.example.minimarket.services.CartService;
 import com.example.minimarket.services.OrderService;
 import com.example.minimarket.services.UserRoleService;
 import com.example.minimarket.services.UserService;
+import com.google.gson.Gson;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +26,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 
 @Service
@@ -35,8 +43,11 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final CartService cartService;
     private final OrderService orderService;
+    private final Gson gson;
+    private final Resource userFile;
 
-    public UserServiceImpl(UserRepository userRepository, ModelMapper mapper, UserRoleService userRoleService, MarketUserService marketUserService, PasswordEncoder passwordEncoder, CartService cartService, OrderService orderService) {
+    public UserServiceImpl(UserRepository userRepository, ModelMapper mapper, UserRoleService userRoleService, MarketUserService marketUserService
+            , PasswordEncoder passwordEncoder, CartService cartService, OrderService orderService, Gson gson,@Value("classpath:init/users.json") Resource userFile) {
         this.userRepository = userRepository;
         this.mapper = mapper;
         this.userRoleService = userRoleService;
@@ -44,6 +55,8 @@ public class UserServiceImpl implements UserService {
         this.passwordEncoder = passwordEncoder;
         this.cartService = cartService;
         this.orderService = orderService;
+        this.gson = gson;
+        this.userFile = userFile;
     }
 
     @Override
@@ -86,13 +99,24 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = this.mapper.map(userRegisterServiceModel, UserEntity.class);
         userEntity.setPassword(this.passwordEncoder.encode(userEntity.getPassword()));
         if(this.userRepository.count() == 0){
-            userEntity.setRoles(this.userRoleService.findAll());
+            userEntity.setRole(this.userRoleService.findByUserRole(UserRole.ADMIN));
         }else {
-            userEntity.setRoles(this.userRoleService.findAllByUserRole(UserRole.USER));
+            userEntity.setRole(this.userRoleService.findByUserRole(UserRole.USER));
         }
         CartEntity cartEntity = this.cartService.createCart(userEntity);
         userEntity.setCart(cartEntity);
         this.userRepository.save(userEntity);
+    }
+
+    public void seedUsersFromJson() throws IOException {
+        if(this.userRepository.count() == 0){
+        UserRegisterBindingModel[] users = this.gson.fromJson(Files.readString(Path.of(userFile.getURI())), UserRegisterBindingModel[].class);
+        for(UserRegisterBindingModel user: users){
+            if(!userWithEmailIsExists(user.getEmail()) && !userWithUsernameIsExists(user.getUsername())){
+            registerUser(this.mapper.map(user, UserRegisterServiceModel.class));
+               }
+            }
+        }
     }
 
     @Override
@@ -105,7 +129,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int getCountAllUserOrders(){
-        return this.orderService.findAllOrderByIsPaid(false, getCartId()).size();
+        return this.orderService.findAllOrderByIsPaidAndCartId(false, getCartId()).size();
     }
 
     @Override
@@ -128,6 +152,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<String> findAllUsername() {
+        return this.userRepository.findAllUsername();
+    }
+
+    @Override
+    public void setUserRole(String username, String roleName) {
+        UserEntity userEntity = this.userRepository.findByUsername(username);
+        UserRoleEntity userRoleEntity = this.userRoleService.findByUserRole(UserRole.valueOf(roleName));
+        this.userRepository.setUserRole(userRoleEntity, userEntity.getId());
+    }
+
+    @Override
     public CartServiceModel getCurrentCart(){
         CartServiceModel cartServiceModel = new CartServiceModel();
         CartEntity cartEntity = getCurrentUser().getCart();
@@ -140,7 +176,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<OrderViewModel> getAllUserOrderByIsPaid(Boolean isPaid, Long id){
-       return this.orderService.findAllOrderByIsPaid(isPaid, id);
+       return this.orderService.findAllOrderByIsPaidAndCartId(isPaid, id);
     }
 
 }

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head th:replace="fragments/fragment :: head"></head>
 <body>
 <header>
@@ -22,18 +22,45 @@
                 <dt class="col-sm-3">Category</dt>
                 <dd class="col-sm-9" th:text="*{category}">Category</dd>
 
-                <dt class="col-sm-3">price</dt>
+                <dt class="col-sm-3">Price</dt>
                 <dd class="col-sm-9" th:text="*{price}">Price</dd>
+
+                <dt class="col-sm-3" th:if="*{isOnPromotion}">Promotion Price</dt>
+                <dd class="col-sm-9 badge badge-warning" id="new-price-details" th:if="*{isOnPromotion}" th:text="*{promotionPrice}">Promotion Price</dd>
+
+                <dt class="col-sm-3" th:if="*{isAvailable}">Available</dt>
+                <dd class="col-sm-9" th:if="*{isAvailable}" th:text="|Product is available|"></dd>
+
+                <dt class="col-sm-3" th:unless="*{isAvailable}">Available</dt>
+                <dd class="col-sm-9" th:unless="*{isAvailable}" th:text="|Product is not available|"></dd>
 
                 </dd>
                 <dt class="col-sm-3">Description</dt>
                 <dd class="col-sm-9" th:text="*{description}">Description
                 </dd>
             </dl>
+
+            <h5 class="form-text rounded badge badge-warning" id="promotional-product" th:if="*{isOnPromotion}">Promotional Product</h5>
+
+            <form th:if="*{isAvailable}" th:action="@{'/products/addProduct/{name}'(name = ${product.name})}" th:method="POST" th:object="${productGetBuyQuantity}">
+                <div sec:authorize="isAuthenticated()" class="form-row m-5">
+                    <div class="col">
+                        <label for="quantity">Quantity</label>
+                        <input th:field="*{quantity}" th:errorclass="is-invalid"  required min="0" name="quantity" id="quantity" type="number" class="form-control" placeholder="Quantity"></input>
+                        <small th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"  id="quantityError" class="form-text bg-danger rounded"></small>
+                    </div>
+                </div>
+                <div sec:authorize="isAuthenticated()" class="d-flex justify-content-center mt-4">
+                    <button type="submit" class="btn btn-primary btn-block w-50">Add To Cart</button>
+                </div>
+            </form>
+
         </div>
+
         <div class="col-md-6 bg-transparent rounded">
             <div class="rounded embed-responsive embed-responsive-16by9" id="image-details">
                 <img class="embed-responsive-item" th:src="*{image}" allowfullscreen></img>
+                <h3 th:if="*{isOnPromotion}" th:text="|-${#strings.substring(product.discountRate,0,2)}%|" class="centered badge badge-warning"></h3>
             </div>
         </div>
     </div>

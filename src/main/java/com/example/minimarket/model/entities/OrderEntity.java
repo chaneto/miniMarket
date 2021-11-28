@@ -37,9 +37,11 @@ public class OrderEntity {
     private boolean isPaid;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private AddressEntity address;
 
-    @OneToOne
+    @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private CourierEntity courier;
 
     public OrderEntity() {
@@ -104,6 +106,7 @@ public class OrderEntity {
     public CourierEntity getCourier() {
         return courier;
     }
+
     public void setCourier(CourierEntity courier) {
         this.courier = courier;
     }

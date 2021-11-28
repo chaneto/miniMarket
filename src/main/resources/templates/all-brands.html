@@ -9,14 +9,21 @@
 <header th:replace="fragments/fragment :: nav"></header>
 
 <main class="p-5 align-content-center bg-blur">
-    <div class="container">
-        <div th:each="f : ${allBrands}" th:object="${f}" id="all-brands" class="p-3 p-md-5 text-white rounded" >
-            <div class="col-md-6 px-0">
-                <h5 class="display-4 font-italic font-weight-bold" th:text="*{name}">Brand name</h5>
-                <img  id="image-brand" th:src="*{image}">
+    <div class="container" id="brands">
+        <h3 th:if="${successfullyDeleted}" th:text="|The brand ${brandName} has been deleted!!!|" class="form-text bg-danger rounded"></h3>
+        <hr class="border-bottom w-75">
+        <div class="row mt-5" id="brand-list">
+        <div th:each="f : ${allBrands}" th:object="${f}" class="col-md-3" >
+            <div class="col-md-6 px-0" id="brand">
+                <h5 class="display-5 font-italic font-weight-bold" th:text="*{name}" id="brand-name">Brand name</h5>
+                <a th:href="@{'/brands/allByBrand/{name}' (name = *{name})}" >
+                <img width="100" height="70" th:src="*{image}" class="image-brand">
+                </a>
+               <!-- <p class="lead mb-0"><a th:text="|All *{name} products|" th:href="@{'/brands/allByBrand/{name}' (name = *{name})}" id="all-brands" class="text-white font-weight-bold">All</a></p> -->
+                <h7 th:if="${unpaidProductInBrand} and ${brandName} == *{name}" th:text="|Unpaid product in the brand!!!|" class="form-text bg-danger rounded"></h7>
                 <p sec:authorize="hasRole('ROLE_ADMIN')" class="lead mb-0"><a th:href="@{'/brands/delete/{name}' (name = *{name})}" class="text-white font-weight-bold">Delete</a></p>
-                <p class="lead mb-0"><a th:text="|All *{name}|" th:href="@{'/brands/allByBrand/{name}' (name = *{name})}" class="text-white font-weight-bold">All</a></p>
             </div>
+          </div>
         </div>
     </div>
 

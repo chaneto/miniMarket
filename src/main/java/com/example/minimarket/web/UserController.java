@@ -2,10 +2,12 @@ package com.example.minimarket.web;
 
 import com.example.minimarket.model.bindings.UserLoginBindingModel;
 import com.example.minimarket.model.bindings.UserRegisterBindingModel;
+import com.example.minimarket.model.bindings.UserSetRoleBindingModel;
 import com.example.minimarket.model.services.UserLoginServiceModel;
 import com.example.minimarket.model.services.UserRegisterServiceModel;
 import com.example.minimarket.services.UserService;
 import org.modelmapper.ModelMapper;
+import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -103,4 +105,5 @@ public class UserController {
         redirectAttributes.addFlashAttribute("successfulRegistration", true);
         return "redirect:login";
     }
+
 }

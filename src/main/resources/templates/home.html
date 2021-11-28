@@ -4,6 +4,14 @@
 <body>
 <header th:replace="fragments/fragment :: nav"></header>
 <main class="p-5 align-content-center bg-blur ">
+
+    <div class="mt-5 col-sm-12 my-auto align-self-center">
+        <input id="searchInput" class="form-control mr-sm-2 w-50" type="search"
+               placeholder="Enter product or brand name" aria-label="Search">
+    </div>
+
+    <div class="row mt-5" id="productsList">
+    <h3 th:if="${successfullyChangedPrice}" th:text="|The price has been changed successfully.|" class="form-text bg-success rounded"></h3>
     <div class="col-sm-12 my-auto ">
         <div id="carouselExampleIndicators" class="carousel slide " data-ride="carousel">
             <ol class="carousel-indicators">
@@ -13,14 +21,63 @@
             </ol>
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img class="d-block w-100 rounded" th:src="@{/img/{image}(image=${firstImg})}" alt="First slide">
+                    <img class="d-block w-100 rounded" th:src="@{/img/{image}(image=${carouselImages.get(0)})}" alt="First slide">
                 </div>
                 <div class="carousel-item">
-                    <img class="d-block w-100 rounded" th:src="@{/img/{image}(image=${secondImg})}" alt="Second slide">
+                    <img class="d-block w-100 rounded" th:src="@{/img/{image}(image=${carouselImages.get(1)})}" alt="Second slide">
                 </div>
                 <div class="carousel-item">
-                    <img class="d-block w-100 rounded" th:src="@{/img/{image}(image=${thirdImg})}" alt="Third slide">
+                    <img class="d-block w-100 rounded" th:src="@{/img/{image}(image=${carouselImages.get(2)})}" alt="Third slide">
                 </div>
+                <div class="carousel-item">
+                    <img class="d-block w-100 rounded" th:src="@{/img/{image}(image=${carouselImages.get(3)})}" alt="Four slide">
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block w-100 rounded" th:src="@{/img/{image}(image=${carouselImages.get(4)})}" alt="Vive slide">
+                </div>
+
+            <!-- ======= -->
+
+              <!--  <div class="carousel-item">
+                    <img class="d-block w-100 rounded" th:src="${promotionsProducts.get(0).image}" alt="First slide">
+                    <div class="centered">
+                    <h1 class="form-text bg-danger rounded">50% OFF</h1>
+                    <br>
+                    <h3 th:text="|${promotionsProducts.get(0).name}|" class="form-text bg-success rounded"></h3>
+                    <hr>
+                    <h3 th:text="|Price: ${promotionsProducts.get(0).price}|" class="form-text bg-success rounded">F</h3>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block w-100 rounded" th:src="${promotionsProducts.get(1).image}" alt="Second slide">
+                    <div class="centered">
+                        <h1 class="form-text bg-danger rounded">50% OFF</h1>
+                        <br>
+                        <h3 th:text="|${promotionsProducts.get(1).name}|" class="form-text bg-success rounded"></h3>
+                        <hr>
+                        <h3 th:text="|Price: ${promotionsProducts.get(1).price}|" class="form-text bg-success rounded">F</h3>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block w-100 rounded" th:src="${promotionsProducts.get(2).image}" alt="Third slide">
+                    <div class="centered">
+                        <h1 class="form-text bg-danger rounded">50% OFF</h1>
+                        <br>
+                        <h3 th:text="|${promotionsProducts.get(2).name}|" class="form-text bg-success rounded"></h3>
+                        <hr>
+                        <h3 th:text="|Price: ${promotionsProducts.get(2).price}|" class="form-text bg-success rounded">F</h3>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img class="d-block w-100 rounded" th:src="${promotionsProducts.get(3).image}" alt="Third slide">
+                    <div class="centered">
+                        <h1 class="form-text bg-danger rounded">50% OFF</h1>
+                        <br>
+                        <h3 th:text="|${promotionsProducts.get(3).name}|" class="form-text bg-success rounded"></h3>
+                        <hr>
+                        <h3 th:text="|Price: ${promotionsProducts.get(3).price}|" class="form-text bg-success rounded">F</h3>
+                    </div>
+                </div> -->
             </div>
             <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -32,35 +89,34 @@
             </a>
         </div>
     </div>
-    <hr class="border-bottom w-50">
-    <div class="mt-5 col-sm-12 my-auto align-self-center">
-        <input id="searchInput" class="form-control mr-sm-2 w-50" type="search"
-               placeholder="Enter album title or artist name" aria-label="Search">
-    </div>
-    <hr class="border-bottom w-75">
-    <div class="row mt-5" id="albumsList">
-        <!-- Start single album -->
-        <div th:each="p : ${allProducts}" th:object="${p}" class="col-md-3">
+
+        <hr class="border-bottom w-100">
+        <!-- product -->
+        <div th:each="p : ${promotionsProducts}" th:object="${p}" class="col-md-3">
             <div class="card mb-4 box-shadow">
-                <img th:src="*{image}"  class="card-img-top" alt="Thumbnail [100%x225]"
-                     data-holder-rendered="true"
-                     style="height: 225px; width: 100%; display: block;">
+                <div class="product-image">
+                <img th:src="*{image}"  class="card-img-top" alt="Thumbnail [100%x225]" data-holder-rendered="true" style="height: 225px; width: 100%; display: block;">
+                    <h5 th:if="*{isOnPromotion}" th:text="|-${#strings.substring(p.discountRate,0,2)}%|" class="centered badge badge-warning"></h5>
+                </div>
                 <div class="card-body">
                     <div class="text-center">
-                        <h5 th:text="|*{name}|" class="d-inline-block mb-2 text-primary"></h5>
-                        <p th:text="|Category: *{category}|" class="card-text border-bottom "></p>
+                        <h6 th:if="${#strings.length(p.name) <= 120}" th:text="${p.name}" id="product-name-text" class="d-inline-block mb-2 text-primary"></h6>
+                        <h6 th:if="${#strings.length(p.name) > 120}" th:text="|${#strings.substring(p.name,0,117)}...|" id="product-name-text-1" class="d-inline-block mb-2 text-primary"></h6>
+                       <!-- <p th:text="|Category: *{category}|" class="card-text border-bottom "></p> -->
                         <p th:text="|brand: *{brand}|" class="card-text border-bottom "></p>
-                        <p th:if="*{price} > 0" th:text="|Price: *{price}|" class="card-text border-bottom "></p>
+                        <p th:if="*{!isOnPromotion}" th:text="|Price: *{price}|" class="card-text border-bottom"></p>
+                        <p th:if="*{isOnPromotion}" th:text="|New Price: *{price}|" id="new-price" class="card-text border-bottom badge badge-warning"></p>
                         <p th:if="*{isAvailable}" th:text="|Product is available|" class="card-text border-bottom"></p>
                         <p th:unless="*{isAvailable}" th:text="|Product is not available|" class="card-text border-bottom"></p>
                     </div>
                     <h7 th:if="${quantityIsNotEnough} and ${productName} == *{name}" th:text="|Insufficient quantity. Available quantity:*{quantity}|" class="form-text bg-danger rounded"></h7>
+                    <h7 th:if="${productInUnpaidOrder} and ${productName} == *{name}" th:text="|Тhe product cannot be deleted. Тhere is an unpaid order|" class="form-text bg-danger rounded"></h7>
                     <form th:if="*{isAvailable}" th:action="@{'/products/addProduct/{name}'(name = ${p.name})}" th:method="POST" th:object="${productGetBuyQuantity}">
-                        <div sec:authorize="isAuthenticated()" class="form-row m-5">
+                        <div sec:authorize="isAuthenticated()" id="quantity-form">
                             <div class="col">
-                                <label for="quantity">Quantity</label>
-                                <input th:field="*{quantity}" th:errorclass="is-invalid"  required min="0" name="quantity" id="quantity" type="number" class="form-control" placeholder="Quantity"></input>
-                                <small th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"  id="quantityError" class="invalid-feedback form-text bg-danger rounded"></small>
+                               <!-- <label for="quantity">Quantity</label> -->
+                                <input th:field="*{quantity}" th:errorclass="is-invalid"  required min="0" name="quantity" id="quantity" type="number" class="form-control" placeholder="Select Quantity"></input>
+                                <small th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"  id="quantityError" class="form-text bg-danger rounded"></small>
                             </div>
                         </div>
                         <div sec:authorize="isAuthenticated()" class="d-flex justify-content-center mt-4">
@@ -68,16 +124,19 @@
                         </div>
                     </form>
                     <div class="btn-group">
-                        <a th:href="@{'/products/details/{name}' (name = *{name})}" type="button" class="btn btn-sm btn-outline-secondary">Details</a>
+                        <a th:href="@{'/products/details/{name}' (name = *{name})}" style="color:blue" type="button" class="btn btn-sm btn-outline-secondary">Details</a>
                     </div>
                     <div sec:authorize="hasRole('ROLE_ADMIN')" class="btn-group">
-                        <a th:href="@{'/products/delete/{name}'(name = *{name})}" type="button" class="btn btn-sm btn-outline-secondary">Delete</a>
+                        <a th:href="@{'/products/delete/{name}'(name = *{name})}" style="color:blue" type="button" class="btn btn-sm btn-outline-secondary">Delete</a>
+                    </div>
+                    <div sec:authorize="hasRole('ROLE_ADMIN')" class="btn-group">
+                        <a th:href="@{'/products/setProductPrice/{id}'(id = *{id})}" style="color:blue" type="button" class="btn btn-sm btn-outline-secondary">Set Price</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-        <!-- EO: Start single album -->
+        <!-- end product -->
     </div>
 </main>
 <footer th:replace="fragments/fragment :: footer"></footer>

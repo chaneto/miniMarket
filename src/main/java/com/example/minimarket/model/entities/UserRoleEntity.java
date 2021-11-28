@@ -1,9 +1,12 @@
 package com.example.minimarket.model.entities;
 
 import com.example.minimarket.model.enums.UserRole;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.security.core.userdetails.User;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,4 +39,5 @@ public class UserRoleEntity {
     public void setUserRole(UserRole userRole) {
         this.userRole = userRole;
     }
+
 }

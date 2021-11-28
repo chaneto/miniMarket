@@ -32,10 +32,9 @@ public interface CartRepository extends JpaRepository<CartEntity, Long> {
     @Query("update CartEntity as c set c.address = :address where c.id = :id")
     void setAddress(@Param("address") AddressEntity addressEntity, @Param("id")  Long id);
 
-    //@Modifying
-    //@Transactional
-    // @Query("update CartEntity as c set c.orders = :orders WHERE c.id = :cartId")
-    // void setOrders(@Param("orders") List<OrderEntity> orders, @Param("cartId") Long id);
+   List<CartEntity> findByAddressIsNotNull();
+
+   List<CartEntity> findByCourierIsNotNull();
 
     @Query("select c.orders from CartEntity as c")
     List<OrderEntity> getOrders();

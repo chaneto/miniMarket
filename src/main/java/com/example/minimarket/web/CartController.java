@@ -34,10 +34,10 @@ public class CartController {
         model.addAttribute("getCartTotalPrice", this.userService.getTotalPriceForAllOrders());
         model.addAttribute("allCouriers", this.courierService.findAll());
         String referer = request.getHeader("Referer");
-//        if(orderCount() == 0){
-//            model.addAttribute("emptyCart", true);
-//            return "view-cart";
-//        }
+        if(orderCount() == 0 && this.cartService.getCartById(id).getCourier() == null && this.cartService.getCartById(id).getAddress() == null){
+            model.addAttribute("emptyCart", true);
+            return "view-cart";
+        }
         if(this.cartService.getCartById(id).getCourier() != null && this.cartService.getCartById(id).getAddress() != null){
            model.addAttribute("cart", this.cartService.getCartById(id));
            return "view-final-cart";

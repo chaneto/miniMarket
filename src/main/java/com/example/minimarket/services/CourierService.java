@@ -16,7 +16,7 @@ public interface CourierService {
 
     void deleteByName(String name);
 
-    void seedCourier() throws IOException;
+    void seedCourierFromJson() throws IOException;
 
     void setCourierCart(String name);
 }

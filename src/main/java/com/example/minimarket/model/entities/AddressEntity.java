@@ -1,8 +1,15 @@
 package com.example.minimarket.model.entities;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "addresses")
@@ -12,7 +19,7 @@ public class AddressEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REFRESH)
     private UserEntity user;
 
     @Column(name = "street_name", nullable = false)
@@ -24,7 +31,7 @@ public class AddressEntity {
     private int streetNumber;
 
     @Column(name = "apartment_number")
-    @Min(value = 0)
+    //@Min(value = 0)
     private Integer apartmentNumber;
 
     @Column(nullable = false)
@@ -38,6 +45,10 @@ public class AddressEntity {
     @Column(name = "zip_code", nullable = false)
     @Size(min = 1)
     private String zipCode;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @Column(name = "date_time", nullable = false)
+    private LocalDateTime dateTime;
 
     public AddressEntity() {
     }
@@ -104,5 +115,13 @@ public class AddressEntity {
 
     public void setZipCode(String zipCode) {
         this.zipCode = zipCode;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
     }
 }

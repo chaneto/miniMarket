@@ -4,7 +4,7 @@ import com.example.minimarket.model.bindings.BrandAddBidingModel;
 import com.example.minimarket.model.bindings.ProductGetBuyQuantity;
 import com.example.minimarket.model.services.BrandServiceModel;
 import com.example.minimarket.services.BrandService;
-import com.example.minimarket.services.ProductService;
+import com.example.minimarket.services.OrderService;
 import com.example.minimarket.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 
@@ -25,11 +26,13 @@ public class BrandController {
     private final BrandService brandService;
     private final ModelMapper mapper;
     private final UserService userService;
+    private final OrderService orderService;
 
-    public BrandController(BrandService brandService, ModelMapper mapper, UserService userService) {
+    public BrandController(BrandService brandService, ModelMapper mapper, UserService userService, OrderService orderService) {
         this.brandService = brandService;
         this.mapper = mapper;
         this.userService = userService;
+        this.orderService = orderService;
     }
 
     @GetMapping("/add")
@@ -69,9 +72,18 @@ public class BrandController {
     }
 
     @GetMapping("/delete/{name}")
-    public String deleteBrand(@PathVariable String name){
-        this.brandService.deleteByName(name);
-        return "redirect:/";
+    public String deleteBrand(@PathVariable String name, HttpServletRequest request, RedirectAttributes redirectAttributes){
+        String referer = request.getHeader("Referer");
+        if(orderService.unpaidProductInBrand(name)){
+            redirectAttributes.addFlashAttribute("unpaidProductInBrand", true);
+            redirectAttributes.addFlashAttribute("brandName", name);
+            return "redirect:" + referer;
+        } else {
+            this.brandService.deleteByName(name);
+            redirectAttributes.addFlashAttribute("successfullyDeleted", true);
+            redirectAttributes.addFlashAttribute("brandName", name);
+            return "redirect:" + referer;
+        }
     }
 
     @GetMapping("/allByBrand/{name}")

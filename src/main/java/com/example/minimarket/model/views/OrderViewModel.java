@@ -2,16 +2,18 @@ package com.example.minimarket.model.views;
 
 import com.example.minimarket.model.entities.AddressEntity;
 import com.example.minimarket.model.entities.CourierEntity;
+import com.example.minimarket.model.entities.ProductEntity;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class OrderViewModel {
 
     private Long id;
-    private String product;
+    private ProductEntity product;
     private int productCount;
     private BigDecimal totalPrice;
-    private LocalDateTime dateTime;
+    private String dateTime;
     private CourierEntity courier;
     private AddressEntity address;
     private boolean isPaid;
@@ -27,11 +29,11 @@ public class OrderViewModel {
         this.id = id;
     }
 
-    public String getProduct() {
+    public ProductEntity getProduct() {
         return product;
     }
 
-    public void setProduct(String product) {
+    public void setProduct(ProductEntity product) {
         this.product = product;
     }
 
@@ -51,11 +53,11 @@ public class OrderViewModel {
         this.totalPrice = totalPrice;
     }
 
-    public LocalDateTime getDateTime() {
+    public String getDateTime() {
         return dateTime;
     }
 
-    public void setDateTime(LocalDateTime dateTime) {
+    public void setDateTime(String dateTime) {
         this.dateTime = dateTime;
     }
 

@@ -6,7 +6,6 @@ import com.example.minimarket.model.views.OrderViewModel;
 import com.example.minimarket.repositories.OrderRepository;
 import com.example.minimarket.services.OrderService;
 import com.example.minimarket.services.ProductService;
-import com.example.minimarket.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -36,27 +35,16 @@ public class OrderServiceImpl implements OrderService {
         orderEntity.setProduct(productEntity);
         orderEntity.setProductCount(quantity.intValue());
         orderEntity.setDateTime(LocalDateTime.now());
-        orderEntity.setTotalPrice(productEntity.getPrice().multiply(quantity));
+        orderEntity.setTotalPrice(productEntity.getPromotionPrice().multiply(quantity));
         orderEntity.setPaid(false);
-        orderEntity.setCart( cartEntity);
+        orderEntity.setCart(cartEntity);
         this.orderRepository.save(orderEntity);
         return orderEntity;
     }
 
     @Override
-    public List<OrderViewModel> findAllByCartId(Long id) {
-        List<OrderViewModel> orderViews = new ArrayList<>();
-        for(OrderEntity order : this.orderRepository.findAllOrderByIsPaid(false, id )){
-            OrderViewModel orderViewModel = this.mapper.map(order, OrderViewModel.class);
-            orderViewModel.setProduct(order.getProduct().getName());
-            orderViews.add(orderViewModel);
-        }
-        return orderViews;
-    }
-
-    @Override
     public void setAddressAndCourier(CartServiceModel cart) {
-        for(OrderEntity order: cart.getOrders()){
+        for(OrderEntity order: this.orderRepository.findAllOrderByIsPaidAndCartId(false, cart.getId())){
             this.orderRepository.setCourier(cart.getCourier(), order.getId());
             this.orderRepository.setAddress(cart.getAddress(), order.getId());
         }
@@ -67,6 +55,13 @@ public class OrderServiceImpl implements OrderService {
         OrderEntity order = this.orderRepository.findOrderById(id);
         this.productService.addQuantity(BigDecimal.valueOf(order.getProductCount()), order.getProduct().getName());
         this.orderRepository.deleteOrderById(id);
+    }
+
+    @Override
+    public void deleteAllIsNotPaidOrders(Long cartId){
+        for(OrderEntity order: this.orderRepository.findAllOrderByIsPaidAndCartId(false, cartId)){
+            deleteOrderById(order.getId());
+        }
     }
 
     @Override
@@ -81,26 +76,93 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void updateOrderToPaid(Long id) {
-        for(OrderEntity order: this.orderRepository.findAllOrderByIsPaid(false,id)){
+        for(OrderEntity order: this.orderRepository.findAllOrderByIsPaidAndCartId(false,id)){
             this.orderRepository.setIsPaid(true, order.getId());
             }
     }
 
     @Override
-    public List<OrderViewModel> findAllOrderByIsPaid(Boolean isPaid, Long id) {
+    public List<OrderViewModel> findAllOrderByIsPaidAndCartId(Boolean isPaid, Long id) {
         List<OrderViewModel> orderViews = new ArrayList<>();
-        for(OrderEntity order : this.orderRepository.findAllOrderByIsPaid(false, id )){
+        for(OrderEntity order : this.orderRepository.findAllOrderByIsPaidAndCartId(false, id )){
             OrderViewModel orderViewModel = this.mapper.map(order, OrderViewModel.class);
-            orderViewModel.setProduct(order.getProduct().getName());
             orderViews.add(orderViewModel);
         }
         return orderViews;
     }
 
     @Override
-    public void deleteAllIsNotPaidOrders(Long cartId){
-        for(OrderEntity order: this.orderRepository.findAllOrderByIsPaid(false, cartId)){
-            deleteOrderById(order.getId());
+    public boolean productInUnpaidOrder(String name) {
+        List<OrderEntity> orders = this.orderRepository.findAllByIsPaidAndProductName(false, name);
+        if(orders.size() > 0){
+            return true;
+        } else {
+            return false;
         }
+    }
+
+    @Override
+    public boolean unpaidProductInBrand(String brandName) {
+        List<OrderEntity> orders = this.orderRepository.findAllByIsPaid(false);
+        int count = 0;
+        for(OrderEntity order: orders){
+          if(order.getProduct().getBrand().getName().equals(brandName)){
+              count++;
+              break;
+          }
+        }
+        if(count > 0){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean unpaidProductInCategory(String categoryName) {
+        List<OrderEntity> orders = this.orderRepository.findAllByIsPaid(false);
+        int count = 0;
+        for(OrderEntity order: orders){
+            if(order.getProduct().getCategory().getName().equals(categoryName)){
+                count++;
+                break;
+            }
+        }
+        if(count > 0){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean unpaidProductInCourier(String courierName) {
+        List<OrderEntity> orders = this.orderRepository.findAllByIsPaid(false);
+        int count = 0;
+        for(OrderEntity order: orders){
+            if(order.getCourier() != null){
+            if(order.getCourier().getName().equals(courierName)) {
+                count++;
+                break;
+             }
+           }
+        }
+        if(count > 0){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public List<OrderViewModel> findAllByCartId(Long id) {
+        List<OrderViewModel> orders = new ArrayList<>();
+        for(OrderEntity order: this.orderRepository.findAllByCartIdOrderByDateTimeDesc(id)){
+            OrderViewModel orderViewModel = this.mapper.map(order, OrderViewModel.class);
+            String date  = orderViewModel.getDateTime().substring(0,10) + " " + orderViewModel.getDateTime().substring(11, 19);
+            orderViewModel.setDateTime(date);
+            orders.add(orderViewModel);
+        }
+        return orders;
     }
 }

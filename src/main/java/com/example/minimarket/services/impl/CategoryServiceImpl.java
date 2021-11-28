@@ -73,12 +73,12 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
         @Override
-        public void seedCategories() throws IOException {
+        public void seedCategoriesFromJson() throws IOException {
             if(this.categoryRepository.count() == 0){
                 CategoryAddBindingModel[] categories = this.gson.fromJson(Files.readString(Path.of(categoryFile.getURI())), CategoryAddBindingModel[].class);
                 for(CategoryAddBindingModel category: categories){
+                    if(findByName(category.getName()) == null){
                     CategoryEntity categoryEntity = this.mapper.map(category, CategoryEntity.class);
-                    if(this.categoryRepository.findByName(categoryEntity.getName()) == null){
                     this.categoryRepository.save(categoryEntity);
                     }
                 }

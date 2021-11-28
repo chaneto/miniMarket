@@ -1,26 +1,78 @@
 [
   {
-    "name":"HTC",
-    "image":"/img/htc.png"
-  },
-  {
     "name": "Apple",
-    "image":"/img/apple.png"
+    "image":"/img/brand/apple.png"
   },
   {
     "name": "Samsung",
-    "image":"/img/samsung.png"
+    "image":"/img/brand/samsung.png"
   },
   {
     "name": "Huawei",
-    "image":"/img/huawei.png"
+    "image":"/img/brand/huawei.png"
+  },
+  {
+    "name": "Nokia",
+    "image":"/img/brand/nokia.jpg"
+  },
+  {
+    "name":"HTC",
+    "image":"/img/brand/htc.png"
+  },
+  {
+    "name":"Google Pixel",
+    "image":"/img/brand/google-pixel-logo.jpg"
+  },
+  {
+    "name":"Sony",
+    "image":"/img/brand/sony.jpg"
+  },
+  {
+    "name":"LG",
+    "image":"/img/brand/LG.png"
+  },
+  {
+    "name":"Motorola",
+    "image":"/img/brand/motorola.png"
   },
   {
     "name": "Lenovo",
-    "image":"/img/lenovo.gif"
+    "image":"/img/brand/lenovo.gif"
   },
   {
     "name": "Xiaomi",
-    "image":"/img/xiaomi.png"
+    "image":"/img/brand/xiaomi.png"
+  },
+  {
+    "name": "Philips",
+    "image":"/img/brand/Philips.jpg"
+  },
+  {
+    "name": "Asus",
+    "image":"/img/brand/asus.png"
+  },
+  {
+    "name": "JBL",
+    "image":"/img/brand/JBL.png"
+  },
+  {
+    "name": "Jabra",
+    "image":"/img/brand/jabra.png"
+  },
+  {
+    "name": "BOSE",
+    "image":"/img/brand/bose.png"
+  },
+  {
+    "name": "SanDisc",
+    "image":"/img/brand/sanDisc.png"
+  },
+  {
+    "name": "Nillkin",
+    "image":"/img/brand/nillkin.png"
+  },
+  {
+    "name": "Spigen",
+    "image":"/img/brand/spigen.jpg"
   }
 ]

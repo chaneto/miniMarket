@@ -1,15 +1,12 @@
 package com.example.minimarket.web;
 
-import com.example.minimarket.model.entities.CartEntity;
 import com.example.minimarket.model.services.CartServiceModel;
-import com.example.minimarket.model.views.CartViewModel;
 import com.example.minimarket.services.CartService;
 import com.example.minimarket.services.OrderService;
 import com.example.minimarket.services.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -40,7 +37,7 @@ public class OrderController {
         this.cartService.setTotalPrice(currentCart.getTotalPrice().subtract(orderPrice),currentCart.getId());
         currentCart = this.userService.getCurrentCart();
         model.addAttribute("cart", currentCart);
-        model.addAttribute("allOrders", this.orderService.findAllOrderByIsPaid(false, currentCart.getId()));
+        model.addAttribute("allOrders", this.orderService.findAllOrderByIsPaidAndCartId(false, currentCart.getId()));
         model.addAttribute("orderCount", this.userService.getCountAllUserOrders());
         model.addAttribute("getTotalPriceForAllOrders", this.userService.getTotalPriceForAllOrders());
         model.addAttribute("getCardId", this.userService.getCartId());
@@ -51,6 +48,12 @@ public class OrderController {
 
         }
 
+    }
+
+    @GetMapping("/history")
+    public String orderHistory(Model model){
+        model.addAttribute("ordersHistory", this.orderService.findAllByCartId(this.userService.getCartId()));
+        return "order-history";
     }
 
 }

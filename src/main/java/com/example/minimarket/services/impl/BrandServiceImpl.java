@@ -45,12 +45,14 @@ public class BrandServiceImpl implements BrandService {
     }
 
     @Override
-    public void seedBrands() throws IOException {
+    public void seedBrandsFromJson() throws IOException {
         if(this.brandRepository.count() == 0){
             BrandAddBidingModel[] brands = this.gson.fromJson(Files.readString(Path.of(brandFile.getURI())), BrandAddBidingModel[].class);
             for(BrandAddBidingModel brand: brands){
+                if(findByName(brand.getName()) == null){
                 BrandEntity brandEntity = this.mapper.map(brand, BrandEntity.class);
                 this.brandRepository.save(brandEntity);
+                }
             }
         }
     }

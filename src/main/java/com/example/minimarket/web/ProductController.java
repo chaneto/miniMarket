@@ -1,8 +1,6 @@
 package com.example.minimarket.web;
 
-import com.example.minimarket.model.bindings.ProductAddBindingModel;
-import com.example.minimarket.model.bindings.ProductAddQuantityBindingModel;
-import com.example.minimarket.model.bindings.ProductGetBuyQuantity;
+import com.example.minimarket.model.bindings.*;
 import com.example.minimarket.model.services.ProductServiceModel;
 import com.example.minimarket.services.*;
 import org.modelmapper.ModelMapper;
@@ -27,15 +25,19 @@ public class ProductController {
     private final BrandService brandService;
     private final UserService userService;
     private final CartService cartService;
+    private final OrderService orderService;
 
-    public ProductController(ProductService productService, ModelMapper mapper, CategoryService categoryService, BrandService brandService, UserService userService, CartService cartService) {
+    public ProductController(ProductService productService, ModelMapper mapper, CategoryService categoryService, BrandService brandService, UserService userService, CartService cartService, OrderService orderService) {
         this.productService = productService;
         this.mapper = mapper;
         this.categoryService = categoryService;
         this.brandService = brandService;
         this.userService = userService;
         this.cartService = cartService;
+        this.orderService = orderService;
     }
+
+    String oldPage = "";
 
     @GetMapping("/add")
     private String addProduct(Model model) {
@@ -73,40 +75,113 @@ public class ProductController {
 
     @GetMapping("/all")
     public String allProducts(Model model) {
-        model.addAttribute("allProducts", this.productService.findAll());
+        model.addAttribute("allProducts", this.productService.findAllOrderByName());
         return "all-products";
     }
 
     @GetMapping("/delete/{name}")
-    public String deleteProduct(@PathVariable String name) {
+    public String deleteProduct(@PathVariable String name, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        String referer = request.getHeader("Referer");
+        if(orderService.productInUnpaidOrder(name)){
+            redirectAttributes.addFlashAttribute("productInUnpaidOrder", true);
+            redirectAttributes.addFlashAttribute("productName", name);
+            return "redirect:" + referer;
+        } else {
+            redirectAttributes.addFlashAttribute("productName", name);
         this.productService.deleteProductByName(name);
-        return "redirect:/";
+            redirectAttributes.addFlashAttribute("deleteProduct", true);
+            return "redirect:" + referer;
+        }
+
     }
 
-    @GetMapping("/addQuantity")
-    public String AddQuantity(Model model) {
+    @GetMapping("/setProductPrice/{id}")
+    public String setPrice(@PathVariable Long id, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+        model.addAttribute("product", this.productService.getById(id));
+        String referer = request.getHeader("Referer");
+        if (!model.containsAttribute("productSetPriceBindingModel")) {
+            model.addAttribute("productSetPriceBindingModel", new ProductSetPriceBindingModel());
+            model.addAttribute("successfullyChangedPrice", false);
+            oldPage = referer;
+        }
+        model.addAttribute("allProductsName", this.productService.getAllProductsName());
+        return "set-product-price";
+    }
+
+    @PostMapping("/setProductPrice")
+    public String setPriceConfirm(@Valid  ProductSetPriceBindingModel productSetPriceBindingModel,
+                              BindingResult bindingResult,
+                              RedirectAttributes redirectAttributes,
+                           HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("productSetPriceBindingModel", productSetPriceBindingModel);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.productSetPriceBindingModel", bindingResult);
+            return "redirect:" + referer;
+        }
+
+        this.productService.setPrice(productSetPriceBindingModel.getNewPrice(), productSetPriceBindingModel.getName());
+        redirectAttributes.addFlashAttribute("productSetPriceBindingModel", productSetPriceBindingModel);
+        redirectAttributes.addFlashAttribute("successfullyChangedPrice", true);
+        return "redirect:" + oldPage;
+    }
+
+    @GetMapping("/setDiscountRate/{id}")
+    public String setDiscountRate(@PathVariable Long id, Model model){
+        if(!model.containsAttribute("productSetDiscountRateBindingModel")){
+            model.addAttribute("productSetDiscountRateBindingModel", new ProductSetDiscountRateBindingModel());
+            model.addAttribute("successfullyChangedDiscountRate", false);
+        }
+
+        model.addAttribute("allProductsName", this.productService.getAllProductsName());
+        model.addAttribute("productName", this.productService.getById(id).getName());
+        return "set-discount-rate";
+    }
+
+    @PostMapping("/setDiscountRate")
+        public String setDiscountRateConfirm(@Valid ProductSetDiscountRateBindingModel productSetDiscountRateBindingModel,
+                BindingResult bindingResult,
+                RedirectAttributes redirectAttributes,
+                HttpServletRequest request){
+        String referer = request.getHeader("Referer");
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("productSetDiscountRateBindingModel", productSetDiscountRateBindingModel);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.productSetDiscountRateBindingModel", bindingResult);
+            return "redirect:" + referer;
+        }
+        this.productService.setPromotionPriceAndDiscountRate(productSetDiscountRateBindingModel.getDiscountRate(), productSetDiscountRateBindingModel.getName());
+        redirectAttributes.addFlashAttribute("productSetDiscountRateBindingModel", productSetDiscountRateBindingModel);
+        redirectAttributes.addFlashAttribute("successfullyChangedDiscountRate", true);
+        return "redirect:/products/productsQuantity";
+    }
+
+    @GetMapping("/addQuantity/{name}")
+    public String addQuantity(Model model, @PathVariable String name) {
         if (!model.containsAttribute("productAddQuantityBindingModel")) {
             model.addAttribute("productAddQuantityBindingModel", new ProductAddQuantityBindingModel());
             model.addAttribute("successfullyAddedQuantity", false);
         }
-        model.addAttribute("allProductsName", this.productService.getAllProductsByName());
+        model.addAttribute("allProductsName", this.productService.getAllProductsName());
+        model.addAttribute("productName", name);
         return "add-quantity";
     }
 
     @PostMapping("/addQuantity")
-    public String addQuantity(ProductAddQuantityBindingModel productAddQuantityBindingModel,
+    public String addQuantity(@Valid ProductAddQuantityBindingModel productAddQuantityBindingModel,
                               BindingResult bindingResult,
-                              RedirectAttributes redirectAttributes, Model model) {
+                              RedirectAttributes redirectAttributes, HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("productAddQuantityBindingModel", productAddQuantityBindingModel);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.productAddQuantityBindingModel", bindingResult);
-            return "redirect:addQuantity";
+            return "redirect:" + referer;
         }
-
         this.productService.addQuantity(productAddQuantityBindingModel.getQuantity(), productAddQuantityBindingModel.getName());
         redirectAttributes.addFlashAttribute("productAddQuantityBindingModel", productAddQuantityBindingModel);
         redirectAttributes.addFlashAttribute("successfullyAddedQuantity", true);
-        return "redirect:addQuantity";
+        redirectAttributes.addFlashAttribute("productName", productAddQuantityBindingModel.getName());
+        redirectAttributes.addFlashAttribute("productQuantity", productAddQuantityBindingModel.getQuantity());
+        return "redirect:/products/productsQuantity";
     }
 
     @PostMapping("/addProduct/{name}")
@@ -120,8 +195,12 @@ public class ProductController {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.productGetBuyQuantity", bindingResult);
             return "redirect:" + referer;
         }
-        if (this.productService.quantityIsEnough(name, productGetBuyQuantity.getQuantity())) {
-            this.cartService.addProductToCart(name, productGetBuyQuantity.getQuantity(), this.userService.getCartId());
+        BigDecimal quantity = productGetBuyQuantity.getQuantity();
+        if(quantity == null){
+            quantity = BigDecimal.valueOf(1);
+        }
+        if (this.productService.quantityIsEnough(name, quantity)) {
+            this.cartService.addProductToCart(name, quantity, this.userService.getCartId());
             return "redirect:" + referer;
         } else {
             redirectAttributes.addFlashAttribute("quantityIsNotEnough", true);
@@ -134,6 +213,18 @@ public class ProductController {
     public String details(@PathVariable String name, Model model) {
         model.addAttribute("product", this.productService.findByName(name));
         return "details";
+    }
+
+    @GetMapping("/promotion")
+    public String promotionProducts(Model model) {
+        model.addAttribute("promotionsProducts", this.productService.getPromotionProduct());
+        return "promotional-products";
+    }
+
+    @GetMapping("/productsQuantity")
+    public String seeProductsQuantities(Model model){
+        model.addAttribute("productsQuantities", this.productService.findAllOrderByQuantity());
+        return "products-quantities";
     }
 
     @ModelAttribute("productGetBuyQuantity")

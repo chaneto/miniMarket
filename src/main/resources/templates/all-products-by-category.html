@@ -9,30 +9,34 @@
 <header th:replace="fragments/fragment :: nav"></header>
 
 <main class="p-5 align-content-center bg-blur">
-  <div class="container">
+
+  <h3 th:if="${successfullyChangedPrice}" th:text="|The price has been changed successfully.|" class="form-text bg-success rounded"></h3>
     <hr class="border-bottom w-75">
     <div class="row mt-5" id="albumsList">
-      <!-- Start single album -->
       <div th:each="p : ${getAllProductsByCategory}" th:object="${p}" class="col-md-3">
         <div  class="card mb-4 box-shadow">
-          <img th:src="*{image}"  class="card-img-top" alt="Thumbnail [100%x225]"
-               data-holder-rendered="true"
-               style="height: 225px; width: 100%; display: block;">
+          <div class="product-image">
+            <img th:src="*{image}"  class="card-img-top" alt="Thumbnail [100%x225]" data-holder-rendered="true" style="height: 225px; width: 100%; display: block;">
+            <h5 th:if="*{isOnPromotion}" th:text="|-${#strings.substring(p.discountRate,0,2)}%|" class="centered badge badge-warning"></h5>
+          </div>
           <div class="card-body">
             <div class="text-center">
-              <h5 th:text="|*{name}|" class="d-inline-block mb-2 text-primary"></h5>
-              <p th:text="|Category: *{category}|" class="card-text border-bottom "></p>
+              <h6 th:if="${#strings.length(p.name) <= 120}" th:text="${p.name}" id="product-name-text" class="d-inline-block mb-2 text-primary"></h6>
+              <h6 th:if="${#strings.length(p.name) > 120}" th:text="|${#strings.substring(p.name,0,117)}...|" id="product-name-text-1" class="d-inline-block mb-2 text-primary"></h6>
+             <!-- <p th:text="|Category: *{category}|" class="card-text border-bottom "></p> -->
               <p th:text="|Brand: *{brand}|" class="card-text border-bottom "></p>
-              <p th:if="*{price} > 0" th:text="|Price: *{price}|" class="card-text border-bottom "></p>
+              <p th:if="*{!isOnPromotion}" th:text="|Price: *{price}|" class="card-text border-bottom"></p>
+              <p th:if="*{isOnPromotion}" th:text="|New Price: *{promotionPrice}|" id="new-price" class="card-text border-bottom badge badge-warning"></p>
               <p th:if="*{isAvailable}" th:text="|Product is available|" class="card-text border-bottom"></p>
               <p th:unless="*{isAvailable}" th:text="|Product is not available|" class="card-text border-bottom"></p>
             </div>
             <h7 th:if="${quantityIsNotEnough} and ${productName} == *{name}" th:text="|Insufficient quantity. Available quantity:*{quantity}|" class="form-text bg-danger rounded"></h7>
+            <h7 th:if="${productInUnpaidOrder} and ${productName} == *{name}" th:text="|Тhe product cannot be deleted. Тhere is an unpaid order|" class="form-text bg-danger rounded"></h7>
             <form th:if="*{isAvailable}" th:action="@{'/products/addProduct/{name}'(name = ${p.name})}" th:method="POST" th:object="${productGetBuyQuantity}">
-              <div class="form-row m-5">
+              <div sec:authorize="isAuthenticated()" id="quantity-form">
                 <div class="col">
-                  <label for="quantity">Quantity</label>
-                  <input th:field="*{quantity}" th:errorclass="is-invalid"  required min="0" name="quantity" id="quantity" type="number" class="form-control" placeholder="Quantity"></input>
+                 <!-- <label for="quantity">Quantity</label> -->
+                  <input th:field="*{quantity}" th:errorclass="is-invalid"  required min="0" name="quantity" id="quantity" type="number" class="form-control" placeholder="Select Quantity"></input>
                   <small th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"  id="quantityError" class="invalid-feedback form-text bg-danger rounded"></small>
                 </div>
               </div>
@@ -41,18 +45,18 @@
               </div>
             </form>
             <div class="btn-group">
-              <a th:href="@{'/products/details/{name}' (name = *{name})}" type="button" class="btn btn-sm btn-outline-secondary">Details</a>
+              <a th:href="@{'/products/details/{name}' (name = *{name})}" style="color:blue" type="button" class="btn btn-sm btn-outline-secondary">Details</a>
             </div>
             <div sec:authorize="hasRole('ROLE_ADMIN')" class="btn-group">
-              <a th:href="@{'/products/delete/{name}'(name = *{name})}" type="button" class="btn btn-sm btn-outline-secondary">Delete</a>
+              <a th:href="@{'/products/delete/{name}'(name = *{name})}" style="color:blue" type="button" class="btn btn-sm btn-outline-secondary">Delete</a>
+            </div>
+            <div sec:authorize="hasRole('ROLE_ADMIN')" class="btn-group">
+              <a th:href="@{'/products/setProductPrice/{id}'(id = *{id})}" style="color:blue" type="button" class="btn btn-sm btn-outline-secondary">Set Price</a>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <!-- EO: Start single album -->
-  </div>
-  </div>
 
 </main>
 

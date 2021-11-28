@@ -14,7 +14,7 @@
             <div class="form-row m-5">
                 <div class="col">
                     <label for="inputName">Product name</label>
-                    <input th:field="*{name}" th:errorclass="is-invalid" required minlength="3" maxlength="20"  id="inputName" name="name" type="text" class="form-control" placeholder="Product name">
+                    <input th:field="*{name}" th:errorclass="is-invalid" required minlength="3" id="inputName" name="name" type="text" class="form-control" placeholder="Product name">
                     <small th:if="${#fields.hasErrors('name')}" th:errors="*{name}" id="nameError" class="form-text bg-danger rounded">Name must be more than 3 characters</small>
                     <small th:if="${productIsExists}" class="form-text bg-danger rounded">This product is already exists!!!</small>
                 </div>
@@ -22,7 +22,7 @@
             <div class="form-row m-5">
                <div class="col">
                     <label for="price">Price</label>
-                    <input th:field="*{price}" th:errorclass="is-invalid" required min="0" step="0.1" name="price" id="price" type="number" class="form-control" placeholder="Price">
+                    <input th:field="*{price}" th:errorclass="is-invalid" required min="0.1" step="0.01" name="price" id="price" type="number" class="form-control" placeholder="Price">
                     <small th:if="${#fields.hasErrors('price')}" th:errors="*{price}" id="priceError" class="form-text bg-danger rounded">Price must be positive</small>
                 </div>
             </div>

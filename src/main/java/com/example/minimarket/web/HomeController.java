@@ -22,17 +22,13 @@ public class HomeController {
 
     @GetMapping("/")
     public String index(Authentication authentication, Model model){
+        model.addAttribute("carouselImages", carouselService.getImages());
+        model.addAttribute("allProducts", this.productService.findAllOrderByName());
+        model.addAttribute("promotionsProducts", this.productService.getPromotionProduct());
         if(authentication == null){
         return "index";
         }
-    //}
 
-   // @GetMapping("/home")
-     //  public String home(Model model){
-       model.addAttribute("firstImg", carouselService.firstImage());
-       model.addAttribute("secondImg", carouselService.secondImage());
-       model.addAttribute("thirdImg", carouselService.thirdImage());
-       model.addAttribute("allProducts", this.productService.findAll());
        model.addAttribute("orderCount", this.userService.getCountAllUserOrders());
        model.addAttribute("getTotalPriceForAllOrders", this.userService.getTotalPriceForAllOrders());
        model.addAttribute("getCardId", this.userService.getCartId());
@@ -41,6 +37,11 @@ public class HomeController {
        }
        return "home";
 
+     }
+
+     @GetMapping("/contacts")
+    public String contact(){
+        return "contacts";
      }
 
 }

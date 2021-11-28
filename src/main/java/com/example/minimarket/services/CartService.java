@@ -14,6 +14,14 @@ import java.util.List;
 
 public interface CartService {
 
+    List<CartEntity> findByCourierIsNotNull();
+
+    boolean cartWithCourierWithUndeliveredOrder(String courierName);
+
+    boolean cartWithOrderNotDeliveredToAddress(AddressEntity address);
+
+    List<CartEntity> findByAddressIsNotNull();
+
     CartEntity createCart(UserEntity userEntity);
 
    void setTotalPrice(BigDecimal totalPrice, Long id);

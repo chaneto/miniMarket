@@ -61,12 +61,14 @@ public class CourierServiceImpl implements CourierService {
     }
 
     @Override
-    public void seedCourier() throws IOException {
+    public void seedCourierFromJson() throws IOException {
         if(this.courierRepository.count() == 0){
             CourierAddBindingModel[] couriers = this.gson.fromJson(Files.readString(Path.of(courierFile.getURI())), CourierAddBindingModel[].class);
             for(CourierAddBindingModel courier: couriers){
+                if(findByName(courier.getName()) == null){
                 CourierEntity courierEntity = this.mapper.map(courier, CourierEntity.class);
                 this.courierRepository.save(courierEntity);
+                }
             }
         }
     }

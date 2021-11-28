@@ -17,7 +17,7 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, Long> 
     @Override
     List<CategoryEntity> findAll();
 
-    @Query("select c.name from CategoryEntity as c")
+    @Query("select c.name from CategoryEntity as c order by c.name")
     List<String> getAllCategoryName();
 
     @Modifying

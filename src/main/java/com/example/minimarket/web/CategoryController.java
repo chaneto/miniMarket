@@ -4,6 +4,7 @@ import com.example.minimarket.model.bindings.CategoryAddBindingModel;
 import com.example.minimarket.model.bindings.ProductGetBuyQuantity;
 import com.example.minimarket.model.services.CategoryServiceModel;
 import com.example.minimarket.services.CategoryService;
+import com.example.minimarket.services.OrderService;
 import com.example.minimarket.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
@@ -14,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 
@@ -24,11 +26,13 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final ModelMapper mapper;
     private final UserService userService;
+    private final OrderService orderService;
 
-    public CategoryController(CategoryService categoryService, ModelMapper mapper, UserService userService) {
+    public CategoryController(CategoryService categoryService, ModelMapper mapper, UserService userService, OrderService orderService) {
         this.categoryService = categoryService;
         this.mapper = mapper;
         this.userService = userService;
+        this.orderService = orderService;
     }
 
     @GetMapping("/add")
@@ -68,9 +72,18 @@ public class CategoryController {
     }
 
     @GetMapping("/delete/{name}")
-    public String deleteProduct(@PathVariable String name){
-        this.categoryService.deleteByName(name);
-        return "redirect:/";
+    public String deleteCategory(@PathVariable String name, HttpServletRequest request, RedirectAttributes redirectAttributes){
+        String referer = request.getHeader("Referer");
+        if(orderService.unpaidProductInCategory(name)){
+            redirectAttributes.addFlashAttribute("unpaidProductInCategory", true);
+            redirectAttributes.addFlashAttribute("categoryName", name);
+            return "redirect:" + referer;
+        } else {
+            this.categoryService.deleteByName(name);
+            redirectAttributes.addFlashAttribute("successfullyDeleted", true);
+            redirectAttributes.addFlashAttribute("categoryName", name);
+            return "redirect:" + referer;
+        }
     }
 
     @GetMapping("/allByCategory/{name}")

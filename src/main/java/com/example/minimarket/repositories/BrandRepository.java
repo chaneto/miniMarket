@@ -14,10 +14,11 @@ public interface BrandRepository extends JpaRepository<BrandEntity, Long> {
 
     BrandEntity findByName(String name);
 
-    @Query("select b from BrandEntity as b")
+    @Query("select b from BrandEntity as b order by b.name")
     List<BrandEntity> getAllBrands();
 
     @Modifying
     @Transactional
     void deleteByName(String name);
+
 }

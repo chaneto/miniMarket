@@ -46,12 +46,7 @@ public class CarouselServiceImpl implements CarouselService {
         return images.get(2);
     }
 
-    @Scheduled(cron = "${refresh-cron}")
-    public void refresh(){
-        LOGGER.info("Shuffle images");
-        Collections.shuffle(images);
-    }
-
+    @Override
     public List<String> getImages() {
         return images;
     }

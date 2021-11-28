@@ -5,16 +5,28 @@ import java.time.LocalDate;
 
 public class ProductViewModel {
 
+    private Long id;
     private String name;
     private BigDecimal price;
+    private BigDecimal promotionPrice;
     private String description;
     private BigDecimal quantity;
     private String image;
+    private BigDecimal discountRate;
+    private boolean isAvailable;
     private String brand;
     private String category;
-    private boolean isAvailable;
+    private boolean isOnPromotion;
 
     public ProductViewModel() {
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -31,6 +43,14 @@ public class ProductViewModel {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+    }
+
+    public BigDecimal getPromotionPrice() {
+        return promotionPrice;
+    }
+
+    public void setPromotionPrice(BigDecimal promotionPrice) {
+        this.promotionPrice = promotionPrice;
     }
 
     public String getDescription() {
@@ -79,5 +99,21 @@ public class ProductViewModel {
 
     public void setAvailable(boolean available) {
         isAvailable = available;
+    }
+
+    public BigDecimal getDiscountRate() {
+        return discountRate;
+    }
+
+    public void setDiscountRate(BigDecimal discountRate) {
+        this.discountRate = discountRate;
+    }
+
+    public boolean isOnPromotion() {
+        return isOnPromotion;
+    }
+
+    public void setOnPromotion(boolean onPromotion) {
+        isOnPromotion = onPromotion;
     }
 }

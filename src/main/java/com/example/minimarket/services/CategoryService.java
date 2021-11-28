@@ -22,7 +22,7 @@ public interface CategoryService {
 
     void deleteByName(String name);
 
-    void seedCategories() throws IOException;
+    void seedCategoriesFromJson() throws IOException;
 
     void saveCategory(CategoryServiceModel categoryServiceModel);
 }

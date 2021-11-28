@@ -15,8 +15,6 @@ import java.util.List;
 @Repository
 public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
-    List<OrderEntity> findAllByCartIdAndIsPaid(Long id, Boolean isPaid);
-
     @Modifying
     @Transactional
     @Query("update OrderEntity as o set o.courier = :courier where o.id = :id")
@@ -41,7 +39,12 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
     OrderEntity findOrderById(@Param("id") Long id);
 
     @Query("select o from OrderEntity as o where o.isPaid = :isPaid and o.cart.id = :id")
-    List<OrderEntity> findAllOrderByIsPaid(@Param("isPaid") Boolean isPaid, @Param("id") Long id);
+    List<OrderEntity> findAllOrderByIsPaidAndCartId(@Param("isPaid") Boolean isPaid, @Param("id") Long id);
 
-    List<OrderEntity> findAllByProduct(ProductEntity productEntity);
+    List<OrderEntity> findAllByIsPaidAndProductName(boolean isPaid, String name);
+
+    List<OrderEntity> findAllByIsPaid(boolean isPaid);
+
+    List<OrderEntity> findAllByCartIdOrderByDateTimeDesc(Long id);
+
 }

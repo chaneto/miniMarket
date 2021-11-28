@@ -1,5 +1,7 @@
 package com.example.minimarket.model.bindings;
 
+import com.google.gson.annotations.Expose;
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.format.annotation.DateTimeFormat;
 import javax.validation.constraints.*;
 import java.math.BigDecimal;
@@ -7,28 +9,35 @@ import java.time.LocalDate;
 
 public class ProductAddBindingModel {
 
+    @Expose
     @NotBlank(message = "Product name cannot be null or empty string!!!")
     @Size(min = 3, message = "Product name must be more than 3 characters!!!")
     private String name;
 
+    @Expose
     @NotNull(message = "Price cannot be null!!!")
-    @DecimalMin(value = "0", message = "Тhe price must be a positive value!!!")
+    @DecimalMin(value = "0.1", message = "Тhe price must be a positive value!!!")
     private BigDecimal price;
 
+    @Expose
     @Size(min = 10, message = "Description must be more than 10 characters!!!")
     private String description;
 
+    @Expose
     @NotNull(message = "Quantity cannot be null!!!")
     @DecimalMin(value = "0", message = "Тhe quantity cannot be a negative value!!!")
     private BigDecimal quantity;
 
+    @Expose
     @NotBlank(message = "Image cannot be null or empty string!!!")
     @Size(min = 3, message = "Image must be more than 3 characters!!!")
     private String image;
 
+    @Expose
     @NotBlank(message = "Brand cannot be null or empty string!!!")
     private String brand;
 
+    @Expose
     @NotBlank(message = "Category cannot be null or empty string!!!")
     private String category;
 

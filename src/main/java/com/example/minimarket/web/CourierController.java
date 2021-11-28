@@ -3,7 +3,9 @@ package com.example.minimarket.web;
 import com.example.minimarket.model.bindings.CourierAddBindingModel;
 import com.example.minimarket.model.bindings.CourierGetBindingModel;
 import com.example.minimarket.model.services.CourierServiceModel;
+import com.example.minimarket.services.CartService;
 import com.example.minimarket.services.CourierService;
+import com.example.minimarket.services.OrderService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Controller
@@ -21,10 +24,14 @@ import javax.validation.Valid;
 public class CourierController {
 
     private final CourierService courierService;
+    private final OrderService orderService;
+    private final CartService cartService;
     private final ModelMapper mapper;
 
-    public CourierController(CourierService courierService, ModelMapper mapper, ModelMapper mapper1) {
+    public CourierController(CourierService courierService, ModelMapper mapper, OrderService orderService, CartService cartService, ModelMapper mapper1) {
         this.courierService = courierService;
+        this.orderService = orderService;
+        this.cartService = cartService;
         this.mapper = mapper1;
     }
 
@@ -60,15 +67,27 @@ public class CourierController {
     }
 
     @GetMapping("/all")
-    public String allCourier(Model model){
-        model.addAttribute("allCourier", this.courierService.findAll());
+    public String allCouriers(Model model){
+        model.addAttribute("allCouriers", this.courierService.findAll());
         return "all-couriers";
     }
 
     @GetMapping("/delete/{name}")
-    public String allCourier(@PathVariable String name){
-        this.courierService.deleteByName(name);
-        return "redirect:/";
+    public String allCourier(@PathVariable String name, HttpServletRequest request, RedirectAttributes redirectAttributes){
+        String referer = request.getHeader("Referer");
+        if(orderService.unpaidProductInCourier(name)){
+            redirectAttributes.addFlashAttribute("unpaidProductInCourier", true);
+            redirectAttributes.addFlashAttribute("courierName", name);
+            return "redirect:" + referer;
+        } else if(cartService.cartWithCourierWithUndeliveredOrder(name)){
+                redirectAttributes.addFlashAttribute("courierInCart", true);
+                redirectAttributes.addFlashAttribute("courierName", name);
+                return "redirect:" + referer;
+        }
+            this.courierService.deleteByName(name);
+            redirectAttributes.addFlashAttribute("successfullyDeleted", true);
+            redirectAttributes.addFlashAttribute("courierName", name);
+            return "redirect:" + referer;
     }
 
     @PostMapping("/get")

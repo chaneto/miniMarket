@@ -10,7 +10,7 @@
     <h1 class="text-light border-bottom">Please enter your data</h1>
     <div class="d-flex justify-content-center ">
         <div class="row g-3 align-items-center">
-            <img alt="Picture of Madonna" th:src="@{/img/img2.jpg}" class="w-50 rounded">
+            <img alt="Picture of Madonna" th:src="@{/img/img6.jpg}" class="w-50 rounded">
         </div>
         <div class="row g-3">
             <form th:action="@{/users/register}" method="POST" th:object="${userRegisterBindingModel}">
@@ -20,7 +20,7 @@
                         <label for="inputUsername" class="col-form-label text-light">Username</label>
                     </div>
                     <div class="col-auto">
-                        <input th:field="*{username}" th:errorclass="is-invalid"  name="username" required minlength="5" maxlength="20"
+                        <input th:field="*{username}" th:errorclass="is-invalid"  name="username" required minlength="3" maxlength="20"
                                type="text"
                                id="inputUsername"
                                class="form-control"
@@ -39,7 +39,7 @@
                         <label for="inputFirstName" class="col-form-label text-light">First Name</label>
                     </div>
                     <div class="col-auto">
-                        <input th:field="*{firstName}" th:errorclass="is-invalid"  name="firstName" required minlength="5" maxlength="20"
+                        <input th:field="*{firstName}" th:errorclass="is-invalid"  name="firstName" required minlength="2" maxlength="20"
                                type="text"
                                id="inputFirstName"
                                class="form-control"
@@ -54,7 +54,7 @@
                         <label for="inputLastName" class="col-form-label text-light">Last Name</label>
                     </div>
                     <div class="col-auto">
-                        <input th:field="*{lastName}" th:errorclass="is-invalid"  name="lastName" required minlength="5" maxlength="30"
+                        <input th:field="*{lastName}" th:errorclass="is-invalid"  name="lastName" required minlength="2" maxlength="30"
                                type="text"
                                id="inputLastName"
                                class="form-control"

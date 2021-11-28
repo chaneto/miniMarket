@@ -18,15 +18,15 @@ public class UserEntity {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    @Size(min = 5, max = 20)
+    @Size(min = 3, max = 20)
     private String username;
 
     @Column(name = "first_name", nullable = false)
-    @Size(min = 5, max = 20)
+    @Size(min = 2, max = 20)
     private String firstName;
 
     @Column(name = "last_name", nullable = false)
-    @Size(min = 5, max = 30)
+    @Size(min = 2, max = 30)
     private String lastName;
 
     @Email(regexp = "^(\\w+@\\w+)(.\\w+){2,}$")
@@ -42,9 +42,8 @@ public class UserEntity {
     @Size(min = 5, max = 20)
     private String phoneNumber;
 
-    @ManyToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
-    private List<UserRoleEntity> roles = new ArrayList<>();
+    @OneToOne
+    private UserRoleEntity role;
 
     @OneToOne
     @JoinColumn(name = "cart_id", referencedColumnName = "id")
@@ -109,12 +108,12 @@ public class UserEntity {
         this.phoneNumber = phoneNumber;
     }
 
-    public List<UserRoleEntity> getRoles() {
-        return roles;
+    public UserRoleEntity getRole() {
+        return role;
     }
 
-    public void setRoles(List<UserRoleEntity> roles) {
-        this.roles = roles;
+    public void setRole(UserRoleEntity role) {
+        this.role = role;
     }
 
     public CartEntity getCart() {
