@@ -10,8 +10,7 @@
 
 <main class="p-5 align-content-center bg-blur">
     <div class="container" id="brands">
-        <h3 th:if="${successfullyDeleted}" th:text="|The brand ${brandName} has been deleted!!!|" class="form-text bg-danger rounded"></h3>
-        <hr class="border-bottom w-75">
+        <h3 th:if="${successfullyDeleted}" th:text="|The brand ${brandName} has been deleted!!!|" class="form-text badge-warning rounded"></h3>
         <div class="row mt-5" id="brand-list">
         <div th:each="f : ${allBrands}" th:object="${f}" class="col-md-3" >
             <div class="col-md-6 px-0" id="brand">

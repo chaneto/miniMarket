@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/fragment :: head">
+</head>
+<body>
+<header th:replace="fragments/fragment :: nav"></header>
+<div class="main-content">
+    <div  class="row mt-5">
+        <div class="col">
+            <div class="card bg-default shadow">
+                <div class="card-header bg-transparent border-0">
+                    <h3 class="text-white mb-0">Orders</h3>
+                    <a th:href="@{/orders/allDelivered}" id="delivered1" type="button" class="btn text-white">Delivered Orders</a>
+                    <a th:href="@{/orders/allNotDelivered}" id="delivered2" type="button" class="btn text-white">Not Delivered Orders</a>
+                    <a th:href="@{/orders/all}" id="delivered3" type="button" class="btn text-white">All Orders</a>
+                </div>
+                <div style="width: 1350px;">
+                    <table class="table align-items-center table-dark table-flush">
+                        <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Product Image</th>
+                            <th scope="col">Product Name</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Total Price</th>
+                            <th scope="col">Date</th>
+                            <th scope="col">Courier</th>
+                            <th scope="col">User</th>
+                            <th scope="col">Address</th>
+                            <th scope="col">Is Paid</th>
+                            <th scope="col">Is Delivered</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="p : ${orders}" th:object="${p}">
+                            <th scope="row">
+                                <p th:text="|ID: *{id}|"></p>
+                                <div class="media align-items-center">
+                                    <a th:href="@{'/products/details/{name}' (name = *{product.name})}" class="avatar">
+                                        <img alt="Image placeholder" th:src="*{product.image}">
+                                    </a>
+                                </div>
+                            </th>
+                            <td th:if="${#strings.length(p.product.name) <= 120}" style="font-size: 15px;">
+                                <textarea th:text="*{product.name}" class="order-history-name" disabled rows="4" cols="25"></textarea>
+                            </td>
+                            <td th:if="${#strings.length(p.product.name) > 120}" style="font-size: 15px;">
+                                <textarea th:text="|${#strings.substring(p.product.name,0,117)}...|" class="order-history-name" disabled rows="4" cols="25"></textarea>
+                            </td>
+                            <td style="font-size: 15px;" th:text="*{productCount}" ></td>
+                            <td style="font-size: 15px;" th:text="*{totalPrice}"></td>
+                            <td style="font-size: 15px;" th:utext="*{dateTime}" ></td>
+                            <td style="font-size: 15px;" th:text="*{courier} == null ? 'not specified yet' : *{courier.name}"></td>
+                            <td style="font-size: 15px;" th:text="*{username}"></td>
+                            <td style="font-size: 15px;" th:if="*{address} == null" th:text="|not specified yet|"></td>
+                            <td style="font-size: 15px;" th:unless="*{address} == null">
+                                <p th:text="|ID: *{address.id}|"></p>
+                                <p th:text="|*{address.zipCode} *{address.country}|"></p>
+                                <p th:text="|*{address.city}|"></p>
+                                <p th:text="|*{address.streetName} *{address.streetNumber}|"></p>
+                                <p th:if="*{address.apartmentNumber} != null" th:text="|Apartment Number: *{address.apartmentNumber}|"></p>
+                            </td>
+                            <td style="font-size: 15px;" th:text="*{isPaid} ? 'PAID' : 'NOT PAID'"></td>
+                            <td style="font-size: 15px;" th:text="*{isDelivered} ? 'DELIVERED' : 'NOT DELIVERED'"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<footer th:replace="fragments/fragment :: footer">
+</footer>
+</body>
+</html>

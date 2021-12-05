@@ -3,6 +3,7 @@ package com.example.minimarket.services;
 import com.example.minimarket.model.entities.ProductEntity;
 import com.example.minimarket.model.services.ProductServiceModel;
 import com.example.minimarket.model.views.ProductViewModel;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.io.IOException;
@@ -51,7 +52,7 @@ public interface ProductService {
 
     void setDiscountRate(BigDecimal discountRate, String productName);
 
-    List<ProductViewModel> findAllOrderByQuantity();
+    List<ProductViewModel> findAllProductsOrderByQuantity();
 
     void updatePriceTop4ByQuantityProduct();
 
@@ -60,4 +61,12 @@ public interface ProductService {
     void refreshPromotionProduct();
 
     void setPromotionPriceAndDiscountRate(BigDecimal discountRate, String productName);
+
+    List<ProductViewModel> findAllProductsOrderByQuantityDesc();
+
+    List<ProductViewModel> findAllProductsOrderByPrice();
+
+    List<ProductViewModel> findAllProductsOrderByPriceDesc();
+
+    List<ProductViewModel> getAllOrderByID();
 }

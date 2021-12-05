@@ -3,6 +3,8 @@ package com.example.minimarket.web;
 import com.example.minimarket.model.entities.UserEntity;
 import com.example.minimarket.model.entities.UserRoleEntity;
 import com.example.minimarket.model.enums.UserRole;
+import com.example.minimarket.model.services.UserLoginServiceModel;
+import com.example.minimarket.model.services.UserRegisterServiceModel;
 import com.example.minimarket.repositories.CartRepository;
 import com.example.minimarket.repositories.UserRoleRepository;
 import com.example.minimarket.services.UserService;
@@ -88,6 +90,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void testLoginCorrectReturnView() throws Exception {
         this.mockMvc
                 .perform(get("/users/login"))
@@ -96,6 +99,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void testRegisterCorrectReturnView() throws Exception {
         this.mockMvc
                 .perform(get("/users/register"))
@@ -215,6 +219,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void testFaledLogin() throws Exception {
         this.userRepository.save(user1);
         this.mockMvc
@@ -228,6 +233,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void testLoginWithInvalidDataCorrect() throws Exception {
         this.mockMvc
                 .perform(post("/users/login")
@@ -240,6 +246,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void testLoginWithCorrectData() throws Exception {
         this.mockMvc
                 .perform(post("/users/login")
@@ -250,5 +257,193 @@ public class UserControllerTest {
         //.andExpect(view().name("redirect:/"));
     }
 
+    @Test
+    @WithMockUser
+    public void testProfile() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/users/profile"))
+                .andExpect(view().name("profile"))
+                .andExpect(model().attributeExists("currentUser"));
+    }
+
+
+    @Test
+    @WithMockUser
+    public void testChangePassword() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/users/changePassword"))
+                .andExpect(view().name("change-password"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testChangePasswordConfirm() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(post("/users/changePassword")
+                        .param("password", "12345")
+                        .param("confirmPassword", "12345")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+        .andExpect(view().name("redirect:/users/profile"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testChangePasswordConfirmWithNotMatchesField() throws Exception {
+        this.mockMvc
+                .perform(post("/users/changePassword")
+                        .param("password", "12345")
+                        .param("confirmPassword", "123453")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:changePassword"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testChangePasswordConfirmWithInvalidPassword() throws Exception {
+        this.mockMvc
+                .perform(post("/users/changePassword")
+                        .param("password", "1")
+                        .param("confirmPassword", "1")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:changePassword"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testChangeEmail() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/users/changeEmail"))
+                .andExpect(view().name("change-email"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testChangeEmailConfirm() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(post("/users/changeEmail")
+                        .param("email", "boncho@abv.bg")
+                        .param("confirmEmail", "boncho@abv.bg")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/users/profile"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testChangeEmailConfirmWithInvalidEmail() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(post("/users/changeEmail")
+                        .param("email", "b")
+                        .param("confirmEmail", "b")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:changeEmail"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testChangeEmailConfirmWithNotMatchesField() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(post("/users/changeEmail")
+                        .param("email", "boncho@abv.bg")
+                        .param("confirmEmail", "petar@abv.bg")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:changeEmail"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testChangeEmailConfirmWithExistingEmail() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(post("/users/changeEmail")
+                        .param("email", "admin_80@abv.bg")
+                        .param("confirmEmail", "admin_80@abv.bg")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:changeEmail"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testAllusers() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/users/all"))
+                .andExpect(view().name("all-users"))
+        .andExpect(model().attributeExists("allUsers"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testDeleteUser() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/users/delete/admin"))
+                .andExpect(view().name("redirect:/users/all"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testDeleteUserConfirm() throws Exception {
+        this.mockMvc
+                .perform(post("/users/delete")
+                        .param("username", "user")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/users/all"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testDeleteUserConfirmWithInvalidUsername() throws Exception {
+        this.mockMvc
+                .perform(post("/users/delete")
+                        .param("username", "")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/users/all"));
+    }
+
+    @Test
+    @WithMockUser
+    public void testDeleteUserConfirmWithINotExistingUsername() throws Exception {
+        this.mockMvc
+                .perform(post("/users/delete")
+                        .param("username", "Ivan")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/users/all"));
+    }
+
+    public void authenticate(){
+
+        UserRegisterServiceModel userRegisterServiceModel = new UserRegisterServiceModel();
+        userRegisterServiceModel.setUsername("admin");
+        userRegisterServiceModel.setFirstName("Admin");
+        userRegisterServiceModel.setLastName("Adminov");
+        userRegisterServiceModel.setEmail("admin_80@abv.bg");
+        userRegisterServiceModel.setPassword("12345");
+        userRegisterServiceModel.setConfirmPassword("12345");
+        userRegisterServiceModel.setPhoneNumber("123456789");
+        if(!this.userService.userWithUsernameIsExists("admin_80@abv.bg") && !this.userService.userWithUsernameIsExists("admin")){
+            this.userService.registerUser(userRegisterServiceModel);
+        }
+        UserLoginServiceModel userLoginServiceModel = new UserLoginServiceModel();
+        userLoginServiceModel.setUsername("admin");
+        userLoginServiceModel.setPassword("12345");
+        this.userService.authenticate(userLoginServiceModel);
+    }
 
 }

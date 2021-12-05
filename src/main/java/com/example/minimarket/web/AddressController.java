@@ -3,7 +3,6 @@ package com.example.minimarket.web;
 import com.example.minimarket.model.bindings.AddressAddBindingModel;
 import com.example.minimarket.model.services.AddressServiceModel;
 import com.example.minimarket.services.AddressService;
-import com.example.minimarket.services.OrderService;
 import com.example.minimarket.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.Authentication;
@@ -11,10 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -54,8 +50,26 @@ public class AddressController {
         AddressServiceModel addressServiceModel = this.mapper.map(addressAddBindingModel, AddressServiceModel.class);
         this.addressService.save(addressServiceModel);
         model.addAttribute("cart", this.userService.getCurrentCart());
-        model.addAttribute("allOrders", this.userService.getAllUserOrderByIsPaid(false, this.userService.getCartId()));
+        model.addAttribute("allOrders", this.userService.getAllUserOrderByIsOrdered(false, this.userService.getCurrentCartId()));
         return "view-final-cart";
+    }
+
+    @GetMapping("/list")
+    public String list(Model model){
+        model.addAttribute("addressesList", this.addressService.getAllNotDeliveredAddresses());
+        return "addresses-list";
+    }
+
+    @GetMapping("/findAllNotDelivered")
+    public String findAllNotDelivered(Model model){
+        model.addAttribute("isNotDeliveredOrders", this.addressService.getAllNotDeliveredAddresses());
+        return "all-is-not-delivered-orders";
+    }
+
+    @GetMapping("/setToDelivered/{id}")
+    public String setToDelivered(@PathVariable Long id){
+        this.addressService.setOrdersToDelivered(id);
+        return "redirect:/addresses/findAllNotDelivered";
     }
 
 
@@ -87,7 +101,7 @@ public class AddressController {
     @ModelAttribute("getCardId")
     public Long getCardId() {
         if(isAuthenticated()){
-            return this.userService.getCartId();
+            return this.userService.getCurrentCartId();
         }
         return Long.valueOf(0);
     }

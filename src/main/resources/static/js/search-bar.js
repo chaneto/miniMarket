@@ -25,7 +25,6 @@ const displayProducts = (products) => {
     productsList.innerHTML = products
         .map((p) => {
             return `
-            <html lang="en" xmlns:th="http://www.thymeleaf.org">
               <div class="col-md-3" >
                  <div class="card mb-4 box-shadow">
                   <div class="product-image">
@@ -33,15 +32,15 @@ const displayProducts = (products) => {
                    </div>
                  <div class="card-body">
                      <div class="text-center">
-                         <h6 id="name-text" class="d-inline-block mb-2 text-primary">${p.name}</h5>
+                         <h6 id="product-name-text" class="d-inline-block mb-2 text-primary">${p.name}</h6>
                          <p class="card-text border-bottom">Brand: ${p.brand}</p>
                          <p class="card-text border-bottom">Price: ${p.promotionPrice}</p
                      </div>
-
                      <div class="d-flex justify-content-between align-items-center">
                          <div class="btn-group">
-                             <a href="/products/details/${p.name}"  type="button" class="btn btn-sm btn-outline-secondary">Details</a>
+                             <a href="/products/details/${p.name}" style="color:blue"  type="button" class="btn btn-sm btn-outline-secondary">Details</a>
                          </div>
+                        </div>
                      </div>
                  </div>
                </div>

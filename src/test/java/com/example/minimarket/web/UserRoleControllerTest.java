@@ -57,7 +57,9 @@ public class UserRoleControllerTest {
         userRegisterServiceModel.setPassword("12345");
         userRegisterServiceModel.setConfirmPassword("12345");
         userRegisterServiceModel.setPhoneNumber("123456789");
-        this.userService.registerUser(userRegisterServiceModel);
+        if(!this.userService.userWithUsernameIsExists("admin_80@abv.bg") && !this.userService.userWithUsernameIsExists("admin")){
+            this.userService.registerUser(userRegisterServiceModel);
+        }
         userLoginServiceModel = new UserLoginServiceModel();
         userLoginServiceModel.setUsername("admin");
         userLoginServiceModel.setPassword("12345");
@@ -88,6 +90,17 @@ public class UserRoleControllerTest {
         this.mockMvc
                 .perform(post("/roles/set")
                         .param("username","")
+                        .param("roleName", "USER")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpectAll(view().name("redirect:set"));
+    }
+
+    @Test
+    public void testPostSetRoleWithNotExistinguser() throws Exception {
+        this.mockMvc
+                .perform(post("/roles/set")
+                        .param("username","Ivancho")
                         .param("roleName", "USER")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())

@@ -8,9 +8,8 @@
 <main class="p-5 bg-blur text-center">
     <h1 class="text-light border-bottom">Set Role</h1>
     <div class="d-flex justify-content-center">
-        <form th:action="@{/roles/set}" th:method="POST" th:object="${userSetRoleBindingModel}"
-              class="text-light">
-            <h3 th:if="${successfullyChangedRole}" th:text="|The Role of *{username} has been changed successfully.|" class="form-text bg-success rounded"></h3>
+        <form th:action="@{/roles/set}" th:method="POST" th:object="${userSetRoleBindingModel}" class="text-light">
+            <h3 th:if="${successfullyChangedRole}" th:text="|The Role of *{username} has been changed successfully.|" class="form-text badge-warning rounded"></h3>
             <div class="form-row m-5">
                 <div class="col">
                     <label for="datalist">Select Username</label>

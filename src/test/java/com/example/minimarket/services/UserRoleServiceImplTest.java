@@ -30,18 +30,14 @@ public class UserRoleServiceImplTest {
 
     @Before
     public void setup(){
-        this.userRoleRepository.deleteAll();
         userRoleEntity1 = new UserRoleEntity();
         userRoleEntity3 = new UserRoleEntity();
         userRoleEntity1.setUserRole(UserRole.ADMIN);
         userRoleEntity3.setUserRole(UserRole.USER);
-        this.userRoleRepository.save(userRoleEntity1);
-        this.userRoleRepository.save(userRoleEntity3);
     }
 
     @Test
     public void testFindAll(){
-        Assert.assertEquals(2, this.userRoleRepository.count());
         List<UserRoleEntity> roles = this.userRoleService.findAll();
         Assert.assertEquals(2, roles.size());
     }
@@ -54,9 +50,8 @@ public class UserRoleServiceImplTest {
 
     @Test
     public void testSaveUserRoleEntity(){
-        this.userRoleRepository.deleteAll();
         this.userRoleService.saveUserRoleEntity(userRoleEntity1);
         this.userRoleService.saveUserRoleEntity(userRoleEntity3);
-        Assert.assertEquals(2, this.userRoleRepository.count());
+        Assert.assertEquals(4, this.userRoleRepository.count());
     }
 }

@@ -25,11 +25,16 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
          httpSecurity.authorizeRequests()
                  .antMatchers("/js/**", "/css/**", "/img/**").permitAll()
                  .antMatchers("/", "/users/login", "/users/register", "/categories/all", "/products/all",
-                         "/couriers/all", "/brands/all", "/products/details/{name}",
+                         "/couriers/all", "/brands/all", "/products/details/{name}", "/products/allProductsOrderByPrice1...9",
+                         "/products/allProductsOrderByPrice9...1",
                          "/brands/allByBrand/{name}", "/categories/allByCategory/{name}", "/products/api",
                          "/products/promotion", "/contacts").permitAll()
-                 .antMatchers("/products/add", "/categories/add", "/brands/add", "/couriers/add"
-                         , "/products/addQuantity").hasRole("ADMIN")
+                 .antMatchers("/products/add", "/categories/add", "/categories/delete/{name}"
+                         ,"/brands/add", "/brands/delete/{name}", "/couriers/add", "/couriers/delete/{name}"
+                         , "/products/addQuantity", "/products/addQuantity/{name}", "/roles/set", "/products/delete/{name}"
+                         , "/products/setDiscountRate", "/products/setDiscountRate/{id}","/products/productsMenu",
+                         "/products/setProductPrice", "/products/setProductPrice/{id}", "/users/delete/{username}",
+                         "/users/all", "/addresses/findAllNotDelivered", "/orders/all").hasRole("ADMIN")
                  .antMatchers("/**")
                  .authenticated()
                  .and()

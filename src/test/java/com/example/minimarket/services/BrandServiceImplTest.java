@@ -131,6 +131,8 @@ public class BrandServiceImplTest {
         productEntity1.setOnPromotion(true);
         productEntity1.setCategory(categoryEntity);
         productEntity1.setBrand(brandEntity1);
+        productEntity1.setDiscountRate(BigDecimal.valueOf(3));
+        productEntity1.setPromotionPrice(BigDecimal.valueOf(10));
 
         productEntity3 = new ProductEntity();
         productEntity3.setName("TPU");
@@ -141,6 +143,8 @@ public class BrandServiceImplTest {
         productEntity3.setOnPromotion(false);
         productEntity3.setCategory(categoryEntity);
         productEntity3.setBrand(brandEntity1);
+        productEntity3.setDiscountRate(BigDecimal.valueOf(5));
+        productEntity3.setPromotionPrice(BigDecimal.valueOf(30));
 
         this.productRepository.save(productEntity1);
         this.productRepository.save(productEntity3);

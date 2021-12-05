@@ -79,17 +79,19 @@ public class BrandController {
             redirectAttributes.addFlashAttribute("brandName", name);
             return "redirect:" + referer;
         } else {
+            if(this.userService.getCurrentUser().getRole().getUserRole().name().equals("ADMIN")){
             this.brandService.deleteByName(name);
             redirectAttributes.addFlashAttribute("successfullyDeleted", true);
             redirectAttributes.addFlashAttribute("brandName", name);
+            }
             return "redirect:" + referer;
         }
     }
 
     @GetMapping("/allByBrand/{name}")
-    public String getAllProductsByCategory(@PathVariable String name, Model model){
-        model.addAttribute("getAllProductsByBrand", this.brandService.getAllProducts(name));
-        return "all-products-by-brands";
+    public String getAllProductsByBrand(@PathVariable String name, Model model){
+        model.addAttribute("allProducts", this.brandService.getAllProducts(name));
+        return "all-products";
     }
 
     @ModelAttribute("productGetBuyQuantity")
@@ -125,7 +127,7 @@ public class BrandController {
     @ModelAttribute("getCardId")
     public Long getCardId() {
         if(isAuthenticated()){
-            return this.userService.getCartId();
+            return this.userService.getCurrentCartId();
         }
         return Long.valueOf(0);
     }

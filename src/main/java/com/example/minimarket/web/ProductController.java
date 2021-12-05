@@ -73,12 +73,6 @@ public class ProductController {
         return "redirect:add";
     }
 
-    @GetMapping("/all")
-    public String allProducts(Model model) {
-        model.addAttribute("allProducts", this.productService.findAllOrderByName());
-        return "all-products";
-    }
-
     @GetMapping("/delete/{name}")
     public String deleteProduct(@PathVariable String name, HttpServletRequest request, RedirectAttributes redirectAttributes) {
         String referer = request.getHeader("Referer");
@@ -88,11 +82,12 @@ public class ProductController {
             return "redirect:" + referer;
         } else {
             redirectAttributes.addFlashAttribute("productName", name);
-        this.productService.deleteProductByName(name);
+            if(this.userService.getCurrentUser().getRole().getUserRole().name().equals("ADMIN")){
+            this.productService.deleteProductByName(name);
             redirectAttributes.addFlashAttribute("deleteProduct", true);
+            }
             return "redirect:" + referer;
         }
-
     }
 
     @GetMapping("/setProductPrice/{id}")
@@ -123,6 +118,7 @@ public class ProductController {
         this.productService.setPrice(productSetPriceBindingModel.getNewPrice(), productSetPriceBindingModel.getName());
         redirectAttributes.addFlashAttribute("productSetPriceBindingModel", productSetPriceBindingModel);
         redirectAttributes.addFlashAttribute("successfullyChangedPrice", true);
+        redirectAttributes.addFlashAttribute("productName", productSetPriceBindingModel.getName());
         return "redirect:" + oldPage;
     }
 
@@ -152,7 +148,7 @@ public class ProductController {
         this.productService.setPromotionPriceAndDiscountRate(productSetDiscountRateBindingModel.getDiscountRate(), productSetDiscountRateBindingModel.getName());
         redirectAttributes.addFlashAttribute("productSetDiscountRateBindingModel", productSetDiscountRateBindingModel);
         redirectAttributes.addFlashAttribute("successfullyChangedDiscountRate", true);
-        return "redirect:/products/productsQuantity";
+        return "redirect:/products/productsMenu";
     }
 
     @GetMapping("/addQuantity/{name}")
@@ -181,7 +177,7 @@ public class ProductController {
         redirectAttributes.addFlashAttribute("successfullyAddedQuantity", true);
         redirectAttributes.addFlashAttribute("productName", productAddQuantityBindingModel.getName());
         redirectAttributes.addFlashAttribute("productQuantity", productAddQuantityBindingModel.getQuantity());
-        return "redirect:/products/productsQuantity";
+        return "redirect:/products/productsMenu";
     }
 
     @PostMapping("/addProduct/{name}")
@@ -190,17 +186,17 @@ public class ProductController {
                                    RedirectAttributes redirectAttributes, @PathVariable String name,
                                    HttpServletRequest request) {
         String referer = request.getHeader("Referer");
+
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("productGetBuyQuantity", productGetBuyQuantity);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.productGetBuyQuantity", bindingResult);
             return "redirect:" + referer;
         }
+
         BigDecimal quantity = productGetBuyQuantity.getQuantity();
-        if(quantity == null){
-            quantity = BigDecimal.valueOf(1);
-        }
+
         if (this.productService.quantityIsEnough(name, quantity)) {
-            this.cartService.addProductToCart(name, quantity, this.userService.getCartId());
+            this.cartService.addProductToCart(name, quantity, this.userService.getCurrentCartId());
             return "redirect:" + referer;
         } else {
             redirectAttributes.addFlashAttribute("quantityIsNotEnough", true);
@@ -221,10 +217,62 @@ public class ProductController {
         return "promotional-products";
     }
 
-    @GetMapping("/productsQuantity")
+    @GetMapping("/productsMenu")
     public String seeProductsQuantities(Model model){
-        model.addAttribute("productsQuantities", this.productService.findAllOrderByQuantity());
-        return "products-quantities";
+        model.addAttribute("allProducts", this.productService.findAllProductsOrderByQuantity());
+        return "products-menu";
+    }
+
+    @GetMapping("/allProductsOrderByQuantity")
+    public String allProductsOrderByQuantities(Model model){
+        model.addAttribute("allProducts", this.productService.findAllProductsOrderByQuantity());
+            return "products-menu";
+    }
+
+    @GetMapping("/allProductsOrderByQuantityDesc")
+    public String seeAllProductsOrderByQuantitiesDesk(Model model){
+        model.addAttribute("allProducts", this.productService.findAllProductsOrderByQuantityDesc());
+        return "products-menu";
+    }
+
+    @GetMapping("/allProductsOrderByPrice")
+    public String seeAllProductsOrderByPrice(Model model){
+        model.addAttribute("allProducts", this.productService.findAllProductsOrderByPrice());
+        return "products-menu";
+    }
+
+    @GetMapping("/allProductsOrderByPriceDesc")
+    public String seeAllProductsOrderByPriceDesk(Model model){
+        model.addAttribute("allProducts", this.productService.findAllProductsOrderByPriceDesc());
+        return "products-menu";
+    }
+
+    @GetMapping("/allProductsOrderByID")
+    public String seeAllProductsOrderByID(Model model){
+        model.addAttribute("allProducts", this.productService.getAllOrderByID());
+        return "products-menu";
+    }
+
+
+    @GetMapping("/all")
+    public String allProducts(Model model) {
+        model.addAttribute("allProducts", this.productService.findAllOrderByName());
+        model.addAttribute("showOrderDropdown", true);
+        return "all-products";
+    }
+
+    @GetMapping("/allProductsOrderByPrice1...9")
+    public String allProductsOrderByPrice(Model model) {
+        model.addAttribute("allProducts", this.productService.findAllProductsOrderByPrice());
+        model.addAttribute("showOrderDropdown", true);
+        return "all-products";
+    }
+
+    @GetMapping("/allProductsOrderByPrice9...1")
+    public String allProductsOrderByPriceDesc(Model model) {
+        model.addAttribute("allProducts", this.productService.findAllProductsOrderByPriceDesc());
+        model.addAttribute("showOrderDropdown", true);
+        return "all-products";
     }
 
     @ModelAttribute("productGetBuyQuantity")
@@ -260,7 +308,7 @@ public class ProductController {
     @ModelAttribute("getCardId")
     public Long getCardId() {
         if(isAuthenticated()){
-        return this.userService.getCartId();
+        return this.userService.getCurrentCartId();
         }
         return Long.valueOf(0);
     }

@@ -4,6 +4,7 @@ import com.example.minimarket.model.entities.BrandEntity;
 import com.example.minimarket.model.services.UserLoginServiceModel;
 import com.example.minimarket.model.services.UserRegisterServiceModel;
 import com.example.minimarket.repositories.BrandRepository;
+import com.example.minimarket.repositories.UserRepository;
 import com.example.minimarket.services.UserService;
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,6 +33,8 @@ public class BrandControllerTest {
     private BrandRepository brandRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    UserRepository userRepository;
 
     BrandEntity brandEntity;
 
@@ -51,7 +54,6 @@ public class BrandControllerTest {
         authenticate();
         this.mockMvc
                 .perform(get("/brands/add"))
-                .andExpect(status().isOk())
                 .andExpect(view().name("add-brand"))
                 .andExpect(model().attributeExists("brandAddBidingModel"))
                 .andExpect(model().attributeExists("brandIsExists"));
@@ -129,13 +131,9 @@ public class BrandControllerTest {
         this.mockMvc
                 .perform(get("/brands/allByBrand/Nokia"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("all-products-by-brands"))
-                .andExpect(model().attributeExists("getAllProductsByBrand"));
+                .andExpect(view().name("all-products"))
+                .andExpect(model().attributeExists("allProducts"));
     }
-
-
-
-
 
 
 
@@ -149,7 +147,9 @@ public class BrandControllerTest {
         userRegisterServiceModel.setPassword("12345");
         userRegisterServiceModel.setConfirmPassword("12345");
         userRegisterServiceModel.setPhoneNumber("123456789");
-        this.userService.registerUser(userRegisterServiceModel);
+        if(!this.userService.userWithUsernameIsExists("admin_80@abv.bg") && !this.userService.userWithUsernameIsExists("admin")){
+            this.userService.registerUser(userRegisterServiceModel);
+        }
         UserLoginServiceModel userLoginServiceModel = new UserLoginServiceModel();
         userLoginServiceModel.setUsername("admin");
         userLoginServiceModel.setPassword("12345");

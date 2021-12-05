@@ -106,19 +106,6 @@ public class ProductServiceImpl implements ProductService {
         return this.productRepository.findAllByIsOnPromotionIsTrue();
     }
 
-    @Override
-    public List<ProductViewModel> findTop4ByQuantityDesc() {
-        List<ProductEntity> products = this.productRepository.findTop4ByQuantityDesc();
-        return conversionToListViewModel(products);
-    }
-
-    @Override
-    public List<ProductViewModel> findAllOrderByQuantity() {
-        List<ProductEntity> products = this.productRepository.findAllOrderByQuantity();
-        return conversionToListViewModel(products);
-    }
-
-
     public List<ProductViewModel> conversionToListViewModel(List<ProductEntity> products){
         List<ProductViewModel> productsViews = new ArrayList<>();
         for(ProductEntity product : products){
@@ -147,6 +134,11 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<String> getAllProductsName() {
         return this.productRepository.getAllProductsName();
+    }
+
+    @Override
+    public List<ProductViewModel> getAllOrderByID(){
+       return conversionToListViewModel(this.productRepository.findAll());
     }
 
     @Override
@@ -204,10 +196,34 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<ProductViewModel> findAllProductsOrderByQuantity() {
+        return conversionToListViewModel(this.productRepository.findAllOrderByQuantity());
+    }
+
+    @Override
+    public List<ProductViewModel> findAllProductsOrderByQuantityDesc() {
+        return conversionToListViewModel(this.productRepository.findAllOrderByQuantityDesc());
+    }
+
+    @Override
+    public List<ProductViewModel> findAllProductsOrderByPrice() {
+        return conversionToListViewModel(this.productRepository.findAllOrderByPrice());
+    }
+
+    @Override
+    public List<ProductViewModel> findAllProductsOrderByPriceDesc() {
+        return conversionToListViewModel(this.productRepository.findAllOrderByPriceDesc());
+    }
+
+    @Override
     public ProductViewModel getById(Long id) {
         return this.mapper.map(this.productRepository.getById(id), ProductViewModel.class);
     }
 
+    @Override
+    public List<ProductViewModel> findTop4ByQuantityDesc() {
+        return conversionToListViewModel(this.productRepository.findTop4ByQuantityDesc());
+    }
 
     @Override
     public List<ProductViewModel> findTop4ByQuantity(){
@@ -226,12 +242,11 @@ public class ProductServiceImpl implements ProductService {
             for(ProductViewModel product: currentList){
                 setPromotionPriceAndDiscountRate(BigDecimal.valueOf(0), product.getName());
             }
+
         currentList = findTop4ByQuantity();
     }
 
-   // @Scheduled(cron = "0 */33 * * * *")
-   // @Scheduled(cron = "0 0 */6 * * *")
-    @Scheduled(cron = "0 0/3 * * * *")
+    @Scheduled(cron = "0 0 0 * * *")
     public void refreshPromotionProduct() {
         updateTop4ByQuantityProduct();
         updatePriceTop4ByQuantityProduct();

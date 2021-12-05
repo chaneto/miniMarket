@@ -1,25 +1,20 @@
 <!DOCTYPE html>
 <html lang="en"
-      xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<!------ Include the above in your HEAD tag ---------->
+      xmlns:th="http://www.thymeleaf.org">
 
 <head th:replace="fragments/fragment :: head">
 </head>
 <body>
 <header th:replace="fragments/fragment :: nav"></header>
 <div class="main-content">
-        <!-- Dark table -->
         <div  class="row mt-5">
             <div class="col">
-                <div class="card bg-default shadow">
+                <div>
                     <div class="card-header bg-transparent border-0">
                         <h3 class="text-white mb-0">Orders</h3>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table align-items-center table-dark table-flush">
+                    <div style="width: 1350px;">
+                        <table class="table align-items-center table-dark">
                             <thead class="thead-dark">
                             <tr>
                                 <th scope="col">Product Image</th>
@@ -30,10 +25,11 @@
                                 <th scope="col">Courier</th>
                                 <th scope="col">Address</th>
                                 <th scope="col">Is Paid</th>
+                                <th scope="col">Is Delivered</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="p : ${ordersHistory}" th:object="${p}">
+                            <tr th:each="p : ${ordersHistory}" th:object="${p}" id="tr">
                                 <th scope="row">
                                     <div class="media align-items-center">
                                         <a th:href="@{'/products/details/{name}' (name = *{product.name})}" class="avatar">
@@ -41,7 +37,12 @@
                                         </a>
                                     </div>
                                 </th>
-                                <td style="font-size: 15px;" th:text="*{product.name}" ></td>
+                                <td th:if="${#strings.length(p.product.name) <= 120}" style="font-size: 15px;">
+                                    <textarea th:text="*{product.name}" class="order-history-name" disabled rows="4" cols="25"></textarea>
+                                </td>
+                                <td th:if="${#strings.length(p.product.name) > 120}" style="font-size: 15px;">
+                                    <textarea th:text="|${#strings.substring(p.product.name,0,117)}...|" class="order-history-name" disabled rows="4" cols="25"></textarea>
+                                </td>
                                 <td style="font-size: 15px;" th:text="*{productCount}" ></td>
                                 <td style="font-size: 15px;" th:text="*{totalPrice}"></td>
                                 <td style="font-size: 15px;" th:utext="*{dateTime}" ></td>
@@ -53,7 +54,8 @@
                                     <p th:text="|*{address.streetName} *{address.streetNumber}|"></p>
                                     <p th:if="*{address.apartmentNumber} != null" th:text="|Apartment Number: *{address.apartmentNumber}|"></p>
                                 </td>
-                                <td style="font-size: 15px;" th:text="*{isPaid} ? 'PAID' : 'NOT PAID'"></td>
+                                <td  style="font-size: 15px;" th:text="*{isPaid} ? 'PAID' : 'NOT PAID'"></td>
+                                <td  style="font-size: 15px;" th:text="*{isDelivered} ? 'DELIVERED' : 'NOT DELIVERED'"></td>
                             </tr>
                             </tbody>
                         </table>

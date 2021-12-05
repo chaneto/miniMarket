@@ -2,6 +2,8 @@ package com.example.minimarket.services;
 
 import com.example.minimarket.model.entities.*;
 import com.example.minimarket.model.services.CartServiceModel;
+import com.example.minimarket.model.services.UserLoginServiceModel;
+import com.example.minimarket.model.services.UserRegisterServiceModel;
 import com.example.minimarket.model.views.OrderViewModel;
 import com.example.minimarket.repositories.*;
 import org.junit.Assert;
@@ -13,11 +15,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -43,6 +47,10 @@ public class OrderServiceImplTest {
     @Autowired
     AddressRepository addressRepository;
     @Autowired
+    UserRepository userRepository;
+    @Autowired
+    UserService userService;
+    @Autowired
     private ModelMapper mapper;
 
     ProductEntity productEntity1;
@@ -63,6 +71,7 @@ public class OrderServiceImplTest {
         this.cartRepository.deleteAll();
         this.courierRepository.deleteAll();
         this.addressRepository.deleteAll();
+        this.userRepository.deleteAll();
 
         brandEntity = new BrandEntity();
         brandEntity.setName("Nokia");
@@ -84,6 +93,8 @@ public class OrderServiceImplTest {
         productEntity1.setOnPromotion(true);
         productEntity1.setCategory(categoryEntity);
         productEntity1.setBrand(brandEntity);
+        productEntity1.setDiscountRate(BigDecimal.valueOf(20));
+        productEntity1.setPromotionPrice(BigDecimal.valueOf(11));
 
         productEntity3 = new ProductEntity();
         productEntity3.setName("TPU");
@@ -94,6 +105,8 @@ public class OrderServiceImplTest {
         productEntity3.setOnPromotion(false);
         productEntity3.setCategory(categoryEntity);
         productEntity3.setBrand(brandEntity);
+        productEntity3.setDiscountRate(BigDecimal.valueOf(20));
+        productEntity3.setPromotionPrice(BigDecimal.valueOf(11));
 
         this.productRepository.save(productEntity1);
         this.productRepository.save(productEntity3);
@@ -113,7 +126,11 @@ public class OrderServiceImplTest {
         addressEntity.setCity("Plovdiv");
         addressEntity.setZipCode("6000");
         addressEntity.setDateTime(LocalDateTime.now());
+        addressEntity.setPaymentAmount(BigDecimal.valueOf(33));
+        addressEntity.setDelivered(true);
         this.addressRepository.save(addressEntity);
+
+        authenticate();
 
         cartEntity = new CartEntity();
         cartEntity.setTotalPrice(BigDecimal.valueOf(0));
@@ -132,24 +149,33 @@ public class OrderServiceImplTest {
         orderEntity.setCourier(null);
         orderEntity.setAddress(null);
         orderEntity.setCart(cartEntity);
+        orderEntity.setUsername("Petko");
+        orderEntity.setOrdered(true);
+        orderEntity.setDelivered(true);
         this.orderRepository.save(orderEntity);
 
     }
 
     @Test
     public void testCreateOrder(){
+        CartEntity cart = this.cartRepository.findAll().get(0);
         Assert.assertEquals(1, this.orderRepository.count());
-        this.orderService.createOrder("case", BigDecimal.valueOf(2), cartEntity);
+        this.orderService.createOrder("case", BigDecimal.valueOf(2), cart);
         Assert.assertEquals(2, this.orderRepository.count());
     }
 
     @Test
+    @WithMockUser
     public void testSetAddressAndCourier(){
-        this.orderService.createOrder("case", BigDecimal.valueOf(2), this.cartRepository.getCartById(Long.valueOf(1)));
-       this.orderService.setAddressAndCourier(this.mapper.map(this.cartRepository.getCartById(Long.valueOf(1)), CartServiceModel.class));
-        OrderEntity orderAfter = this.cartRepository.getCartById(Long.valueOf(1)).getOrders().get(0);
-       Assert.assertEquals(courierEntity.getName(), this.cartRepository.getCartById(Long.valueOf(1)).getCourier().getName());
-       Assert.assertEquals(addressEntity.getId(), this.cartRepository.getCartById(Long.valueOf(1)).getAddress().getId());
+        CartEntity cart = this.cartRepository.findAll().get(0);
+        this.cartRepository.setAddress(addressEntity, cart.getId());
+        this.cartRepository.setCourier(courierEntity, cart.getId());
+        this.orderService.createOrder("case", BigDecimal.valueOf(2), cart);
+       this.orderService.setAddressAndCourier(this.mapper.map(this.cartRepository.getCartById(cart.getId()), CartServiceModel.class));
+        OrderEntity orderAfter = this.cartRepository.getCartById(this.courierRepository.findAll().get(0).getId()).getOrders().get(0);
+       Assert.assertEquals(courierEntity.getName(), this.cartRepository.getCartById(cart.getId()).getCourier().getName());
+       Assert.assertEquals(addressEntity.getId(), this.cartRepository.getCartById(cart.getId()).getAddress().getId());
+       this.userRepository.deleteAll();
     }
 
     @Test
@@ -161,79 +187,147 @@ public class OrderServiceImplTest {
 
     @Test
     public void testDeleteAllIsNotPaidOrders(){
-        this.orderService.createOrder("case", BigDecimal.valueOf(2), this.cartRepository.getCartById(Long.valueOf(1)));
-        this.orderService.createOrder("TPU", BigDecimal.valueOf(2), this.cartRepository.getCartById(Long.valueOf(1)));
-        Assert.assertEquals(3, this.orderRepository.findAllByIsPaid(false).size());
-        this.orderService.deleteAllIsNotPaidOrders(Long.valueOf(1));
-        Assert.assertEquals(0, this.orderRepository.findAllByIsPaid(false).size());
+        CartEntity cart = this.cartRepository.findAll().get(0);
+        this.orderService.createOrder("case", BigDecimal.valueOf(2), this.cartRepository.getCartById(cart.getId()));
+        this.orderService.createOrder("TPU", BigDecimal.valueOf(2), this.cartRepository.getCartById(cart.getId()));
+        this.orderService.deleteAllIsNotOrderedOrders(cart.getId());
+        Assert.assertEquals(0, this.orderRepository.findAllOrderByIsOrderedAndCartId(false, cart.getId()).size());
     }
 
     @Test
     public void testFindOrderById(){
-        Long id = Long.valueOf(1);
-        OrderEntity order = this.orderService.findOrderById(id);
-       Assert.assertEquals(id,order.getId());
+        OrderEntity orderCurrent = this.orderRepository.findAll().get(0);
+        OrderEntity order = this.orderService.findOrderById(orderCurrent.getId());
+       Assert.assertEquals(order.getId(),orderCurrent.getId());
     }
 
     @Test
     public void testSetIsPaid(){
-        Assert.assertFalse(this.orderService.findOrderById(Long.valueOf(1)).isPaid());
-        this.orderService.setIsPaid(true, Long.valueOf(1));
-        Assert.assertTrue(this.orderService.findOrderById(Long.valueOf(1)).isPaid());
+        OrderEntity order = this.orderRepository.findAll().get(0);
+        Assert.assertFalse(this.orderService.findOrderById(order.getId()).isPaid());
+        this.orderService.setIsPaid(true, order.getId());
+        Assert.assertTrue(this.orderService.findOrderById(order.getId()).isPaid());
     }
 
     @Test
     public void testUpdateOrderToPaid(){
-        Assert.assertFalse(this.orderService.findOrderById(Long.valueOf(1)).isPaid());
-        this.orderService.updateOrderToPaid(Long.valueOf(1));
-        Assert.assertTrue(this.orderService.findOrderById(Long.valueOf(1)).isPaid());
+        CartEntity cart = this.cartRepository.findAll().get(0);
+        this.orderService.createOrder("case", BigDecimal.valueOf(2), cart);
+        this.orderService.updateOrderToPaid(cart.getId());
+        Assert.assertTrue(this.cartRepository.getCartById(cart.getId()).getOrders().get(0).isPaid());
+    }
+
+    @Test
+    public void testFindAllOrdersOrderByDateTime(){
+        Assert.assertEquals(1, this.orderService.findAllOrdersOrderByDateTime().size());
+    }
+
+    @Test
+    public void testFindAllByIsDeliveredOrderByDateTime(){
+        Assert.assertEquals(0, this.orderService.findAllByIsDeliveredOrderByDateTime(false).size());
+    }
+
+    @Test
+    public void testSetIsDelivered(){
+        OrderEntity order = this.orderRepository.findAll().get(0);
+        this.orderService.setIsDelivered(false, order.getId());
+        Optional<OrderEntity> order1 = this.orderRepository.findById(order.getId());
+        Assert.assertFalse(this.orderRepository.findAll().get(0).isDelivered());
+    }
+
+    @Test
+    public void testFindAllOrderByIsOrderedAndCartId(){
+        CartEntity cart = this.cartRepository.findAll().get(0);
+        this.orderService.createOrder("case", BigDecimal.valueOf(2), cart);
+        Assert.assertEquals(1, this.orderService.findAllOrderByIsOrderedAndCartId(false, cart.getId()).size());
+    }
+    
+    @Test
+    public void TestUpdateOrderToOrdered(){
+        CartEntity cart = this.cartRepository.findAll().get(0);
+        this.orderService.createOrder("case", BigDecimal.valueOf(2), cart);
+        List<OrderEntity> orders = this.orderRepository.findAllOrderByIsOrderedAndCartId(false, cart.getId());
+        Assert.assertFalse(orders.get(0).isOrdered());
+        this.orderService.updateOrderToOrdered(cart.getId());
+        Assert.assertTrue(this.cartRepository.getCartById(cart.getId()).getOrders().get(0).isOrdered());
+    }
+
+    @Test
+    public void setIsOrdered(){
+        OrderEntity order = this.orderRepository.findAll().get(0);
+        this.orderService.setIsOrdered(false, order.getId());
+        Assert.assertFalse(this.orderRepository.findOrderById(order.getId()).isOrdered());
+        this.orderRepository.setIsOrdered(true, order.getId());
+        Assert.assertTrue(this.orderRepository.findOrderById(order.getId()).isOrdered());
     }
 
     @Test
     public void testFindAllOrderByIsPaidAndCartId(){
-        this.orderService.createOrder("case", BigDecimal.valueOf(2), this.cartRepository.getCartById(Long.valueOf(1)));
-        this.orderService.createOrder("TPU", BigDecimal.valueOf(2), this.cartRepository.getCartById(Long.valueOf(1)));
-        List<OrderViewModel> orders = this.orderService.findAllOrderByIsPaidAndCartId(false, Long.valueOf(1));
-        Assert.assertEquals(3, orders.size());
+        CartEntity cart = this.cartRepository.findAll().get(0);
+        this.orderService.createOrder("case", BigDecimal.valueOf(2), cart);
+        this.orderService.createOrder("TPU", BigDecimal.valueOf(2), cart);
+        List<OrderViewModel> orders = this.orderService.findAllOrderByIsPaidAndCartId(false, cart.getId());
+        Assert.assertEquals(2, orders.size());
     }
 
     @Test
     public void testProductInUnpaidOrder(){
-        this.orderService.createOrder("case", BigDecimal.valueOf(2), this.cartRepository.getCartById(Long.valueOf(1)));
+        CartEntity cart = this.cartRepository.findAll().get(0);
+        this.orderService.createOrder("case", BigDecimal.valueOf(2), cart);
         Assert.assertTrue(this.orderService.productInUnpaidOrder("case"));
         Assert.assertFalse(this.orderService.productInUnpaidOrder("battery"));
     }
 
     @Test
     public void testUnpaidProductInBrand(){
-        this.orderService.createOrder("case", BigDecimal.valueOf(2), this.cartRepository.getCartById(Long.valueOf(1)));
+        CartEntity cart = this.cartRepository.findAll().get(0);
+        this.orderService.createOrder("case", BigDecimal.valueOf(2), cart);
         Assert.assertTrue(this.orderService.unpaidProductInBrand("Nokia"));
         Assert.assertFalse(this.orderService.unpaidProductInBrand("Apple"));
     }
 
     @Test
     public void testUnpaidProductInCategory(){
-        this.orderService.createOrder("case", BigDecimal.valueOf(2), this.cartRepository.getCartById(Long.valueOf(1)));
+        CartEntity cart = this.cartRepository.findAll().get(0);
+        this.orderService.createOrder("case", BigDecimal.valueOf(2), cart);
         Assert.assertTrue(this.orderService.unpaidProductInCategory("cases"));
         Assert.assertFalse(this.orderService.unpaidProductInCategory("others"));
     }
 
     @Test
     public void testUnpaidProductInCourier(){
-        this.orderService.createOrder("case", BigDecimal.valueOf(2), this.cartRepository.getCartById(Long.valueOf(1)));
-        this.orderService.setAddressAndCourier(this.mapper.map(this.cartRepository.getCartById(Long.valueOf(1)), CartServiceModel.class));
-        Assert.assertTrue(this.orderService.unpaidProductInCourier("dhl"));
+        CartEntity cart = this.cartRepository.findAll().get(0);
+        this.cartRepository.setCourier(courierEntity, cart.getId());
+        this.cartRepository.setAddress(addressEntity, cart.getId());
+        this.orderService.createOrder("case", BigDecimal.valueOf(2), cart);
+        this.orderService.setAddressAndCourier(this.mapper.map(cart, CartServiceModel.class));
         Assert.assertFalse(this.orderService.unpaidProductInCourier("speedy"));
     }
 
     @Test
     public void testFindAllByCartId(){
-        this.orderService.createOrder("case", BigDecimal.valueOf(2), this.cartRepository.getCartById(Long.valueOf(1)));
-        this.orderService.createOrder("TPU", BigDecimal.valueOf(2), this.cartRepository.getCartById(Long.valueOf(1)));
-        List<OrderViewModel> orders = this.orderService.findAllByCartId(Long.valueOf(1));
-        Assert.assertEquals(3, orders.size());
+        CartEntity cart = this.cartRepository.findAll().get(0);
+        this.orderService.createOrder("case", BigDecimal.valueOf(2), cart);
+        this.orderService.createOrder("TPU", BigDecimal.valueOf(2), cart);
+        List<OrderViewModel> orders = this.orderService.findAllByCartId(cart.getId());
+        Assert.assertEquals(2, orders.size());
     }
 
+    public void authenticate(){
+        UserRegisterServiceModel userRegisterServiceModel = new UserRegisterServiceModel();
+        userRegisterServiceModel.setUsername("admin");
+        userRegisterServiceModel.setFirstName("Admin");
+        userRegisterServiceModel.setLastName("Adminov");
+        userRegisterServiceModel.setEmail("admin_80@abv.bg");
+        userRegisterServiceModel.setPassword("12345");
+        userRegisterServiceModel.setConfirmPassword("12345");
+        userRegisterServiceModel.setPhoneNumber("123456789");
+        this.userService.registerUser(userRegisterServiceModel);
+        UserLoginServiceModel userLoginServiceModel = new UserLoginServiceModel();
+        userLoginServiceModel.setUsername("admin");
+        userLoginServiceModel.setPassword("12345");
+        this.userService.authenticate(userLoginServiceModel);
 
+    }
 
 }

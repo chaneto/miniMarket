@@ -2,8 +2,11 @@ package com.example.minimarket.model.entities;
 
 import org.apache.tomcat.jni.User;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
+import javax.validation.constraints.DecimalMin;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,9 +24,11 @@ public class CartEntity {
     private List<OrderEntity> orders = new ArrayList<>();
 
     @OneToOne(mappedBy = "cart", cascade = CascadeType.ALL)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private UserEntity user;
 
     @Column(name = "total_price", nullable = false)
+    @DecimalMin("0")
     private BigDecimal totalPrice;
 
     @OneToOne

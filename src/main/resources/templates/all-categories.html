@@ -10,13 +10,13 @@
 
 <main class="p-5 align-content-center bg-blur">
     <div class="container">
-        <h3 th:if="${successfullyDeleted}" th:text="|The category ${categoryName} has been deleted!!!|" class="form-text bg-danger rounded"></h3>
+        <h3 th:if="${successfullyDeleted}" th:text="|The category ${categoryName} has been deleted!!!|" class="form-text badge-warning rounded"></h3>
         <div class="row mb-2">
             <div th:each="f : ${allCategories}" th:object="${f}" class="col-md-6">
                 <div class="card flex-md-row mb-4 shadow-sm h-md-250" id="all-categories">
                     <div class="card-body d-flex flex-column align-items-start">
                         <h3 th:text="*{name}"  class="d-inline-block mb-2 text-primary">Name</h3>
-                        <textarea th:text="*{description}" rows="4" cols="30" id="text-all-categories" class="card-text mb-auto"></textarea>
+                        <textarea th:text="*{description}" disabled rows="4" cols="30" id="text-all-categories" class="card-text mb-auto"></textarea>
                         <a th:text="|All *{name} products|" th:href="@{'/categories/allByCategory/{name}'(name = *{name})}"></a>
                         <h7 th:if="${unpaidProductInCategory} and ${categoryName} == *{name}" th:text="|Unpaid product in the category!!!|" class="form-text bg-danger rounded"></h7>
                         <div sec:authorize="hasRole('ROLE_ADMIN')" class="btn-group">

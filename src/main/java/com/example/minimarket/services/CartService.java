@@ -38,5 +38,7 @@ public interface CartService {
 
     void addProductToCart(String name, BigDecimal quantity, Long id);
 
+    void clearCartById(Long id);
+
     void deleteCartById(Long id);
 }

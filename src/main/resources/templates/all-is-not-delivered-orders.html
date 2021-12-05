@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="fragments/fragment :: head"></head>
+<body>
+<header>
+   <nav th:replace="fragments/fragment :: nav"></nav>
+</header>
+<main class="p-5 align-content-center bg-blur">
+        <h2 class="text-light">Incoming Orders</h2>
+        <div class="table-responsive text-light" id="table-not-delivered-orders">
+          <h3 th:if="${successfullyAddedQuantity}" th:text="|Successfully added quantity ${productQuantity} to the product ${productName}|" class="form-text bg-success rounded"></h3>
+          <h3 th:if="${successfullyChangedPrice}" th:text="|The price of the product: ${productName} has been changed successfully.|" class="form-text bg-success rounded"></h3>
+          <h3 th:if="${successfullyChangedDiscountRate}" th:text="|Successfully change discount rate.|" class="form-text bg-success rounded"></h3>
+          <table class="table table-striped table-sm">
+            <thead>
+            <tr>
+              <th>Shipping Address</th>
+              <th>User info</th>
+              <th>Time</th>
+              <th>Courier</th>
+              <th>Product name</th>
+              <th>Product count and ID</th>
+              <th>Total Price</th>
+              <th>Is Delivered</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="a : ${isNotDeliveredOrders}" th:object="${a}">
+              <td>
+                <p th:text="|ID: *{id}|"></p>
+                <p th:text="*{country}"></p>
+                <p th:text="*{zipCode}"></p>
+                <p th:text="*{city}"></p>
+                <p th:text="*{streetName}"></p>
+                <p th:text="*{streetNumber}"></p>
+                <p th:if="*{apartmentNumber} != null" th:text="*{address.apartmentNumber}"></p>
+              </td>
+              <td>
+                <p th:text="|ID: *{user.id}|"></p>
+                <p th:text="*{user.firstName}"></p>
+                <p th:text="*{user.lastName}"></p>
+                <p th:text="*{user.phoneNumber}"></p>
+              </td>
+              <td>
+                <p disabled th:text="*{dateTime}"></p>
+              </td>
+              <td>
+                <p th:text="*{courier}"></p>
+              </td>
+              <td>
+                <div th:each="o : ${a.orders}" th:object="${o}" id="not-delivered">
+                <textarea th:if="${#strings.length(o.product.name) <= 120}" style="font-size: 15px;" th:text="*{product.name}" class="order-history-name" disabled rows="4" cols="30"></textarea>
+                <textarea th:if="${#strings.length(o.product.name) > 120}" style="font-size: 15px;" th:text="|${#strings.substring(o.product.name,0,117)}...|" class="order-history-name" disabled rows="4" cols="30"></textarea>
+                  <p th:text="|>>>>> ID: *{product.id}|" id="order-product-count-id"></p>
+                <p th:text="|>>>>> PIECES: *{productCount}|" id="order-product-count-pieces"></p>
+                </div>
+              </td>
+              <td>
+                <!-- <p th:text="${#lists.size(a.orders)}"></p> -->
+              </td>
+              <td>
+                <p th:text="*{paymentAmount}"></p>
+              </td>
+              <td>
+                <p th:text="*{!isDelivered} ? 'IS PROCESSED' : 'DELIVERED'"></p>
+               <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{'/addresses/setToDelivered/{id}'(id = *{id})}" id="delivered" type="button" class="btn text-white">Delivered</a>
+              </td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+</main>
+<footer th:replace="fragments/fragment :: footer" class="footer bg-blur"></footer>
+</body>
+</html>

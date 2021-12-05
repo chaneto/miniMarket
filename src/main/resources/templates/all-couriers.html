@@ -10,12 +10,11 @@
 
 <main class="p-5 align-content-center bg-blur">
     <div class="container" id="couriers">
-        <hr class="border-bottom w-75">
-        <h3 th:if="${successfullyDeleted}" th:text="|The courier ${courierName} has been deleted!!!|" class="form-text bg-success rounded"></h3>
+        <h3 th:if="${successfullyDeleted}" th:text="|The courier ${courierName} has been deleted!!!|" class="form-text badge-warning rounded"></h3>
         <div class="row mt-5" id="courier-list">
             <div th:each="f : ${allCouriers}" th:object="${f}" class="col-md-3" >
                 <div class="col-md-6 px-0" id="courier">
-                    <p th:text="*{name}" class="display-4 font-italic font-weight-bold" id="courier-name"></p>
+                    <p th:text="*{name}" class="display-5 font-italic font-weight-bold" id="courier-name"></p>
                     <h5 th:if="${unpaidProductInCourier} and ${courierName} == *{name}" th:text="|Unpaid product in the courier!!!|" class="form-text bg-danger rounded"></h5>
                     <h5 th:if="${courierInCart} and ${courierName} == *{name}" th:text="|Тhis courier has been added to the cart!!!|" class="form-text bg-danger rounded"></h5>
                     <img width="250" height="200" th:src="*{imageUrl}" class="image-courier">

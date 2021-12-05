@@ -10,8 +10,8 @@
   },
   {
     "username": "user",
-    "firstName": "User",
-    "lastName": "Userov",
+    "firstName": "Ivan",
+    "lastName": "Ivanov",
     "email": "user_80@abv.bg",
     "password": "56789",
     "confirmPassword": "56789",

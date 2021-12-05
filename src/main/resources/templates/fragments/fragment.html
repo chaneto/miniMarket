@@ -11,7 +11,7 @@
     <script src="/js/bootstrap.min.js"></script>
 </head>
 <body>
-<nav th:fragment="nav" class="navbar navbar-expand-lg bg-nav rounded">
+<nav th:fragment="nav" id="navbar" class="navbar navbar-expand-lg bg-nav rounded">
     <a class="nav-link" href="/">
         <img src="/img/logo.jpg" width="40px" alt="Logo picture">
     </a>
@@ -28,19 +28,32 @@
             Admin Panel
         </button>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item" href="/statistics">Statistics</a>
             <a class="dropdown-item" href="/products/add">Add product</a>
             <a class="dropdown-item" href="/categories/add">Add Category</a>
             <a class="dropdown-item" href="/couriers/add">Add Courier</a>
             <a class="dropdown-item" href="/brands/add">Add Brand</a>
             <a class="dropdown-item" href="/roles/set">Set Role</a>
-            <a class="dropdown-item" href="/products/productsQuantity">Products Settings-</a>
+            <a class="dropdown-item" href="/products/productsMenu">Products Menu</a>
+            <a class="dropdown-item" href="/users/all">All Users</a>
+            <a class="dropdown-item" href="/addresses/findAllNotDelivered">Not Delivered Orders</a>
+            <a class="dropdown-item" href="/orders/all">All Orders</a>
+        </div>
+    </div>
+
+    <div th:if="${showOrderDropdown}" class="dropdown" id="productOrderDropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Order By
+        </button>
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item" href="/products/allProductsOrderByPrice1...9">Price 1...9</a>
+            <a class="dropdown-item" href="/products/allProductsOrderByPrice9...1">Price 9...1</a>
+            <a class="dropdown-item" href="/products/all">Name a...z</a>
         </div>
     </div>
 
     <div class="collapse navbar-collapse d-flex justify-content-end" id="navbarNav">
         <ul class="navbar-nav row">
-            <li class="nav-item ">
+            <li sec:authorize="!isAuthenticated()" class="nav-item ">
                 <a  class="nav-link text-white active h5" th:href="@{/contacts}">Contacts</a>
             </li>
             <li class="nav-item ">
@@ -58,9 +71,27 @@
             <li class="nav-item ">
                 <a class="nav-link text-white active h5" th:href="@{/couriers/all}">All couriers</a>
             </li>
-            <li sec:authorize="isAuthenticated()" class="nav-item ">
-                <a class="nav-link text-white active h5" th:href="@{/orders/history}">Orders History</a>
-            </li>
+
+            <div sec:authorize="isAuthenticated()" class="dropdown">
+                <h7 th:text="|Hello ${#authentication.getName()}|" class="text-light badge badge-warning"></h7>
+                <button class="btn" type="button" id="profileButton" data-toggle="dropdown" >
+                    <img src="/img/profile.jpg" width="35" alt="Cart picture">
+                </button>
+                <div class="dropdown-menu" id="dropdown-profile" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="/users/profile" th:text="|${#authentication.getName()} profile|">My Profile</a>
+                    <a class="dropdown-item" href="/orders/history">Orders History</a>
+                    <a class="dropdown-item" href="/addresses/list">Address List</a>
+                    <a class="dropdown-item" href="/contacts">Contacts</a>
+                    <a class="dropdown-item">
+                        <form th:action="@{/logout}" method="POST">
+                            <button type="submit" class="badge badge-warning">
+                                Logout
+                            </button>
+                        </form>
+                    </a>
+                </div>
+            </div>
+
                 <li  sec:authorize="!isAuthenticated()" class="login">
                     <a class="nav-link text-white active h5" th:href="@{/users/login}">Login</a>
                 </li>
@@ -69,14 +100,13 @@
                 </li>
             <li class="logout"  sec:authorize="isAuthenticated()">
                     <form th:action="@{/logout}" method="POST">
-                       <!-- <h3 th:text="|Hello ${#authentication.getName()}|" class=text-light></h3> -->
-                        <script src="https://code.iconify.design/2/2.1.0/iconify.min.js"></script>
-                        <button type="submit" class="nav-link active h5">
+                        <button type="submit" id="logout" class="nav-link active h5">
+                            <img src="/img/exit.png" width="35" alt="Cart picture">
                             <span class="iconify" data-icon="mdi:logout-variant" data-height="23" data-width="23"></span></button>
                     </form>
             </li>
-
         </ul>
+
     </div>
 </nav>
 
@@ -84,6 +114,12 @@
     <div class="container-fluid text-center">
         <div class="h5 text-white">
             &copy;2021 GSM Accessories. All rights reserved.
+        </div>
+        <div>
+            <a href="/contacts"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-layers"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg> Contacts</a>
+        </div>
+        <div>
+            <a href="/products/all"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline></svg> All Products</a>
         </div>
     </div>
 </footer>

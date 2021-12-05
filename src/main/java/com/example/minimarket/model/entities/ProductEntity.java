@@ -60,7 +60,7 @@ public class ProductEntity {
     @JoinColumn(name = "brand_id", referencedColumnName = "id")
     private BrandEntity brand;
 
-    @ManyToOne//(cascade = CascadeType.DETACH, fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "id")
     private CategoryEntity category;
 

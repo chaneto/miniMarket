@@ -134,8 +134,8 @@ public class CategoryControllerTest {
         this.mockMvc
                 .perform(get("/categories/allByCategory/chargers"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("all-products-by-category"))
-                .andExpect(model().attributeExists("getAllProductsByCategory"));
+                .andExpect(view().name("all-products"))
+                .andExpect(model().attributeExists("allProducts"));
     }
 
 
@@ -150,7 +150,9 @@ public class CategoryControllerTest {
         userRegisterServiceModel.setPassword("12345");
         userRegisterServiceModel.setConfirmPassword("12345");
         userRegisterServiceModel.setPhoneNumber("123456789");
-        this.userService.registerUser(userRegisterServiceModel);
+        if(!this.userService.userWithUsernameIsExists("admin_80@abv.bg") && !this.userService.userWithUsernameIsExists("admin")){
+            this.userService.registerUser(userRegisterServiceModel);
+        }
         UserLoginServiceModel userLoginServiceModel = new UserLoginServiceModel();
         userLoginServiceModel.setUsername("admin");
         userLoginServiceModel.setPassword("12345");

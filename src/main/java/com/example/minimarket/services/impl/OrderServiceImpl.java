@@ -37,6 +37,9 @@ public class OrderServiceImpl implements OrderService {
         orderEntity.setDateTime(LocalDateTime.now());
         orderEntity.setTotalPrice(productEntity.getPromotionPrice().multiply(quantity));
         orderEntity.setPaid(false);
+        orderEntity.setDelivered(false);
+        orderEntity.setOrdered(false);
+        orderEntity.setUsername(cartEntity.getUser().getUsername());
         orderEntity.setCart(cartEntity);
         this.orderRepository.save(orderEntity);
         return orderEntity;
@@ -44,7 +47,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void setAddressAndCourier(CartServiceModel cart) {
-        for(OrderEntity order: this.orderRepository.findAllOrderByIsPaidAndCartId(false, cart.getId())){
+        for(OrderEntity order: this.orderRepository.findAllOrderByIsOrderedAndCartId(false, cart.getId())){
             this.orderRepository.setCourier(cart.getCourier(), order.getId());
             this.orderRepository.setAddress(cart.getAddress(), order.getId());
         }
@@ -58,8 +61,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void deleteAllIsNotPaidOrders(Long cartId){
-        for(OrderEntity order: this.orderRepository.findAllOrderByIsPaidAndCartId(false, cartId)){
+    public void deleteAllIsNotOrderedOrders(Long cartId){
+        for(OrderEntity order: this.orderRepository.findAllOrderByIsOrderedAndCartId(false, cartId)){
             deleteOrderById(order.getId());
         }
     }
@@ -79,6 +82,47 @@ public class OrderServiceImpl implements OrderService {
         for(OrderEntity order: this.orderRepository.findAllOrderByIsPaidAndCartId(false,id)){
             this.orderRepository.setIsPaid(true, order.getId());
             }
+    }
+
+    @Override
+    public void setIsOrdered(Boolean isOrdered, Long id) {
+        this.orderRepository.setIsOrdered(isOrdered, id);
+    }
+
+    @Override
+    public void updateOrderToOrdered(Long id) {
+        for(OrderEntity order: this.orderRepository.findAllOrderByIsOrderedAndCartId(false,id)){
+            this.orderRepository.setIsOrdered(true, order.getId());
+        }
+    }
+
+    @Override
+    public List<OrderViewModel> findAllByAddressId(Long id) {
+        return conversionToListViewModel(this.orderRepository.findAllByAddressId(id));
+    }
+
+    @Override
+    public void setOrdersToDelivered(Long id) {
+        for(OrderEntity order : this.orderRepository.findAllByAddressId(id)){
+            setIsDelivered(true, order.getId());
+        }
+    }
+
+    @Override
+    public void setOrdersToPaid(Long id) {
+        for(OrderEntity order: this.orderRepository.findAllByAddressId(id)){
+            setIsPaid( true, order.getId());
+        }
+    }
+
+    @Override
+    public List<OrderViewModel> findAllOrdersOrderByDateTime() {
+        return conversionToListViewModel(this.orderRepository.findAllOrderByDateTime());
+    }
+
+    @Override
+    public void setIsDelivered(Boolean isDelivered, Long id) {
+        this.orderRepository.setIsDelivered(isDelivered, id);
     }
 
     @Override
@@ -155,14 +199,28 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<OrderViewModel> findAllOrderByIsOrderedAndCartId(Boolean ordered, Long id) {
+        return conversionToListViewModel(this.orderRepository.findAllOrderByIsOrderedAndCartId(ordered, id));
+    }
+
+    @Override
     public List<OrderViewModel> findAllByCartId(Long id) {
-        List<OrderViewModel> orders = new ArrayList<>();
-        for(OrderEntity order: this.orderRepository.findAllByCartIdOrderByDateTimeDesc(id)){
+      return conversionToListViewModel(this.orderRepository.findAllByCartIdOrderByDateTimeDesc(id));
+    }
+
+    @Override
+    public List<OrderViewModel> findAllByIsDeliveredOrderByDateTime(boolean isDelivered) {
+        return conversionToListViewModel(this.orderRepository.findAllByIsDeliveredOrderByDateTimeDesc(isDelivered));
+    }
+
+    public List<OrderViewModel> conversionToListViewModel(List<OrderEntity> orders){
+        List<OrderViewModel> ordersView = new ArrayList<>();
+        for(OrderEntity order: orders){
             OrderViewModel orderViewModel = this.mapper.map(order, OrderViewModel.class);
             String date  = orderViewModel.getDateTime().substring(0,10) + " " + orderViewModel.getDateTime().substring(11, 19);
             orderViewModel.setDateTime(date);
-            orders.add(orderViewModel);
+            ordersView.add(orderViewModel);
         }
-        return orders;
+        return ordersView;
     }
 }

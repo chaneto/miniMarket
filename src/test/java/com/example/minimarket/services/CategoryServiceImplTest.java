@@ -124,6 +124,8 @@ public class CategoryServiceImplTest {
     }
 
     public void saveProduct(){
+        this.productRepository.deleteAll();
+        this.brandRepository.deleteAll();
         brandEntity = new BrandEntity();
         brandEntity.setName("Nokia");
         brandEntity.setImage("image");
@@ -138,6 +140,8 @@ public class CategoryServiceImplTest {
         productEntity1.setOnPromotion(true);
         productEntity1.setCategory(categoryEntity1);
         productEntity1.setBrand(brandEntity);
+        productEntity1.setDiscountRate(BigDecimal.valueOf(20));
+        productEntity1.setPromotionPrice(BigDecimal.valueOf(20));
 
         productEntity3 = new ProductEntity();
         productEntity3.setName("TPU");
@@ -148,6 +152,8 @@ public class CategoryServiceImplTest {
         productEntity3.setOnPromotion(false);
         productEntity3.setCategory(categoryEntity1);
         productEntity3.setBrand(brandEntity);
+        productEntity3.setDiscountRate(BigDecimal.valueOf(20));
+        productEntity3.setPromotionPrice(BigDecimal.valueOf(20));
 
         this.productRepository.save(productEntity1);
         this.productRepository.save(productEntity3);

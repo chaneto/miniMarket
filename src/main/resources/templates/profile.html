@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+
+<head th:replace="fragments/fragment :: head"></head>
+
+<body>
+
+<header th:replace="fragments/fragment :: nav"></header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6 col-xs-offset-0 col-sm-offset-0 col-md-offset-3 col-lg-offset-3 toppad" >
+            <h3 th:if="${successfulChangePassword}" class="text-light form-text badge-warning rounded">Passwords changed successfully!!!</h3>
+            <h3 th:if="${successfulChangeEmail}" class="text-light form-text badge-warning rounded">Email changed successfully!!!</h3>
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 th:text="|${currentUser.username} profile|" class="panel-title"></h3>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-3 col-lg-3 " align="center"> <img alt="User Pic" src="/img/profile.jpg" class="img-circle img-responsive"> </div>
+                        <div class=" col-md-9 col-lg-9 ">
+                            <table class="table table-user-information">
+                                <tbody>
+                                <tr>
+                                    <td>Username:</td>
+                                    <td th:text="${currentUser.username}"></td>
+                                </tr>
+                                <tr>
+                                    <td>First Name:</td>
+                                    <td th:text="${currentUser.firstName}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Last Name</td>
+                                    <td th:text="${currentUser.lastName}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Email</td>
+                                    <td th:text="${currentUser.email}"><a th:href="${currentUser.email}"></a></td>
+                                </tr>
+                                <td>Phone Number</td>
+                                <td th:text="${currentUser.phoneNumber}"></td>
+
+                                </tr>
+
+                                </tbody>
+                            </table>
+
+                            <a href="/users/changePassword" class="btn btn-primary">change password</a>
+                            <a href="/users/changeEmail" class="btn btn-primary">change email</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<footer th:replace="fragments/fragment :: footer"></footer>
+</body>
+</html>

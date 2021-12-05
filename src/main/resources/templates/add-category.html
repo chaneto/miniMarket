@@ -8,9 +8,8 @@
 <main class="p-5 bg-blur text-center">
     <h1 class="text-light border-bottom">Add Category</h1>
     <div class="d-flex justify-content-center">
-        <form th:action="@{/categories/add}" method="POST" th:object="${categoryAddBindingModel}"
-              class="text-light">
-            <h4 th:if="${successfulAddedCategory}" th:text="|Successful Added Category: *{name}|" class="form-text bg-success rounded"></h4>
+        <form th:action="@{/categories/add}" method="POST" th:object="${categoryAddBindingModel}" class="text-light">
+            <h4 th:if="${successfulAddedCategory}" th:text="|Successful Added Category: *{name}|" class="form-text badge badge-warning rounded"></h4>
             <div class="form-row">
                 <div class="col">
                     <label for="inputName">Category name</label>

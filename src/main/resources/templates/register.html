@@ -76,7 +76,7 @@
                                class="form-control"
                                aria-describedby="emailHelpInline">
                         <small th:if="${#fields.hasErrors('email')}" th:errors="*{email}" id="emailError"
-                          class="invalid-feedback text-light form-text bg-danger rounded">Must be valid email!!!</small>
+                          class="invalid-feedback text-light form-text bg-danger rounded">Must be enter valid email!!!</small>
                         <small th:if="${userWithEmailIsExists}" id="emailUniqueError"
                                class="text-light form-text bg-danger rounded">Email is already occupied!!!</small>
 

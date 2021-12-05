@@ -32,6 +32,16 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
 
     @Modifying
     @Transactional
+    @Query("update OrderEntity as o set o.isOrdered = :isOrdered where o.id = :id")
+    void setIsOrdered(@Param("isOrdered") Boolean isOrdered, @Param("id")  Long id);
+
+    @Modifying
+    @Transactional
+    @Query("update OrderEntity as o set o.isDelivered = :isDelivered where o.id = :id")
+    void setIsDelivered(@Param("isDelivered") Boolean isDelivered, @Param("id")  Long id);
+
+    @Modifying
+    @Transactional
     @Query("delete from OrderEntity as o where o.id = :id")
     void deleteOrderById(@Param("id") Long id);
 
@@ -41,10 +51,20 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
     @Query("select o from OrderEntity as o where o.isPaid = :isPaid and o.cart.id = :id")
     List<OrderEntity> findAllOrderByIsPaidAndCartId(@Param("isPaid") Boolean isPaid, @Param("id") Long id);
 
+    @Query("select o from OrderEntity as o where o.isOrdered = :isOrdered and o.cart.id = :id")
+    List<OrderEntity> findAllOrderByIsOrderedAndCartId(@Param("isOrdered") Boolean isOrdered, @Param("id") Long id);
+
     List<OrderEntity> findAllByIsPaidAndProductName(boolean isPaid, String name);
 
     List<OrderEntity> findAllByIsPaid(boolean isPaid);
 
+    List<OrderEntity> findAllByIsDeliveredOrderByDateTimeDesc(boolean isDelivered);
+
     List<OrderEntity> findAllByCartIdOrderByDateTimeDesc(Long id);
+
+    List<OrderEntity> findAllByAddressId(Long id);
+
+    @Query("select o from OrderEntity as o order by o.dateTime desc")
+    List<OrderEntity> findAllOrderByDateTime();
 
 }

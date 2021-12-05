@@ -19,7 +19,7 @@
                 th:action="@{/users/login}"
                 method="POST" th:object="${userLoginBindingModel}">
                 <!--User name-->
-                <h3 th:if="${successfulRegistration}" class="form-text bg-success rounded">Successful Registration. Please Login</h3>
+                <h3 th:if="${successfulRegistration}" class="form-text badge-warning rounded">Successful Registration. Please Login</h3>
                 <div>
                     <div class="col-auto">
                         <label for="inputUsername" class="col-form-label text-light">Username</label>

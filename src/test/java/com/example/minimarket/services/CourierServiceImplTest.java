@@ -9,6 +9,7 @@ import com.example.minimarket.model.services.UserRegisterServiceModel;
 import com.example.minimarket.model.views.CourierViewModel;
 import com.example.minimarket.repositories.CartRepository;
 import com.example.minimarket.repositories.CourierRepository;
+import com.example.minimarket.repositories.UserRepository;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,6 +38,8 @@ public class CourierServiceImplTest {
     @Autowired
     UserService userService;
     @Autowired
+    UserRepository userRepository;
+    @Autowired
     ModelMapper mapper;
 
     CourierEntity courierEntity1;
@@ -51,6 +54,9 @@ public class CourierServiceImplTest {
             this.courierRepository.deleteByName(courier.getName());
             }
         }
+
+        this.cartRepository.deleteAll();
+
         courierEntity1 = new CourierEntity();
         courierEntity1.setName("dhl");
         courierEntity1.setRating(5);
@@ -119,15 +125,18 @@ public class CourierServiceImplTest {
         Assert.assertNull(cartEntity.getCourier());
         this.courierService.setCourierCart(courierEntity2.getName());
         Assert.assertEquals(courierEntity2.getName(), this.userService.getCurrentCart().getCourier().getName());
+        this.userRepository.deleteAll();
     }
 
     @Test
     public void testDeleteCourierByName(){
+        authenticate();
         this.courierRepository.save(courierEntity1);
         this.courierRepository.save(courierEntity3);
         Assert.assertEquals(3, this.courierRepository.count());
         this.courierService.deleteByName(courierEntity1.getName());
         Assert.assertEquals(2, this.courierRepository.count());
+        this.userRepository.deleteAll();
     }
 
     public void authenticate(){

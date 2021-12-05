@@ -41,10 +41,8 @@ public class CartServiceImpl implements CartService {
         }return result;
     }
 
-
     @Override
     public List<CartEntity> findByAddressIsNotNull() {
-        List<CartEntity> fff =   this.cartRepository.findByAddressIsNotNull();
         return this.cartRepository.findByAddressIsNotNull();
     }
 
@@ -73,6 +71,11 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
+    public void updateTotalPrice(CartEntity cart) {
+        setTotalPrice(cart.getTotalPrice().add(cart.getCourier().getShippingAmount()), cart.getId());
+    }
+
+    @Override
     public CartViewModel getCartById(Long id){
         CartViewModel cartViewModel = null;
         CartEntity cartEntity = this.cartRepository.getCartById(id);
@@ -95,19 +98,6 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void updateTotalPrice(CartEntity cart) {
-        this.cartRepository.setTotalPrice(cart.getTotalPrice().add(cart.getCourier().getShippingAmount()), cart.getId());
-    }
-
-    @Override
-    public void resetCart(Long id) {
-        this.cartRepository.setTotalPrice(BigDecimal.valueOf(0.0), id);
-        this.cartRepository.setCourier(null, id);
-        this.cartRepository.setAddress(null, id);
-        this.orderService.updateOrderToPaid(id);
-    }
-
-    @Override
     public void addProductToCart(String productName, BigDecimal quantity, Long cartId) {
         CartEntity cartEntity = this.cartRepository.getCartById(cartId);
         OrderEntity orderEntity = this.orderService.createOrder(productName, quantity, cartEntity);
@@ -115,9 +105,22 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public void deleteCartById(Long cartId) {
-        this.orderService.deleteAllIsNotPaidOrders(cartId);
+    public void resetCart(Long id) {
+        this.cartRepository.setTotalPrice(BigDecimal.valueOf(0.0), id);
+        this.cartRepository.setCourier(null, id);
+        this.cartRepository.setAddress(null, id);
+        this.orderService.updateOrderToOrdered(id);
+    }
+
+    @Override
+    public void clearCartById(Long cartId) {
+        this.orderService.deleteAllIsNotOrderedOrders(cartId);
                 resetCart(cartId);
+    }
+
+    @Override
+    public void deleteCartById(Long id){
+        this.cartRepository.deleteById(id);
     }
 
 }

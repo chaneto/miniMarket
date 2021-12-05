@@ -23,7 +23,7 @@ public interface OrderService {
 
     void updateOrderToPaid(Long id);
 
-    void deleteAllIsNotPaidOrders(Long cartId);
+    void deleteAllIsNotOrderedOrders(Long cartId);
 
     List<OrderViewModel> findAllOrderByIsPaidAndCartId(Boolean isPaid, Long id);
 
@@ -36,5 +36,23 @@ public interface OrderService {
     boolean unpaidProductInCourier(String courierName);
 
     List<OrderViewModel> findAllByCartId(Long id);
+
+    List<OrderViewModel> findAllByIsDeliveredOrderByDateTime(boolean isDelivered);
+
+    List<OrderViewModel> findAllOrderByIsOrderedAndCartId(Boolean IsOrdered, Long id);
+
+    void setIsOrdered(Boolean isOrdered, Long id);
+
+    void setIsDelivered(Boolean isDelivered, Long id);
+
+    void updateOrderToOrdered(Long id);
+
+    List<OrderViewModel> findAllByAddressId(Long id);
+
+    void setOrdersToDelivered(Long id);
+
+    void setOrdersToPaid(Long id);
+
+    List<OrderViewModel> findAllOrdersOrderByDateTime();
 }
 

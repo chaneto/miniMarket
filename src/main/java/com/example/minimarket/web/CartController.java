@@ -15,11 +15,13 @@ import java.math.BigDecimal;
 public class CartController {
 
     private final CourierService courierService;
+    private final AddressService addressService;
     private final UserService userService;
     private final CartService cartService;
 
-    public CartController(CourierService courierService, UserService userService, CartService cartService) {
+    public CartController(CourierService courierService, AddressService addressService, UserService userService, CartService cartService) {
         this.courierService = courierService;
+        this.addressService = addressService;
         this.userService = userService;
         this.cartService = cartService;
     }
@@ -30,7 +32,7 @@ public class CartController {
         if(!model.containsAttribute("courierGetBindingModel")){
             model.addAttribute("courierGetBindingModel", new CourierGetBindingModel());
         }
-        model.addAttribute("allOrders", this.userService.getAllUserOrderByIsPaid(false, id));
+        model.addAttribute("allOrders", this.userService.getAllUserOrderByIsOrdered(false, id));
         model.addAttribute("getCartTotalPrice", this.userService.getTotalPriceForAllOrders());
         model.addAttribute("allCouriers", this.courierService.findAll());
         String referer = request.getHeader("Referer");
@@ -49,8 +51,6 @@ public class CartController {
        }
     }
 
-
-
     @GetMapping("/view")
     public String view(){
         return "redirect:/";
@@ -58,15 +58,21 @@ public class CartController {
 
     @GetMapping("/buy")
     public String buyCart(){
-        this.cartService.resetCart(this.userService.getCartId());
+        this.addressService.updateFinallyPaymentAmount();
+        this.cartService.resetCart(this.userService.getCurrentCartId());
         return "redirect:/";
     }
 
     @GetMapping("/delete/{id}")
-    public String deleteCartById(@PathVariable Long id){
-        this.cartService.deleteCartById(id);
+    public String clearCartById(@PathVariable Long id){
+        if(this.userService.getCurrentUser().getCart().getId().equals(id)){
+            Long addressId = this.cartService.getCartById(id).getAddress().getId();
+        this.cartService.clearCartById(id);
+            this.addressService.deleteById(addressId);
+        }
         return "redirect:/";
     }
+
     public boolean isAuthenticated(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication.getPrincipal().equals("anonymousUser")){
@@ -95,7 +101,7 @@ public class CartController {
     @ModelAttribute("getCardId")
     public Long getCardId() {
         if(isAuthenticated()){
-            return this.userService.getCartId();
+            return this.userService.getCurrentCartId();
         }
         return Long.valueOf(0);
     }

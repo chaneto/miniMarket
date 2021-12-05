@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: head"></head>
+<body>
+<header>
+  <nav th:replace="fragments/fragment :: nav"></nav>
+</header>
+<main class="p-5 align-content-center bg-blur my-register-div">
+  <div class="d-flex justify-content-center ">
+    <div class="row g-3">
+      <form th:action="@{/users/changeEmail}" method="POST" th:object="${changeEmailBindingModel}">
+        <!-- Email -->
+        <div>
+          <div class="col-auto">
+            <label for="inputEmail" class="col-form-label text-light">New Email</label>
+          </div>
+          <div class="col-auto">
+            <input th:value="*{email}" th:errorclass="is-invalid" name="email" required minlength="3"
+                   type="email"
+                   id="inputEmail"
+                   class="form-control"
+                   aria-describedby="emailHelpInline">
+            <small th:if="${#fields.hasErrors('email')}" th:errors="*{email}" id="emailError"
+                   class="invalid-feedback text-light form-text bg-danger rounded">Must be enter valid email!!!</small>
+            <small th:if="${userWithEmailIsExists}" id="emailUniqueError"
+                   class="text-light form-text bg-danger rounded">Email is already occupied!!!</small>
+            <small th:if="${emailNotMatch}" class="text-light form-text bg-danger rounded">Emails do not match!!!</small>
+          </div>
+        </div>
+        <!-- EO: Email-->
+        <!-- Email confirm -->
+        <div>
+          <div class="col-auto">
+            <label for="inputConfirmEmail" class="col-form-label text-light">Confirm Email</label>
+          </div>
+          <div class="col-auto">
+            <input th:value="*{confirmEmail}" th:errorclass="is-invalid" name="confirmEmail" required minlength="3"
+                   type="email"
+                   id="inputConfirmEmail"
+                   class="form-control"
+                   aria-describedby="confirmEmailHelpInline">
+            <small th:if="${#fields.hasErrors('confirmEmail')}" th:errors="*{confirmEmail}" id="confirmEmailError"
+                   class="invalid-feedback text-light form-text bg-danger rounded">Must be enter valid email!!!</small>
+          </div>
+        </div>
+        <!-- EO: Email confirm -->
+        <div class="d-flex justify-content-center mt-4">
+          <button class="btn btn-primary btn-block w-50" type="submit">Change</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</main>
+<footer th:replace="fragments/fragment :: footer" class="footer bg-blur"></footer>
+</body>
+</html>

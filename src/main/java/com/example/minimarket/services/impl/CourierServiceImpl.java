@@ -82,6 +82,8 @@ public class CourierServiceImpl implements CourierService {
 
     @Override
     public void deleteByName(String name) {
+        if(this.userService.getCurrentUser().getRole().getUserRole().name().equals("ADMIN")){
         this.courierRepository.deleteByName(name);
+        }
     }
 }

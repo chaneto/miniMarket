@@ -17,10 +17,12 @@
                          data-holder-rendered="true"
                          style="height: 225px; width: 100%; display: block;">
                     <div  class="card-body">
-                        <div th:each="p : ${allOrders}" th:object="${p}" class="text-center">
+                        <div th:each="o : ${allOrders}" th:object="${o}" class="text-center">
                             <a th:href="@{'/orders/delete/{id}'(id = *{id})}" class="delete-order"><img src="/img/delete.png" width="20px" alt="Delete picture"></a>
-                            <p th:text="|*{product.name}: *{productCount} pieces|"></p>
-                            <p th:text="|Price: *{totalPrice}|" class="card-text border-bottom"></p>
+                            <p th:if="${#strings.length(o.product.name) <= 120}" th:text="${o.product.name}" class="card-text"></p>
+                            <p th:if="${#strings.length(o.product.name) > 120}" th:text="|${#strings.substring(o.product.name,0,117)}...|" class="card-text"></p>
+                            <p th:text="|*{productCount} pieces|" class="card-text"></p>
+                            <p th:text="|Price: *{totalPrice}|" class="d-inline-block mb-2 text-primary border-bottom"></p>
                         </div>
                         <h3 th:text="|Total Price: ${getCartTotalPrice}|" class="d-inline-block mb-2 text-primary"></h3>
                         <form th:if="${#lists.size(allOrders)} > 0" th:action="@{/couriers/get}" th:method="POST" th:object="${courierGetBindingModel}">
@@ -34,8 +36,8 @@
                                     <small th:if="${#fields.hasErrors('name')}" th:errors="*{name}" id="courierError" class="invalid-feedback form-text bg-danger rounded">You must select courier</small>
                                 </div>
                             </div>
-                            <div sec:authorize="isAuthenticated()" class="btn-group">
-                                <button type="submit" class="btn btn-sm btn-outline-secondary">Add Shipping Address</button>
+                            <div sec:authorize="isAuthenticated()" class="btn-group" id="view-cart-address">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary text-white" id="view-cart-address-button">Add Shipping Address</button>
                             </div>
                         </form>
                         </div>

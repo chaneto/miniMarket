@@ -6,7 +6,9 @@ import com.example.minimarket.model.entities.UserRoleEntity;
 import com.example.minimarket.model.enums.UserRole;
 import com.example.minimarket.model.services.UserLoginServiceModel;
 import com.example.minimarket.model.services.UserRegisterServiceModel;
+import com.example.minimarket.model.services.UserServiceModel;
 import com.example.minimarket.model.views.OrderViewModel;
+import com.example.minimarket.model.views.UserViewModel;
 import com.example.minimarket.repositories.CartRepository;
 import com.example.minimarket.repositories.UserRepository;
 import com.example.minimarket.repositories.UserRoleRepository;
@@ -19,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import java.math.BigDecimal;
 import java.util.List;
@@ -179,13 +182,6 @@ public class UserServiceImplTest {
      }
 
      @Test
-     public void testSetUserRole(){
-        authenticate();
-        this.userService.setUserRole(user1.getUsername(), "USER");
-        Assert.assertEquals(user1.getRole().getUserRole().name(), "USER");
-     }
-
-     @Test
      public void getCurrentCart(){
         authenticate();
         Assert.assertEquals(cartEntity1.getUser().getUsername(), this.userService.getCurrentCart().getUser());
@@ -193,11 +189,43 @@ public class UserServiceImplTest {
 
      @Test
      public void testGetAllUserOrderByIsPaid(){
-    List<OrderViewModel> orders = this.userService.getAllUserOrderByIsPaid(false, Long.valueOf(1));
+    List<OrderViewModel> orders = this.userService.getAllUserOrderByIsOrdered(false, Long.valueOf(1));
     Assert.assertEquals(0, orders.size());
     }
 
+@Test
+public void testFindAllOrderByUsername(){
+        Assert.assertEquals("admin", this.userService.findAllOrderByUsername().get(0).getUsername());
+    }
 
+    @Test
+    public void setUserPassword(){
+        authenticate();
+        UserEntity user = this.userRepository.findByUsername("admin");
+        this.userService.changePassword("98765");
+    }
+
+    @Test
+    public void changeEmail(){
+        authenticate();
+        UserEntity user = this.userRepository.findByUsername("admin");
+        this.userService.changeEmail("ivan@abv.bg");
+        Assert.assertEquals("ivan@abv.bg", this.userService.getCurrentUser().getEmail());
+
+    }
+
+    @Test
+    public void testDeleteUserByUsername(){
+        authenticate();
+        Assert.assertEquals(2, this.userRepository.count());
+        this.userService.deleteUserByUsername(this.userRepository.findAll().get(1).getUsername());
+        Assert.assertEquals(2, this.userRepository.count());
+    }
+
+    @Test
+    public void passwordMatches(){
+        Assert.assertTrue(this.userService.passwordMatches("12345", "12345"));
+    }
 
     public void authenticate(){
         UserLoginServiceModel userLoginServiceModel = new UserLoginServiceModel();

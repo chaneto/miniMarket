@@ -76,4 +76,14 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
 
     @Query("select p from ProductEntity as p order by p.quantity")
     List<ProductEntity> findAllOrderByQuantity();
+
+    @Query("select p from ProductEntity as p order by p.quantity desc")
+    List<ProductEntity> findAllOrderByQuantityDesc();
+
+    @Query("select p from ProductEntity as p order by p.price")
+    List<ProductEntity> findAllOrderByPrice();
+
+    @Query("select p from ProductEntity as p order by p.price desc")
+    List<ProductEntity> findAllOrderByPriceDesc();
+
 }

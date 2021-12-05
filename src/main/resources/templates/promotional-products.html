@@ -11,7 +11,6 @@
 <main class="p-5 align-content-center bg-blur">
 
     <h3 th:if="${successfullyChangedPrice}" th:text="|The price has been changed successfully.|" class="form-text bg-success rounded"></h3>
-        <hr class="border-bottom w-75">
         <div class="row mt-5" id="productList">
             <div th:each="p : ${promotionsProducts}" th:object="${p}" class="col-md-3">
                 <div class="card mb-4 box-shadow">
@@ -25,8 +24,10 @@
                             <h6 th:if="${#strings.length(p.name) > 120}" th:text="|${#strings.substring(p.name,0,117)}...|" id="product-name-text-1" class="d-inline-block mb-2 text-primary"></h6>
                             <!-- <p th:text="|Category: *{category}|" class="card-text border-bottom "></p> -->
                             <p th:text="|brand: *{brand}|" class="card-text border-bottom "></p>
-                            <p th:text="|Old Price: *{price}|" class="card-text border-bottom"></p>
-                            <p th:text="|New Price: *{promotionPrice}|" id="new-price" class="card-text border-bottom badge badge-warning"></p>
+                            <div class="cta-btn">
+                            <p th:text="|Old Price: *{price}|" class="card-text border-bottom old-price"></p>
+                            <p th:text="|New Price: *{promotionPrice}|" id="new-price" class="card-text border-bottom badge badge-warning new-price"></p>
+                            </div>
                             <p th:if="*{isAvailable}" th:text="|Product is available|" class="card-text border-bottom"></p>
                             <p th:unless="*{isAvailable}" th:text="|Product is not available|" class="card-text border-bottom"></p>
                         </div>
@@ -35,8 +36,8 @@
                         <form th:if="*{isAvailable}" th:action="@{'/products/addProduct/{name}'(name = ${p.name})}" th:method="POST" th:object="${productGetBuyQuantity}">
                         <div sec:authorize="isAuthenticated()" id="quantity-form">
                             <div class="col">
-                                <label for="quantity">Select Quantity</label>
-                                <input th:field="*{quantity}" th:errorclass="is-invalid"  required min="0" name="quantity" id="quantity" type="number" class="form-control" placeholder="Quantity"></input>
+                                <label for="quantity-all-products">Select Quantity</label>
+                                <input th:field="*{quantity}" th:errorclass="is-invalid"  required min="1" name="quantity" id="quantity-all-products" type="number" class="form-control" placeholder="Quantity"></input>
                                 <small th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"  id="quantityError" class="invalid-feedback form-text bg-danger rounded"></small>
                             </div>
                         </div>

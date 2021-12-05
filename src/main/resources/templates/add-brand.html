@@ -8,9 +8,8 @@
 <main class="p-5 bg-blur text-center">
     <h1 class="text-light border-bottom">Add brand</h1>
     <div class="d-flex justify-content-center">
-        <form th:action="@{/brands/add}" method="POST" th:object="${brandAddBidingModel}"
-              class="text-light">
-            <h4 th:if="${successfulAddedBrand}" th:text="|Successful Added Brand: *{name}|" class="form-text bg-success rounded"></h4>
+        <form th:action="@{/brands/add}" method="POST" th:object="${brandAddBidingModel}" class="text-light">
+            <h4 th:if="${successfulAddedBrand}" th:text="|Successful Added Brand: ${brandAddBidingModel.name}|" class="form-text badge-warning rounded"></h4>
             <div class="form-row m-5">
                 <div class="col">
                     <label for="name">Brand name</label>

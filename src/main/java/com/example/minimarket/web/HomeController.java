@@ -31,7 +31,7 @@ public class HomeController {
 
        model.addAttribute("orderCount", this.userService.getCountAllUserOrders());
        model.addAttribute("getTotalPriceForAllOrders", this.userService.getTotalPriceForAllOrders());
-       model.addAttribute("getCardId", this.userService.getCartId());
+       model.addAttribute("getCardId", this.userService.getCurrentCartId());
        if(!model.containsAttribute("productGetBuyQuantity")){
            model.addAttribute("productGetBuyQuantity", new ProductGetBuyQuantity());
        }

@@ -10,6 +10,7 @@ import com.example.minimarket.model.services.UserLoginServiceModel;
 import com.example.minimarket.model.services.UserRegisterServiceModel;
 import com.example.minimarket.model.services.UserServiceModel;
 import com.example.minimarket.model.views.OrderViewModel;
+import com.example.minimarket.model.views.UserViewModel;
 import com.example.minimarket.repositories.UserRepository;
 import com.example.minimarket.services.CartService;
 import com.example.minimarket.services.OrderService;
@@ -26,11 +27,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -72,6 +73,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserRegisterServiceModel findByUsernameAndEmail(String username, String email) {
         return  this.mapper.map(this.userRepository.findByUsernameAndEmail(username, email), UserRegisterServiceModel.class);
+    }
+
+    @Override
+    public List<UserEntity> findAllOrderByUsername() {
+        return this.userRepository.findAllUsersOrderByUsername();
     }
 
     @Override
@@ -129,7 +135,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int getCountAllUserOrders(){
-        return this.orderService.findAllOrderByIsPaidAndCartId(false, getCartId()).size();
+        return this.orderService.findAllOrderByIsOrderedAndCartId(false, getCurrentCartId()).size();
     }
 
     @Override
@@ -138,7 +144,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Long getCartId(){
+    public Long getCurrentCartId(){
         return getCurrentUser().getCart().getId();
     }
 
@@ -158,9 +164,36 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void setUserRole(String username, String roleName) {
+        if(getCurrentUser().getRole().getUserRole().name().equals("ADMIN")){
         UserEntity userEntity = this.userRepository.findByUsername(username);
         UserRoleEntity userRoleEntity = this.userRoleService.findByUserRole(UserRole.valueOf(roleName));
         this.userRepository.setUserRole(userRoleEntity, userEntity.getId());
+        }
+    }
+
+    @Override
+    public void setUserPassword(String password, Long id) {
+        this.userRepository.setUserPassword(password, id);
+    }
+
+    @Override
+    public void changePassword(String password) {
+        setUserPassword(this.passwordEncoder.encode(password), getCurrentUser().getId());
+    }
+
+    @Override
+    public boolean passwordMatches(String password, String confirmPassword) {
+       return password.equals(confirmPassword);
+    }
+
+    @Override
+    public void changeEmail(String email) {
+
+        setUserEmail(email, getCurrentUser().getId());
+    }
+
+    public void setUserEmail(String email, Long id) {
+        this.userRepository.setUserEmail(email, id);
     }
 
     @Override
@@ -175,8 +208,30 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<OrderViewModel> getAllUserOrderByIsPaid(Boolean isPaid, Long id){
-       return this.orderService.findAllOrderByIsPaidAndCartId(isPaid, id);
+    public List<OrderViewModel> getAllUserOrderByIsOrdered(Boolean isPaid, Long id){
+       return this.orderService.findAllOrderByIsOrderedAndCartId(isPaid, id);
+    }
+
+    @Override
+    public List<UserViewModel> getAllUsers(){
+        List<UserViewModel> users = new ArrayList<>();
+        for(UserEntity user: findAllOrderByUsername()){
+            UserViewModel userViewModel = this.mapper.map(user, UserViewModel.class);
+            userViewModel.setRole(user.getRole().getUserRole().name());
+            users.add(userViewModel);
+        }
+        return users;
+    }
+
+    @Override
+    public void deleteUserByUsername(String username){
+        if(getCurrentUser().getRole().getUserRole().name().equals("ADMIN") && !getCurrentUser().getUsername().equals(username)){
+        CartEntity cart = this.userRepository.findByUsername(username).getCart();
+        if(cart.getAddress() != null){
+            this.cartService.setAddress(null, cart.getId());
+        }
+        this.cartService.deleteCartById(cart.getId());
+        }
     }
 
 }

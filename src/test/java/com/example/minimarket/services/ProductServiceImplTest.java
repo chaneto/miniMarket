@@ -70,6 +70,8 @@ public class ProductServiceImplTest {
         productEntity1.setOnPromotion(true);
         productEntity1.setCategory(categoryEntity);
         productEntity1.setBrand(brandEntity);
+        productEntity1.setDiscountRate(BigDecimal.valueOf(50));
+        productEntity1.setPromotionPrice(BigDecimal.valueOf(5));
 
         productEntity3 = new ProductEntity();
         productEntity3.setName("TPU");
@@ -80,6 +82,8 @@ public class ProductServiceImplTest {
         productEntity3.setOnPromotion(false);
         productEntity3.setCategory(categoryEntity);
         productEntity3.setBrand(brandEntity);
+        productEntity3.setDiscountRate(BigDecimal.valueOf(20));
+        productEntity3.setPromotionPrice(BigDecimal.valueOf(20));
 
         this.productRepository.save(productEntity1);
         this.productRepository.save(productEntity3);
@@ -144,7 +148,7 @@ public class ProductServiceImplTest {
 
     @Test
     public void testFindAllOrderByQuantity(){
-        List<ProductViewModel> products = this.productService.findAllOrderByQuantity();
+        List<ProductViewModel> products = this.productService.findAllProductsOrderByQuantity();
         Assert.assertEquals(2, this.productRepository.count());
         Assert.assertEquals(products.get(0).getName(), "case");
     }
@@ -207,19 +211,35 @@ public class ProductServiceImplTest {
     }
 
     @Test
-    public void testUpdatePricePromotionProduct(){
-        BigDecimal oldPrice = productEntity1.getPrice();
-        BigDecimal newPrice = oldPrice.divide(BigDecimal.valueOf(2));
-        this.productService.updatePriceTop4ByQuantityProduct();
-        Assert.assertEquals(newPrice.stripTrailingZeros(), this.productService.findByName("case").getPrice().stripTrailingZeros());
+    public void testUpdatePromotionProduct(){
+        ProductViewModel product = this.productService.findByName("case");
+        BigDecimal oldPrice = product.getPromotionPrice();
+        BigDecimal discountRate = (BigDecimal.valueOf(0));
+        this.productService.setPromotionPriceAndDiscountRate(discountRate, "case");
+        Assert.assertEquals(this.productService.findByName("case").getPrice().stripTrailingZeros()
+                , this.productService.findByName("case").getPromotionPrice().stripTrailingZeros());
     }
 
     @Test
-    public void testUpdatePromotionProduct(){
-        BigDecimal oldPrice = productEntity1.getPrice();
-        BigDecimal newPrice = oldPrice.multiply(BigDecimal.valueOf(2));
-        this.productService.updateTop4ByQuantityProduct();
-        Assert.assertEquals(newPrice.stripTrailingZeros(), this.productService.findByName("case").getPrice().stripTrailingZeros());
+    public void testFindAllProductsOrderByPriceDesc(){
+        Assert.assertEquals("TPU", this.productService.findAllProductsOrderByPriceDesc().get(0).getName());
+    }
+
+    @Test
+    public void testFindAllProductsOrderByPrice(){
+        Assert.assertEquals("case", this.productService.findAllProductsOrderByPrice().get(0).getName());
+    }
+
+    @Test
+    public void testFindAllProductsOrderByQuantityDesc(){
+        Assert.assertEquals(2,
+                this.productService.findAllProductsOrderByQuantityDesc().size());
+    }
+
+
+    @Test
+    public void testGetAllOrderByID(){
+        Assert.assertEquals(2, this.productService.getAllOrderByID().size());
     }
 
     @Test
@@ -248,14 +268,4 @@ public class ProductServiceImplTest {
         Assert.assertEquals(1, products.size());
     }
 
-    @Test
-
-    public void testRefreshPromotionProduct(){
-
-        List<ProductEntity> products = this.productService.findAllByIsOnPromotionIsTrue();
-        Assert.assertEquals(1, products.size());
-        this.productService.refreshPromotionProduct();
-         products = this.productService.findAllByIsOnPromotionIsTrue();
-        Assert.assertEquals(2, products.size());
-    }
 }

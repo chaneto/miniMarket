@@ -12,8 +12,7 @@
 
     <h3 th:if="${successfullyChangedPrice}" th:text="|The price has been changed successfully.|" class="form-text bg-success rounded"></h3>
     <h3 th:if="${deleteProduct}" th:text="|The product: ${productName} has been removed successfully.|" class="form-text bg-success rounded"></h3>
-    <div>
-        <div class="row mt-5" id="productList">
+    <div class="row mt-5" id="productsList">
             <div th:each="p : ${allProducts}" th:object="${p}" class="col-md-3">
                 <div class="card mb-4 box-shadow">
                     <div class="product-image">
@@ -37,7 +36,7 @@
                         <div sec:authorize="isAuthenticated()"  id="quantity-form">
                             <div class="col">
                                <!-- <label for="quantity">Select Quantity</label> -->
-                                <input th:field="*{quantity}" th:errorclass="is-invalid" required min="0" name="quantity" id="quantity" type="number" class="form-control" placeholder="Select Quantity"></input>
+                                <input th:field="*{quantity}" th:errorclass="is-invalid" required min="1" name="quantity" id="quantity-all-products" type="number" class="form-control" placeholder="Select Quantity"></input>
                                 <small th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}"  id="quantityError" class="invalid-feedback form-text bg-danger rounded"></small>
                             </div>
                         </div>
@@ -58,7 +57,6 @@
                     </div>
                 </div>
             </div>
-    </div>
 
 </main>
 

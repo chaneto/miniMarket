@@ -5,6 +5,7 @@
 <header>
    <!-- <nav th:replace="fragments/fragment :: nav"></nav> -->
 </header>
+
 <main class="p-5 align-content-center bg-blur">
 
     <div class="container-fluid">
@@ -35,55 +36,76 @@
                                 Contacts
                             </a>
                         </li>
+                        <form th:action="@{/users/delete}" th:method="POST" th:object="${userDeleteBindingModel}"
+                              class="text-light" id="user-menu-delete">
+                            <div class="form-row m-5">
+                                <div class="col">
+                                    <label for="datalist">Select Username</label>
+                                    <input list="datalist" name="username" required min="3" max="20" type="text"
+                                           id="inputUsername"
+                                           class="form-control"
+                                           aria-describedby="usernameHelpInline">
+                                    <small th:if="${#fields.hasErrors('username')}" th:errors="*{username}" id="usernameError"
+                                           class="invalid-feedback text-light form-text bg-danger rounded">Username length must be between 3 and 20 characters!!!</small>
+                                    <small th:if="${userNotExists}" class="text-light form-text bg-danger rounded">Such a user does not exist!!!</small>
+                                    <datalist th:field="*{username}" th:errorclass="is-invalid" required size="1" name="username" style="width:100px;" id="datalist" class="custom-select">
+                                        <option th:each="a : ${allUsernames}" th:text="${a}" th:value="${a}"></option>
+                                    </datalist>
+                                    <small th:if="${#fields.hasErrors('username')}" th:errors="*{username}" id="usernameError1" class="form-text bg-danger rounded">You must select username!</small>
+                                </div>
+                            </div>
+                            <div sec:authorize="hasRole('ROLE_ADMIN')" class="d-flex justify-content-center mt-4">
+                                <button class="btn btn-primary btn-block w-50" type="submit">Delete User</button>
+                            </div>
+                        </form>
                     </ul>
-            </nav>
 
+            </nav>
             <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
-                <h2 class="text-light">Products Settings</h2>
+                <h3 th:if="${successfullyDeleteUser}" th:text="|${userDeleteBindingModel.username} has been deleted successfully.|" class="form-text badge-warning rounded"></h3>
+                <h2 class="text-light">All Users</h2>
                 <div class="table-responsive text-light">
-                    <h3 th:if="${successfullyAddedQuantity}" th:text="|Successfully added quantity ${productQuantity} to the product ${productName}|" class="form-text bg-success rounded"></h3>
-                    <h3 th:if="${successfullyChangedPrice}" th:text="|The price of the product: ${productName} has been changed successfully.|" class="form-text bg-success rounded"></h3>
-                    <h3 th:if="${successfullyChangedDiscountRate}" th:text="|Successfully change discount rate.|" class="form-text bg-success rounded"></h3>
                     <table class="table table-striped table-sm">
                         <thead>
                         <tr>
-                            <th>Image</th>
                             <th>ID</th>
-                            <th>Product Nane</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>IsOnPromotion</th>
-
-
+                            <th>username</th>
+                            <th>First name</th>
+                            <th>Last name</th>
+                            <th>Email</th>
+                            <th>Phone number</th>
+                            <th>Role</th>
+                            <th></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="p : ${productsQuantities}" th:object="${p}">
-                            <td><img th:src="*{image}" id="image-product-settings" class="card-img-top" alt="Thumbnail [100%x225]" data-holder-rendered="true" style="height: 74px; width: 62px; display: block;"></td>
+                        <tr th:each="u : ${allUsers}" th:object="${u}">
                             <td>
                                 <p th:text="*{id}" class="circle"></p>
                             </td>
                             <td>
-                                <textarea id="name-product-settings" rows="3" cols="50" th:text="*{name}"></textarea>
+                                <p disabled th:text="*{username}"></p>
                             </td>
                             <td>
-                                <p th:text="*{quantity}" class="circle"></p>
-                                <a th:href="@{'/products/addQuantity/{name}'(name = *{name})}" id="add-quantity" type="button" class="btn btn-sm btn-outline-secondary text-white">Add Quantity</a>
+                                <p th:text="*{firstName}"></p>
                             </td>
                             <td>
-                                <p th:if="*{price} != *{promotionPrice}" th:text="|*{price} / *{promotionPrice}|" class="circle"></p>
-                                <p th:if="*{price} == *{promotionPrice}" th:text="|*{price}|" class="circle"></p>
-                                <div sec:authorize="hasRole('ROLE_ADMIN')" class="btn-group">
-                                    <a th:href="@{'/products/setProductPrice/{id}'(id = *{id})}" id="set-price" type="button" class="btn btn-sm btn-outline-secondary text-white">Set Price</a>
-                                </div>
+                                <p th:text="*{lastName}"></p>
                             </td>
                             <td>
-                                <p th:text="|*{discountRate}%|" class="circle"></p>
-                                <div sec:authorize="hasRole('ROLE_ADMIN')" class="btn-group">
-                                    <a th:href="@{'/products/setDiscountRate/{id}'(id = *{id})}" id="set-discount-rate" type="button" class="btn btn-sm btn-outline-secondary text-white">Set Promotion</a>
-                                </div>
+                                <p th:text="*{email}"></p>
                             </td>
-                        </tr>
+                            <td>
+                                <p th:text="*{phoneNumber}"></p>
+                            </td>
+                            <td>
+                                <p th:text="*{role}"></p>
+                            </td>
+                              <td>
+                               <a sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{'/users/delete/{username}'(username = *{username})}" id="delete-user" type="button" class="text-white">Delete User</a>
+                           </td>
+
+                           </tr>
                         </tbody>
                     </table>
                 </div>

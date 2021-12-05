@@ -79,17 +79,19 @@ public class CategoryController {
             redirectAttributes.addFlashAttribute("categoryName", name);
             return "redirect:" + referer;
         } else {
+            if(this.userService.getCurrentUser().getRole().getUserRole().name().equals("ADMIN")){
             this.categoryService.deleteByName(name);
             redirectAttributes.addFlashAttribute("successfullyDeleted", true);
             redirectAttributes.addFlashAttribute("categoryName", name);
+            }
             return "redirect:" + referer;
         }
     }
 
     @GetMapping("/allByCategory/{name}")
     public String getAllProductsByCategory(@PathVariable String name, Model model){
-        model.addAttribute("getAllProductsByCategory", this.categoryService.getAllProducts(name));
-        return "all-products-by-category";
+        model.addAttribute("allProducts", this.categoryService.getAllProducts(name));
+        return "all-products";
     }
 
     @ModelAttribute("productGetBuyQuantity")
@@ -125,7 +127,7 @@ public class CategoryController {
     @ModelAttribute("getCardId")
     public Long getCardId() {
         if(isAuthenticated()){
-            return this.userService.getCartId();
+            return this.userService.getCurrentCartId();
         }
         return Long.valueOf(0);
     }

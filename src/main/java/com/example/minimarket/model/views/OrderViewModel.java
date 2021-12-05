@@ -1,6 +1,7 @@
 package com.example.minimarket.model.views;
 
 import com.example.minimarket.model.entities.AddressEntity;
+import com.example.minimarket.model.entities.CartEntity;
 import com.example.minimarket.model.entities.CourierEntity;
 import com.example.minimarket.model.entities.ProductEntity;
 
@@ -17,6 +18,10 @@ public class OrderViewModel {
     private CourierEntity courier;
     private AddressEntity address;
     private boolean isPaid;
+    private CartEntity cart;
+    private boolean isDelivered;
+    private boolean isOrdered;
+    private String username;
 
     public OrderViewModel() {
     }
@@ -83,5 +88,37 @@ public class OrderViewModel {
 
     public void setPaid(boolean paid) {
         isPaid = paid;
+    }
+
+    public CartEntity getCart() {
+        return cart;
+    }
+
+    public void setCart(CartEntity cart) {
+        this.cart = cart;
+    }
+
+    public boolean isDelivered() {
+        return isDelivered;
+    }
+
+    public void setDelivered(boolean delivered) {
+        isDelivered = delivered;
+    }
+
+    public boolean isOrdered() {
+        return isOrdered;
+    }
+
+    public void setOrdered(boolean ordered) {
+        isOrdered = ordered;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

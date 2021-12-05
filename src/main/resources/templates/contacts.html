@@ -1,8 +1,3 @@
-<!--<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>-->
-
-
 
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
@@ -85,83 +80,6 @@ section:first-child {
   display: inline-block;
 }
 
-
-
-/*POPULAR FAQS*/
-
-.cf-contact-faqs-box-title {
-  font-size: 16px;
-  text-transform: uppercase;
-}
-
-.cf-contact-faqs-box-title h2 {
-  font-size: 16px;
-  margin-top: 0;
-  margin-bottom: 1em;
-}
-
-.cf-contact-faqs-box-title a.faq-link {
-  float: right;
-}
-
-.cf-contact-faqs-info {
-  width: 100%;
-  padding: 0;
-  margin: 0;
-}
-
-.tab {
-  position: relative;
-  margin-bottom: 1px;
-  width: 100%;
-  color: #000;
-  overflow: hidden;
-}
-
-.cf-contact-faqs-info input {
-  position: absolute;
-  opacity: 0;
-  z-index: -1;
-}
-
-.cf-contact-faqs-info label {
-  position: relative;
-  display: block;
-  padding: 1em 0 0.5em;
-  border-top: 1px solid #9B9B9B;
-  font-weight: bold;
-  line-height: 3;
-  cursor: pointer;
-  text-decoration: none;
-}
-
-.cf-contact-faqs-info label:last-child {
-  border-bottom: 1px solid #9B9B9B;
-}
-
-.cf-contact-faqs-info label span {
-  top: 22px;
-  position: absolute;
-  right: 6px;
-}
-
-.tab-content {
-  max-height: 0;
-  overflow: hidden;
-  -webkit-transition: max-height .350s;
-  -o-transition: max-height .35s;
-  transition: max-height .35s;
-}
-
-.tab-content > div {
-  padding: 2em 0;
-}
-
-/* :checked*/
-.cf-contact-faqs-info input:checked ~ .tab-content {
-  max-height: 30em;
-  border-top: 1px solid #9B9B9B;
-}
     </style>
     <script>
   window.console = window.console || function(t) {};
@@ -209,7 +127,7 @@ section:first-child {
                                     <div class="icon-location cf-contact-icon-box">
                                         <img height="48px" src="https://quantscience.rbind.io/project/pinsearch/featured.png" alt="icon chat with agent" />
                                     </div>
-                                    <div class="cf-contact-liveChat-title">
+                                    <div class="cf-contact-liveChat-title" style="height:47px;">
                                         <h2>Main Office:</h2>
                                     </div>
                                     <div class="cf-contact-breaker-line"></div>
@@ -242,7 +160,7 @@ section:first-child {
                                     <div class="cf-contact-icon-box">
                                         <img src="https://www.cityfurniture.com/media/wysiwyg/contact-us/email-us-desktop.png" alt="icon Email Us" />
                                     </div>
-                                    <div class="cf-contact-liveChat-title">
+                                    <div class="cf-contact-liveChat-title" style="height:55px;">
                                         <h2>Email</h2>
                                     </div>
                                     <div class="cf-contact-breaker-line"></div>
@@ -257,7 +175,7 @@ section:first-child {
             <section id="cf-contact-info">
                 <div class="row">
                     <div class="col-md-7 col-sm-7 col-xs-6">
-                        <a href="https://www.google.com/maps/place/%D0%B1%D1%83%D0%BB.+%E2%80%9E%D0%9A%D0%BD%D1%8F%D0%B7+%D0%90%D0%BB%D0%B5%D0%BA%D1%81%D0%B0%D0%BD%D0%B4%D1%8A%D1%80+%D0%91%D0%B0%D1%82%D0%B5%D0%BD%D0%B1%D0%B5%D1%80%D0%B3%E2%80%9C+5,+6003+%D0%BA%D0%B2.+%D0%A1%D0%BB%D0%B0%D0%B2%D0%B5%D0%B9%D0%BA%D0%BE%D0%B2,+%D0%A1%D1%82%D0%B0%D1%80%D0%B0+%D0%97%D0%B0%D0%B3%D0%BE%D1%80%D0%B0/@42.4223833,25.6145307,17z/data=!3m1!4b1!4m5!3m4!1s0x40a869855f67b375:0xfee6f1a100226011!8m2!3d42.4223794!4d25.6167194">
+                        <a href="https://www.google.com/maps/place/%D1%83%D0%BB.+%E2%80%9E%D0%A5%D0%B0%D0%B4%D0%B6%D0%B8+%D0%94%D0%B8%D0%BC%D0%B8%D1%82%D1%8A%D1%80+%D0%90%D1%81%D0%B5%D0%BD%D0%BE%D0%B2%E2%80%9C+87,+6000+%D0%A1%D1%82%D0%B0%D1%80%D0%B0+%D0%97%D0%B0%D0%B3%D0%BE%D1%80%D0%B0+%D0%A6%D0%B5%D0%BD%D1%82%D1%8A%D1%80,+%D0%A1%D1%82%D0%B0%D1%80%D0%B0+%D0%97%D0%B0%D0%B3%D0%BE%D1%80%D0%B0/@42.424748,25.6223224,17z/data=!3m1!4b1!4m5!3m4!1s0x40a8699bbfb0714b:0xa52c014243162a67!8m2!3d42.4247441!4d25.6245111">
                             <div class="cf-contact-info-box">
                                 <img src="https://www.cityfurniture.com/media/wysiwyg/contact-us/store_black_24px-desktop.png" alt="icon Store Locations and Hours" />
                                 <div>See Office Locations</div>

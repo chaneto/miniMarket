@@ -14,25 +14,27 @@
             <div  class="col-md-3">
                 <div class="card mb-4 box-shadow">
                     <img src="/img/cart.png"  class="card-img-top" alt="Thumbnail [100%x225]" data-holder-rendered="true" style="height: 225px; width: 100%; display: block;">
-                    <div th:each="f : ${cart}" th:object="${f}" class="card-body">
+                    <div th:each="c : ${cart}" th:object="${c}" class="card-body">
                         <p th:text="${#lists.size(allOrders)} > 0 ? 'Products:' : 'NO PRODUCT'" class="d-inline-block mb-2 text-primary">Products:</p>
                         <br th:if="${#lists.size(allOrders)} <= 0">
-                        <div th:each="p : ${allOrders}" th:object="${p}" class="text-center">
+                        <div th:each="o : ${allOrders}" th:object="${o}" class="text-center">
                             <a th:href="@{'/orders/delete/{id}'(id = *{id})}" class="delete-order"><img src="/img/delete.png" width="20px" alt="Delete picture"></a>
-                            <p th:text="|*{product.name}: *{productCount} pieces|"></p>
-                            <p th:text="|Price: *{totalPrice}|" class="card-text border-bottom"></p>
+                            <p th:if="${#strings.length(o.product.name) <= 120}" th:text="${o.product.name}" class="card-text"></p>
+                            <p th:if="${#strings.length(o.product.name) > 120}" th:text="|${#strings.substring(o.product.name,0,117)}...|" class="card-text"></p>
+                            <p th:text="|*{productCount} pieces|" class="card-text"></p>
+                            <p th:text="|Price: *{totalPrice}|" class="d-inline-block mb-2 text-primary border-bottom"></p>
                         </div>
                         <p class="d-inline-block mb-2 text-primary">Courier:</p>
                         <p th:text="|*{courier.name} - *{courier.shippingAmount}.|" class="card-text border-bottom "></p>
-                        <p class="d-inline-block mb-2 text-primary">Shipping Address:</p>
+                      <p class="d-inline-block mb-2 text-primary">Shipping Address:</p>
                         <p th:text="|*{address.zipCode}  *{address.country} *{address.city} *{address.streetNumber}.|" class="card-text border-bottom "></p>
                         <h3 th:text="|Total Price: *{totalPrice}|" class="d-inline-block mb-2 text-primary"></h3>
                         </div>
-                    <div class="d-flex justify-content-center mt-4">
+                    <div th:if="${#lists.size(allOrders)} > 0" class="d-flex justify-content-center mt-4">
                         <a th:href="@{/carts/buy}" type="button" class="btn btn-primary btn-block w-50">Buy</a>
                     </div>
                     <div class="btn-group">
-                        <a th:href="@{'/carts/delete/{id}'(id = ${cart.id})}" style="color: blue" type="button" class="btn btn-sm btn-outline-secondary">Delete</a>
+                        <a th:href="@{'/carts/delete/{id}'(id = ${cart.id})}" style="color: blue" type="button" class="btn btn-sm btn-outline-secondary">Delete Cart</a>
                     </div>
                     </div>
                 </div>

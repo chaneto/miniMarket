@@ -79,6 +79,8 @@ public class ProductControllerTest {
         productEntity1.setOnPromotion(true);
         productEntity1.setCategory(categoryEntity);
         productEntity1.setBrand(brandEntity);
+        productEntity1.setPromotionPrice(BigDecimal.valueOf(33));
+        productEntity1.setDiscountRate(BigDecimal.valueOf(22));
         this.productRepository.save(productEntity1);
 
         cartEntity = new CartEntity();
@@ -91,6 +93,8 @@ public class ProductControllerTest {
         orderEntity.setCart(cartEntity);
         orderEntity.setTotalPrice(BigDecimal.valueOf(99));
         orderEntity.setDateTime(LocalDateTime.now());
+        orderEntity.setOrdered(true);
+        orderEntity.setUsername("admin");
         List<OrderEntity> orders = List.of(orderEntity);
         cartEntity.setOrders(orders);
         this.orderRepository.save(orderEntity);
@@ -216,7 +220,8 @@ public class ProductControllerTest {
     public void testSetPriceConfirm() throws Exception {
         authenticate();
         this.mockMvc
-                .perform(post("/products/setProductPrice/1")
+                .perform(post("/products/setProductPrice")
+                        .param("name", "case")
                 .param("newPrice", "999")
                 .with(csrf()))
                 .andExpect(status().is3xxRedirection());
@@ -226,7 +231,118 @@ public class ProductControllerTest {
     public void testSetPriceConfirmWithInvalidPrice() throws Exception {
         authenticate();
         this.mockMvc
-                .perform(post("/products/setProductPrice/1")
+                .perform(post("/products/setProductPrice")
+                        .param("name", "case")
+                        .param("newPrice", "null")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection());
+    }
+
+
+    @Test
+    @WithMockUser
+    public void testSetDiscountRateConfirm() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(post("/products/setDiscountRate")
+                        .param("name", "case")
+                        .param("newPrice", "999")
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    @WithMockUser
+    public void testSetDiscountRate() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/products/setDiscountRate/1"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("set-discount-rate"))
+                .andExpect(model().attributeExists("productSetPriceBindingModel"))
+                .andExpect(model().attributeExists("successfullyChangedPrice"));
+    }
+
+    @Test
+    public void testSeeProductsQuantities() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/products/productsMenu"))
+                .andExpect(view().name("products-menu"))
+                .andExpect(model().attributeExists("allProducts"));
+    }
+
+    @Test
+    public void testAllProductsOrderByQuantities() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/products/allProductsOrderByQuantity"))
+                .andExpect(view().name("products-menu"))
+                .andExpect(model().attributeExists("allProducts"));
+    }
+
+    @Test
+    public void testAllProductsOrderByQuantitiesDesk() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/products/allProductsOrderByQuantityDesc"))
+                .andExpect(view().name("products-menu"))
+                .andExpect(model().attributeExists("allProducts"));
+    }
+
+    @Test
+    public void testAllProductsOrderByPrice() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/products/allProductsOrderByPrice"))
+                .andExpect(view().name("products-menu"))
+                .andExpect(model().attributeExists("allProducts"));
+    }
+
+    @Test
+    public void testAllProductsOrderByPriceDesc() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/products/allProductsOrderByPriceDesc"))
+                .andExpect(view().name("products-menu"))
+                .andExpect(model().attributeExists("allProducts"));
+    }
+
+    @Test
+    public void testSeeAllProductsOrderByID() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/products/allProductsOrderByID"))
+                .andExpect(view().name("products-menu"))
+                .andExpect(model().attributeExists("allProducts"));
+    }
+
+    @Test
+    public void testAllProductsOrderByPrice1() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/products/allProductsOrderByPrice1...9"))
+                .andExpect(view().name("all-products"))
+                .andExpect(model().attributeExists("allProducts"));
+    }
+
+    @Test
+    public void testAllProductsOrderByPriceDesc1() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/products/allProductsOrderByPrice9...1"))
+                .andExpect(view().name("all-products"))
+                .andExpect(model().attributeExists("allProducts"));
+    }
+
+
+    @Test
+    @WithMockUser
+    public void testSetDiscountRateConfirmWithInvalidData() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(post("/products/setDiscountRate")
+                        .param("name", "")
                         .param("newPrice", "null")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection());
@@ -252,7 +368,7 @@ public class ProductControllerTest {
                 .param("quantity", "999")
                 .with(csrf()))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(view().name("redirect:/products/productsQuantity"));
+                .andExpect(view().name("redirect:/products/productsMenu"));
     }
 
     @Test
@@ -320,7 +436,6 @@ public class ProductControllerTest {
         authenticate();
         this.mockMvc
                 .perform(get("/products/productsQuantity"))
-                .andExpect(status().isOk())
                 .andExpect(view().name("products-quantities"))
                 .andExpect(model().attributeExists("productsQuantities"));
     }
@@ -337,7 +452,9 @@ public class ProductControllerTest {
         userRegisterServiceModel.setPassword("12345");
         userRegisterServiceModel.setConfirmPassword("12345");
         userRegisterServiceModel.setPhoneNumber("123456789");
-        this.userService.registerUser(userRegisterServiceModel);
+        if(!this.userService.userWithUsernameIsExists("admin_80@abv.bg") && !this.userService.userWithUsernameIsExists("admin")){
+            this.userService.registerUser(userRegisterServiceModel);
+        }
         UserLoginServiceModel userLoginServiceModel = new UserLoginServiceModel();
         userLoginServiceModel.setUsername("admin");
         userLoginServiceModel.setPassword("12345");

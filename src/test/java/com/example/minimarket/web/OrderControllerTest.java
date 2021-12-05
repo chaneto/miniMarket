@@ -58,6 +58,8 @@ public class OrderControllerTest {
         productEntity.setQuantity(BigDecimal.valueOf(20));
         productEntity.setImage("https://s13emagst.akamaized.net/products/33285/33284232/images/res_14a6987ed029429aaaebc06b2b9e2ca1.jpg");
         productEntity.setOnPromotion(true);
+        productEntity.setDiscountRate(BigDecimal.valueOf(33));
+        productEntity.setPromotionPrice(BigDecimal.valueOf(33));
         this.productRepository.save(productEntity);
 
          orderEntity = new OrderEntity();
@@ -65,6 +67,9 @@ public class OrderControllerTest {
          orderEntity.setDateTime(LocalDateTime.now());
          orderEntity.setPaid(true);
          orderEntity.setProduct(productEntity);
+         orderEntity.setOrdered(true);
+         orderEntity.setDelivered(true);
+         orderEntity.setUsername("admin");
          this.orderRepository.save(orderEntity);
 
     }
@@ -75,6 +80,39 @@ public class OrderControllerTest {
                .perform(get("/orders/delete/1")
                        .with(csrf()))
                .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    public void testGetAllIsNotDeliveredOrders() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/orders/allNotDelivered")
+                        .with(csrf()))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(model().attributeExists("orders"))
+        .andExpect(view().name("all-orders"));
+    }
+
+    @Test
+    public void testGetAllDeliveredOrders() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/orders/allDelivered")
+                        .with(csrf()))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(model().attributeExists("orders"))
+                .andExpect(view().name("all-orders"));
+    }
+
+    @Test
+    public void testGetAll() throws Exception {
+        authenticate();
+        this.mockMvc
+                .perform(get("/orders/all")
+                        .with(csrf()))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(model().attributeExists("orders"))
+                .andExpect(view().name("all-orders"));
     }
     
     @Test
@@ -100,7 +138,9 @@ public class OrderControllerTest {
         userRegisterServiceModel.setPassword("12345");
         userRegisterServiceModel.setConfirmPassword("12345");
         userRegisterServiceModel.setPhoneNumber("123456789");
-        this.userService.registerUser(userRegisterServiceModel);
+        if(!this.userService.userWithUsernameIsExists("admin_80@abv.bg") && !this.userService.userWithUsernameIsExists("admin")){
+            this.userService.registerUser(userRegisterServiceModel);
+        }
         UserLoginServiceModel userLoginServiceModel = new UserLoginServiceModel();
         userLoginServiceModel.setUsername("admin");
         userLoginServiceModel.setPassword("12345");

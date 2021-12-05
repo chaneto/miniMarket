@@ -57,20 +57,17 @@ public class CarouselServiceImplTest {
 
     @Test
     public void testGetImages(){
-        Assert.assertEquals(images.size(), this.carouselService.getImages().size());
-    }
-
-    @Test
-    public void testSetImages(){
-        List<String> newImages = List.of("image1", "image2", "image3", "image4", "image5");
-        Assert.assertEquals(3, this.carouselService.getImages().size());
-        this.carouselService.setImages(newImages);
         Assert.assertEquals(5, this.carouselService.getImages().size());
     }
 
     @Test
-    public void testGetLogger(){
-        Assert.assertEquals(LOGGER, this.carouselService.getLOGGER());
+    public void testSetImages(){
+        List<String> newImages = List.of("image1", "image2", "image3", "image4", "image5", "image6");
+        List<String> oldImages = this.carouselService.getImages();
+        Assert.assertEquals(5, this.carouselService.getImages().size());
+        this.carouselService.setImages(newImages);
+        Assert.assertEquals(6, this.carouselService.getImages().size());
+        this.carouselService.setImages(oldImages);
     }
 
     @Test

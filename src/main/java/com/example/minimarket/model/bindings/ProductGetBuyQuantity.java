@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 public class ProductGetBuyQuantity {
 
     @NotNull(message = "Quantity cannot be null!!!")
-    @DecimalMin(value = "0", message = "Тhe quantity cannot be a negative value!!!")
+    @DecimalMin(value = "1", message = "Тhe quantity cannot be a negative value!!!")
     private BigDecimal quantity;
 
     public ProductGetBuyQuantity() {

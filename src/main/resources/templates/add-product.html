@@ -7,10 +7,10 @@
 </header>
 <main class="p-5 bg-blur text-center">
     <h1 class="text-light border-bottom">Add product</h1>
+
     <div class="d-flex justify-content-center">
-        <form th:action="@{/products/add}" th:method="POST" th:object="${productAddBindingModel}"
-              class="text-light">
-            <h4 th:if="${successfulProductAdded}" th:text="|Successful Added Product: *{name}|" class="form-text bg-success rounded"></h4>
+        <form th:action="@{/products/add}" th:method="POST" th:object="${productAddBindingModel}" class="text-light">
+            <h4 th:if="${successfulProductAdded}" th:text="|Successful Added Product: ${productAddBindingModel.name}|" class="form-text badge-warning rounded"></h4>
             <div class="form-row m-5">
                 <div class="col">
                     <label for="inputName">Product name</label>
@@ -40,15 +40,17 @@
                     <small th:if="${#fields.hasErrors('quantity')}" th:errors="*{quantity}" id="quantityError" class="form-text bg-danger rounded"></small>
                 </div>
             </div>
-            <div class="col">
+            <div class="form-row m-5">
+              <div class="col">
                 <label for="image">Image</label>
                 <input th:field="*{image}" th:errorclass="is-invalid" required minlength="3" name="image" id="image" type="text" class="form-control" placeholder="Image">
                 <small th:if="${#fields.hasErrors('image')}" th:errors="*{image}" id="imageError" class="form-text bg-danger rounded">Image url must be more than 5 characters</small>
+              </div>
             </div>
             <div class="form-row m-5">
                 <div class="col">
-                    <label for="brand">Brand</label>
-                    <select th:field="*{brand}" th:errorclass="is-invalid" required size="1" name="brand" id="brand" class="custom-select">
+                    <label for="brandd">Brand</label>
+                    <select th:field="*{brand}" th:errorclass="is-invalid" required size="1" id="brandd" name="brand" class="form-control">
                         <option value="" selected>Select Brand</option>
                         <option th:each="a : ${allBrands}" th:text="${a.name}" th:value="${a.name}"></option>
                     </select>
@@ -58,7 +60,7 @@
             <div class="form-row m-5">
                 <div class="col">
                     <label for="category">Category</label>
-                    <select th:field="*{category}" th:errorclass="is-invalid" required size="1" name="category" id="category" class="custom-select">
+                    <select th:field="*{category}" th:errorclass="is-invalid" required size="1" name="category" id="category" class="form-control">
                         <option value="" selected>Select Category</option>
                         <option th:each="a : ${allCategory}" th:text="${a}" th:value="${a}"></option>
                     </select>
