@@ -3,6 +3,7 @@ package com.example.minimarket.web;
 import com.example.minimarket.model.entities.*;
 import com.example.minimarket.model.services.UserLoginServiceModel;
 import com.example.minimarket.model.services.UserRegisterServiceModel;
+import com.example.minimarket.model.views.UserViewModel;
 import com.example.minimarket.repositories.*;
 import com.example.minimarket.services.UserService;
 import org.junit.Assert;
@@ -205,11 +206,13 @@ public class ProductControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void testSetPrice() throws Exception {
+       ProductEntity product = this.productRepository.findAll().get(0);
+       Long id = product.getId();
         authenticate();
         this.mockMvc
-                .perform(get("/products/setProductPrice/1"))
-                .andExpect(status().isOk())
+                .perform(get("/products/setProductPrice/id"))
                 .andExpect(view().name("set-product-price"))
         .andExpect(model().attributeExists("productSetPriceBindingModel"))
         .andExpect(model().attributeExists("successfullyChangedPrice"));

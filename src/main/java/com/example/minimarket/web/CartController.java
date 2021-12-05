@@ -7,6 +7,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
@@ -57,7 +59,8 @@ public class CartController {
     }
 
     @GetMapping("/buy")
-    public String buyCart(){
+    public String buyCart(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("buy", true);
         this.addressService.updateFinallyPaymentAmount();
         this.cartService.resetCart(this.userService.getCurrentCartId());
         return "redirect:/";

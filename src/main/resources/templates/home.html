@@ -5,13 +5,21 @@
 <header th:replace="fragments/fragment :: nav"></header>
 <main class="p-5 align-content-center bg-blur ">
 
+    <div th:if="${buy}" class="alert">
+        <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        Your order has been successfully accepted and will be submitted for processing.
+        Will be delivered within 3 working days !!!
+    </div>
+
     <div class="mt-5 col-sm-12 my-auto align-self-center">
         <input id="searchInput" class="form-control mr-sm-2 w-50" type="search"
                placeholder="Enter product or brand name" aria-label="Search">
     </div>
 
     <div class="row mt-5" id="productsList">
-    <h3 th:if="${successfullyChangedPrice}" th:text="|The price has been changed successfully.|" class="form-text bg-success rounded"></h3>
+        <div th:if="${successfullyChangedPrice}" th:text="|The price has been changed successfully.|" class="alert1">
+            <span class="closebtn1" onclick="this.parentElement.style.display='none';">&times;</span>
+        </div>
     <div class="col-sm-12 my-auto ">
         <div id="carouselExampleIndicators" class="carousel slide " data-ride="carousel">
             <ol class="carousel-indicators">
