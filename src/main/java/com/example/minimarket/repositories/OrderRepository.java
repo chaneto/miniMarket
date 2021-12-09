@@ -10,6 +10,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -63,6 +65,9 @@ public interface OrderRepository extends JpaRepository<OrderEntity, Long> {
     List<OrderEntity> findAllByCartIdOrderByDateTimeDesc(Long id);
 
     List<OrderEntity> findAllByAddressId(Long id);
+
+    @Query(value = "select o from OrderEntity as o where o.dateTime > :date and o.dateTime < :date1")
+    List<OrderEntity> findAllByDate(@Param("date") LocalDateTime date, @Param("date1") LocalDateTime date1);
 
     @Query("select o from OrderEntity as o order by o.dateTime desc")
     List<OrderEntity> findAllOrderByDateTime();

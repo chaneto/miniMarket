@@ -86,4 +86,11 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     @Query("select p from ProductEntity as p order by p.price desc")
     List<ProductEntity> findAllOrderByPriceDesc();
 
+    List<ProductEntity> findAllByIsLeastInterest(boolean isLeastInterest);
+
+    @Modifying
+    @Transactional
+    @Query("update ProductEntity as p set p.isLeastInterest = :isLeastInterest where p.id = :id")
+    void setIsLeastInterest(@Param("isLeastInterest") Boolean isLeastInterest, @Param("id") Long id);
+
 }

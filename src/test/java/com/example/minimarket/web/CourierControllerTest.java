@@ -5,7 +5,6 @@ import com.example.minimarket.model.services.UserLoginServiceModel;
 import com.example.minimarket.model.services.UserRegisterServiceModel;
 import com.example.minimarket.repositories.CourierRepository;
 import com.example.minimarket.services.UserService;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.runner.RunWith;

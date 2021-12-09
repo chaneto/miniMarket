@@ -37,6 +37,7 @@ public class CourierController {
 
     @GetMapping("/add")
     public String addCourier(Model model){
+
         if(!model.containsAttribute("courierAddBindingModel")){
             model.addAttribute("courierAddBindingModel", new CourierAddBindingModel());
             model.addAttribute("courierIsExists", false);
@@ -48,6 +49,7 @@ public class CourierController {
     public String addCourierConfirm(@Valid CourierAddBindingModel courierAddBindingModel,
                                     BindingResult bindingResult,
                                     RedirectAttributes redirectAttributes){
+
         if(bindingResult.hasErrors()){
             redirectAttributes.addFlashAttribute("courierAddBindingModel", courierAddBindingModel);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.courierAddBindingModel", bindingResult);
@@ -60,6 +62,7 @@ public class CourierController {
             redirectAttributes.addFlashAttribute("courierIsExists", true);
             return "redirect:add";
         }
+
         this.courierService.saveCourier(courierServiceModel);
         redirectAttributes.addFlashAttribute("courierAddBindingModel", courierAddBindingModel);
         redirectAttributes.addFlashAttribute("successfulAddedCourier", true);
@@ -74,7 +77,9 @@ public class CourierController {
 
     @GetMapping("/delete/{name}")
     public String allCourier(@PathVariable String name, HttpServletRequest request, RedirectAttributes redirectAttributes){
+
         String referer = request.getHeader("Referer");
+
         if(orderService.unpaidProductInCourier(name)){
             redirectAttributes.addFlashAttribute("unpaidProductInCourier", true);
             redirectAttributes.addFlashAttribute("courierName", name);
@@ -84,6 +89,7 @@ public class CourierController {
                 redirectAttributes.addFlashAttribute("courierName", name);
                 return "redirect:" + referer;
         }
+
             this.courierService.deleteByName(name);
             redirectAttributes.addFlashAttribute("successfullyDeleted", true);
             redirectAttributes.addFlashAttribute("courierName", name);
@@ -94,11 +100,13 @@ public class CourierController {
     public String view(@Valid CourierGetBindingModel courierGetBindingModel,
                        BindingResult bindingResult,
                        RedirectAttributes redirectAttributes){
+
         if(bindingResult.hasErrors()){
             redirectAttributes.addFlashAttribute("courierGetBindingModel", courierGetBindingModel);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.courierGetBindingModel", bindingResult);
             return "redirect:get";
         }
+
        this.courierService.setCourierCart(courierGetBindingModel.getName());
         return "redirect:/addresses/add";
     }

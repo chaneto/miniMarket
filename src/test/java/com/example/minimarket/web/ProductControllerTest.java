@@ -3,7 +3,6 @@ package com.example.minimarket.web;
 import com.example.minimarket.model.entities.*;
 import com.example.minimarket.model.services.UserLoginServiceModel;
 import com.example.minimarket.model.services.UserRegisterServiceModel;
-import com.example.minimarket.model.views.UserViewModel;
 import com.example.minimarket.repositories.*;
 import com.example.minimarket.services.UserService;
 import org.junit.Assert;
@@ -18,6 +17,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.servlet.ModelAndView;
+import static com.jayway.jsonpath.internal.path.PathCompiler.fail;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -45,6 +49,8 @@ public class ProductControllerTest {
     CartRepository cartRepository;
     @Autowired
     OrderRepository orderRepository;
+    @Autowired
+    private WebApplicationContext context;
 
     ProductEntity productEntity1;
     OrderEntity orderEntity;
@@ -54,6 +60,11 @@ public class ProductControllerTest {
 
     @Before
     public void setup(){
+
+        this.mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .build();
+
         this.categoryRepository.deleteAll();
         this.brandRepository.deleteAll();
         this.productRepository.deleteAll();
@@ -207,19 +218,6 @@ public class ProductControllerTest {
 
     @Test
     @WithMockUser
-    public void testSetPrice() throws Exception {
-       ProductEntity product = this.productRepository.findAll().get(0);
-       Long id = product.getId();
-        authenticate();
-        this.mockMvc
-                .perform(get("/products/setProductPrice/id"))
-                .andExpect(view().name("set-product-price"))
-        .andExpect(model().attributeExists("productSetPriceBindingModel"))
-        .andExpect(model().attributeExists("successfullyChangedPrice"));
-    }
-
-    @Test
-    @WithMockUser
     public void testSetPriceConfirm() throws Exception {
         authenticate();
         this.mockMvc
@@ -231,6 +229,7 @@ public class ProductControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void testSetPriceConfirmWithInvalidPrice() throws Exception {
         authenticate();
         this.mockMvc
@@ -252,18 +251,6 @@ public class ProductControllerTest {
                         .param("newPrice", "999")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection());
-    }
-
-    @Test
-    @WithMockUser
-    public void testSetDiscountRate() throws Exception {
-        authenticate();
-        this.mockMvc
-                .perform(get("/products/setDiscountRate/1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("set-discount-rate"))
-                .andExpect(model().attributeExists("productSetPriceBindingModel"))
-                .andExpect(model().attributeExists("successfullyChangedPrice"));
     }
 
     @Test
@@ -434,16 +421,6 @@ public class ProductControllerTest {
                 .andExpect(model().attributeExists("promotionsProducts"));
     }
 
-    @Test
-    public void testSeeProductQuantity() throws Exception {
-        authenticate();
-        this.mockMvc
-                .perform(get("/products/productsQuantity"))
-                .andExpect(view().name("products-quantities"))
-                .andExpect(model().attributeExists("productsQuantities"));
-    }
-
-
 
     public void authenticate(){
 
@@ -462,6 +439,14 @@ public class ProductControllerTest {
         userLoginServiceModel.setUsername("admin");
         userLoginServiceModel.setPassword("12345");
         this.userService.authenticate(userLoginServiceModel);
+    }
+
+    private ModelAndView getModelAndView(MvcResult mvcResult) {
+        ModelAndView mav = mvcResult.getModelAndView();
+        if (mav == null) {
+            fail("No ModelAndView found");
+        }
+        return mav;
     }
 
 }

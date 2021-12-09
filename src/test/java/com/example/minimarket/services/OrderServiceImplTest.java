@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -146,12 +147,12 @@ public class OrderServiceImplTest {
         orderEntity.setProduct(productEntity1);
         orderEntity.setPaid(false);
         orderEntity.setProductCount(1);
-        orderEntity.setCourier(null);
-        orderEntity.setAddress(null);
+        orderEntity.setCourier(courierEntity);
+        orderEntity.setAddress(addressEntity);
         orderEntity.setCart(cartEntity);
         orderEntity.setUsername("Petko");
         orderEntity.setOrdered(true);
-        orderEntity.setDelivered(true);
+        orderEntity.setDelivered(false);
         this.orderRepository.save(orderEntity);
 
     }
@@ -224,6 +225,7 @@ public class OrderServiceImplTest {
 
     @Test
     public void testFindAllByIsDeliveredOrderByDateTime(){
+        this.orderService.setOrdersToDelivered(this.addressRepository.findAll().get(0).getId());
         Assert.assertEquals(0, this.orderService.findAllByIsDeliveredOrderByDateTime(false).size());
     }
 
@@ -311,6 +313,31 @@ public class OrderServiceImplTest {
         this.orderService.createOrder("TPU", BigDecimal.valueOf(2), cart);
         List<OrderViewModel> orders = this.orderService.findAllByCartId(cart.getId());
         Assert.assertEquals(2, orders.size());
+    }
+
+    @Test
+    public void testFindAllOrdersByDate(){
+        Assert.assertEquals(1, this.orderService.findAllOrdersByDate(LocalDate.now()).size());
+    }
+
+    @Test
+    public void testSetOrdersToPaid(){
+        Assert.assertFalse(this.orderRepository.findAll().get(0).isPaid());
+        this.orderService.setOrdersToPaid(this.addressRepository.findAll().get(0).getId());
+        Assert.assertTrue(this.orderRepository.findAll().get(0).isPaid());
+    }
+
+    @Test
+    public void testSetOrdersToDelivered(){
+        Assert.assertFalse(this.orderRepository.findAll().get(0).isDelivered());
+        this.orderService.setOrdersToDelivered(this.addressRepository.findAll().get(0).getId());
+        Assert.assertTrue(this.orderRepository.findAll().get(0).isDelivered());
+    }
+
+    @Test
+    public void testFindAllByAddressId(){
+        Assert.assertEquals(1, this.orderService.findAllByAddressId
+                (this.addressRepository.findAll().get(0).getId()).size());
     }
 
     public void authenticate(){

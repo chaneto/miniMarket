@@ -9,6 +9,7 @@ import com.example.minimarket.services.ProductService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +41,8 @@ public class OrderServiceImpl implements OrderService {
         orderEntity.setDelivered(false);
         orderEntity.setOrdered(false);
         orderEntity.setUsername(cartEntity.getUser().getUsername());
+        orderEntity.setAddress(cartEntity.getAddress());
+        orderEntity.setCourier(cartEntity.getCourier());
         orderEntity.setCart(cartEntity);
         this.orderRepository.save(orderEntity);
         return orderEntity;
@@ -56,7 +59,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void deleteOrderById(Long id){
         OrderEntity order = this.orderRepository.findOrderById(id);
+        if(!order.isDelivered()){
         this.productService.addQuantity(BigDecimal.valueOf(order.getProductCount()), order.getProduct().getName());
+        }
         this.orderRepository.deleteOrderById(id);
     }
 
@@ -113,6 +118,11 @@ public class OrderServiceImpl implements OrderService {
         for(OrderEntity order: this.orderRepository.findAllByAddressId(id)){
             setIsPaid( true, order.getId());
         }
+    }
+
+    @Override
+    public List<OrderViewModel> findAllOrdersByDate(LocalDate date){
+       return conversionToListViewModel(this.orderRepository.findAllByDate(date.atTime(00,00), date.atTime(23,59)));
     }
 
     @Override

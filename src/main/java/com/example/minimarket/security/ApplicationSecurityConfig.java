@@ -34,7 +34,11 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                          , "/products/addQuantity", "/products/addQuantity/{name}", "/roles/set", "/products/delete/{name}"
                          , "/products/setDiscountRate", "/products/setDiscountRate/{id}","/products/productsMenu",
                          "/products/setProductPrice", "/products/setProductPrice/{id}", "/users/delete/{username}",
-                         "/users/all", "/addresses/findAllNotDelivered", "/orders/all").hasRole("ADMIN")
+                         "/users/all", "/addresses/findAllNotDelivered", "/orders/all", "/orders/deleteByAdminPanel/{id}",
+                         "/orders/allDelivered", "/orders/selectByUser", "/orders/selectByDate", "/orders",
+                         "/products/allProductsOrderByQuantity", "/products/allProductsOrderByQuantityDesc",
+                         "/products/allProductsOrderByPrice", "/products/allProductsOrderByPriceDesc",
+                         "/products//allProductsOrderByID").hasRole("ADMIN")
                  .antMatchers("/**")
                  .authenticated()
                  .and()

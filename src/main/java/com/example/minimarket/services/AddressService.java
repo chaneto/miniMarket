@@ -19,9 +19,9 @@ public interface AddressService {
 
     void deleteById(Long id);
 
-    List<AddressEntity> findAllWithDateIsSmaller6Months();
+    List<AddressEntity> findAllWithDateIsSmaller1Year();
 
-    void deleteAllAddressesOlderThan6Months();
+    void deleteAllAddressesOlderThan1Year();
 
     void addressCleaning();
 

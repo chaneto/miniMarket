@@ -26,6 +26,7 @@ public class ProductController {
     private final UserService userService;
     private final CartService cartService;
     private final OrderService orderService;
+    private String oldPage = "";
 
     public ProductController(ProductService productService, ModelMapper mapper, CategoryService categoryService, BrandService brandService, UserService userService, CartService cartService, OrderService orderService) {
         this.productService = productService;
@@ -37,14 +38,14 @@ public class ProductController {
         this.orderService = orderService;
     }
 
-    String oldPage = "";
-
     @GetMapping("/add")
     private String addProduct(Model model) {
+
         if (!model.containsAttribute("productAddBindingModel")) {
             model.addAttribute("productAddBindingModel", new ProductAddBindingModel());
             model.addAttribute("productIsExists", false);
         }
+
         model.addAttribute("allCategory", this.categoryService.getAllCategoryName());
         model.addAttribute("allBrands", this.brandService.getAllBrands());
         return "add-product";
@@ -60,7 +61,9 @@ public class ProductController {
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.productAddBindingModel", bindingResult);
             return "redirect:add";
         }
+
         ProductServiceModel productServiceModel = this.mapper.map(productAddBindingModel, ProductServiceModel.class);
+
         if (this.productService.findByName(productServiceModel.getName()) != null) {
             redirectAttributes.addFlashAttribute("productAddBindingModel", productAddBindingModel);
             redirectAttributes.addFlashAttribute("productIsExists", true);
@@ -75,7 +78,9 @@ public class ProductController {
 
     @GetMapping("/delete/{name}")
     public String deleteProduct(@PathVariable String name, HttpServletRequest request, RedirectAttributes redirectAttributes) {
+
         String referer = request.getHeader("Referer");
+
         if(orderService.productInUnpaidOrder(name)){
             redirectAttributes.addFlashAttribute("productInUnpaidOrder", true);
             redirectAttributes.addFlashAttribute("productName", name);
@@ -86,19 +91,23 @@ public class ProductController {
             this.productService.deleteProductByName(name);
             redirectAttributes.addFlashAttribute("deleteProduct", true);
             }
+
             return "redirect:" + referer;
         }
     }
 
     @GetMapping("/setProductPrice/{id}")
-    public String setPrice(@PathVariable Long id, Model model, HttpServletRequest request, RedirectAttributes redirectAttributes) {
-        model.addAttribute("product", this.productService.getById(id));
+    public String setPrice(@PathVariable Long id, Model model, HttpServletRequest request) {
+
         String referer = request.getHeader("Referer");
+        model.addAttribute("product", this.productService.getById(id));
+
         if (!model.containsAttribute("productSetPriceBindingModel")) {
             model.addAttribute("productSetPriceBindingModel", new ProductSetPriceBindingModel());
             model.addAttribute("successfullyChangedPrice", false);
             oldPage = referer;
         }
+
         model.addAttribute("allProductsName", this.productService.getAllProductsName());
         return "set-product-price";
     }
@@ -108,7 +117,9 @@ public class ProductController {
                               BindingResult bindingResult,
                               RedirectAttributes redirectAttributes,
                            HttpServletRequest request) {
+
         String referer = request.getHeader("Referer");
+
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("productSetPriceBindingModel", productSetPriceBindingModel);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.productSetPriceBindingModel", bindingResult);
@@ -122,11 +133,14 @@ public class ProductController {
         return "redirect:" + oldPage;
     }
 
+
     @GetMapping("/setDiscountRate/{id}")
-    public String setDiscountRate(@PathVariable Long id, Model model){
+    public String setDiscountRate(@PathVariable Long id, Model model, HttpServletRequest request){
+        String referer = request.getHeader("Referer");
         if(!model.containsAttribute("productSetDiscountRateBindingModel")){
             model.addAttribute("productSetDiscountRateBindingModel", new ProductSetDiscountRateBindingModel());
             model.addAttribute("successfullyChangedDiscountRate", false);
+            oldPage = referer;
         }
 
         model.addAttribute("allProductsName", this.productService.getAllProductsName());
@@ -134,29 +148,36 @@ public class ProductController {
         return "set-discount-rate";
     }
 
+
     @PostMapping("/setDiscountRate")
         public String setDiscountRateConfirm(@Valid ProductSetDiscountRateBindingModel productSetDiscountRateBindingModel,
                 BindingResult bindingResult,
                 RedirectAttributes redirectAttributes,
                 HttpServletRequest request){
+
         String referer = request.getHeader("Referer");
+
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("productSetDiscountRateBindingModel", productSetDiscountRateBindingModel);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.productSetDiscountRateBindingModel", bindingResult);
             return "redirect:" + referer;
         }
+
         this.productService.setPromotionPriceAndDiscountRate(productSetDiscountRateBindingModel.getDiscountRate(), productSetDiscountRateBindingModel.getName());
         redirectAttributes.addFlashAttribute("productSetDiscountRateBindingModel", productSetDiscountRateBindingModel);
         redirectAttributes.addFlashAttribute("successfullyChangedDiscountRate", true);
-        return "redirect:/products/productsMenu";
+        return "redirect:" + oldPage;
     }
 
     @GetMapping("/addQuantity/{name}")
-    public String addQuantity(Model model, @PathVariable String name) {
+    public String addQuantity(Model model, @PathVariable String name, HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
         if (!model.containsAttribute("productAddQuantityBindingModel")) {
             model.addAttribute("productAddQuantityBindingModel", new ProductAddQuantityBindingModel());
             model.addAttribute("successfullyAddedQuantity", false);
+            oldPage = referer;
         }
+
         model.addAttribute("allProductsName", this.productService.getAllProductsName());
         model.addAttribute("productName", name);
         return "add-quantity";
@@ -166,18 +187,21 @@ public class ProductController {
     public String addQuantity(@Valid ProductAddQuantityBindingModel productAddQuantityBindingModel,
                               BindingResult bindingResult,
                               RedirectAttributes redirectAttributes, HttpServletRequest request) {
+
         String referer = request.getHeader("Referer");
+
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("productAddQuantityBindingModel", productAddQuantityBindingModel);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.productAddQuantityBindingModel", bindingResult);
             return "redirect:" + referer;
         }
+
         this.productService.addQuantity(productAddQuantityBindingModel.getQuantity(), productAddQuantityBindingModel.getName());
         redirectAttributes.addFlashAttribute("productAddQuantityBindingModel", productAddQuantityBindingModel);
         redirectAttributes.addFlashAttribute("successfullyAddedQuantity", true);
         redirectAttributes.addFlashAttribute("productName", productAddQuantityBindingModel.getName());
         redirectAttributes.addFlashAttribute("productQuantity", productAddQuantityBindingModel.getQuantity());
-        return "redirect:/products/productsMenu";
+        return "redirect:" + oldPage;
     }
 
     @PostMapping("/addProduct/{name}")

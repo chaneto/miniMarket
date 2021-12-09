@@ -17,6 +17,7 @@ public class ProductViewModel {
     private String brand;
     private String category;
     private boolean isOnPromotion;
+    private boolean isLeastInterest;
 
     public ProductViewModel() {
     }
@@ -115,5 +116,13 @@ public class ProductViewModel {
 
     public void setOnPromotion(boolean onPromotion) {
         isOnPromotion = onPromotion;
+    }
+
+    public boolean isLeastInterest() {
+        return isLeastInterest;
+    }
+
+    public void setLeastInterest(boolean leastInterest) {
+        isLeastInterest = leastInterest;
     }
 }

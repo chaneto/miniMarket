@@ -37,6 +37,7 @@ public class CategoryController {
 
     @GetMapping("/add")
     public String addCategory(Model model){
+
         if(!model.containsAttribute("categoryAddBindingModel")){
             model.addAttribute("categoryAddBindingModel", new CategoryAddBindingModel());
             model.addAttribute("categoryIsExists", false);
@@ -48,17 +49,21 @@ public class CategoryController {
     public String addCategoryConfirm(@Valid CategoryAddBindingModel categoryAddBindingModel,
                                      BindingResult bindingResult,
                                      RedirectAttributes redirectAttributes){
+
         if(bindingResult.hasErrors()){
             redirectAttributes.addFlashAttribute("categoryAddBindingModel", categoryAddBindingModel);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.categoryAddBindingModel", bindingResult);
             return "redirect:add";
         }
+
         CategoryServiceModel categoryServiceModel = this.mapper.map(categoryAddBindingModel, CategoryServiceModel.class);
+
         if(this.categoryService.findByName(categoryServiceModel.getName()) != null){
             redirectAttributes.addFlashAttribute("categoryAddBindingModel", categoryAddBindingModel);
             redirectAttributes.addFlashAttribute("categoryIsExists", true);
             return "redirect:add";
         }
+
         this.categoryService.saveCategory(categoryServiceModel);
         redirectAttributes.addFlashAttribute("categoryAddBindingModel", categoryAddBindingModel);
         redirectAttributes.addFlashAttribute("successfulAddedCategory", true);
@@ -73,7 +78,9 @@ public class CategoryController {
 
     @GetMapping("/delete/{name}")
     public String deleteCategory(@PathVariable String name, HttpServletRequest request, RedirectAttributes redirectAttributes){
+
         String referer = request.getHeader("Referer");
+
         if(orderService.unpaidProductInCategory(name)){
             redirectAttributes.addFlashAttribute("unpaidProductInCategory", true);
             redirectAttributes.addFlashAttribute("categoryName", name);

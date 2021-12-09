@@ -21,8 +21,8 @@
                     </div>
                     <div class="card-body">
                         <div class="text-center">
-                            <h6 th:if="${#strings.length(p.name) <= 120}" th:text="${p.name}" id="product-name-text" class="d-inline-block mb-2 text-primary"></h6>
-                            <h6 th:if="${#strings.length(p.name) > 120}" th:text="|${#strings.substring(p.name,0,117)}...|" id="product-name-text-1" class="d-inline-block mb-2 text-primary"></h6>
+                            <h6 th:if="${#strings.length(p.name) <= 118}" th:text="${p.name}" id="product-name-text" class="d-inline-block mb-2 text-primary"></h6>
+                            <h6 th:if="${#strings.length(p.name) > 118}" th:text="|${#strings.substring(p.name,0,115)}...|" id="product-name-text-1" class="d-inline-block mb-2 text-primary"></h6>
                              <!-- <p th:text="|Category: *{category}|" class="card-text border-bottom "></p> -->
                             <p th:text="|brand: ${p.brand}|" class="card-text border-bottom "></p>
                             <p th:if="*{!isOnPromotion}" th:text="|Price: *{price}|" class="card-text border-bottom"></p>
@@ -41,7 +41,7 @@
                             </div>
                         </div>
                             <div sec:authorize="isAuthenticated()"  class="d-flex justify-content-center mt-4">
-                                <button type="submit" class="btn btn-primary btn-block w-50">Add To Cart</button>
+                                <button type="submit" class="btn btn-primary btn-block w-50" id="add-to-cart-button">Add To Cart</button>
                             </div>
                         </form>
                             <div class="btn-group">

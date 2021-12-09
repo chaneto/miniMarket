@@ -18,18 +18,10 @@ import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
-
-import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
-import static org.hamcrest.Matchers.notNullValue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -235,26 +227,27 @@ public class UserControllerTest {
     @Test
     @WithMockUser
     public void testLoginWithInvalidDataCorrect() throws Exception {
+        authenticate();
         this.mockMvc
                 .perform(post("/users/login")
                         .param("username", "")
                         .param("password", "1234555")
                 .with(csrf())).
                 andExpect(status().is2xxSuccessful());
-               // .andExpect(view().name("redirect:login"));
 
     }
 
     @Test
     @WithMockUser
     public void testLoginWithCorrectData() throws Exception {
+        registerUser();
         this.mockMvc
                 .perform(post("/users/login")
                         .param("username", "admin")
                         .param("password", "12345")
                 .with(csrf()))
                 .andExpect(status().is2xxSuccessful());
-        //.andExpect(view().name("redirect:/"));
+                //.andExpect(view().name("redirect:/"));
     }
 
     @Test
@@ -397,9 +390,11 @@ public class UserControllerTest {
     @Test
     @WithMockUser
     public void testDeleteUserConfirm() throws Exception {
+        authenticate();
+        String usernameTest = this.userRepository.findAll().get(0).getUsername();
         this.mockMvc
                 .perform(post("/users/delete")
-                        .param("username", "user")
+                        .param("username", "usernameTest")
                         .with(csrf()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/users/all"));
@@ -444,6 +439,21 @@ public class UserControllerTest {
         userLoginServiceModel.setUsername("admin");
         userLoginServiceModel.setPassword("12345");
         this.userService.authenticate(userLoginServiceModel);
+    }
+
+    public void registerUser(){
+        UserRegisterServiceModel userRegisterServiceModel = new UserRegisterServiceModel();
+        userRegisterServiceModel.setUsername("admin");
+        userRegisterServiceModel.setFirstName("Admin");
+        userRegisterServiceModel.setLastName("Adminov");
+        userRegisterServiceModel.setEmail("admin_80@abv.bg");
+        userRegisterServiceModel.setPassword("12345");
+        userRegisterServiceModel.setConfirmPassword("12345");
+        userRegisterServiceModel.setPhoneNumber("123456789");
+        if(!this.userService.userWithUsernameIsExists("admin_80@abv.bg") && !this.userService.userWithUsernameIsExists("admin")){
+            this.userService.registerUser(userRegisterServiceModel);
+        }
+
     }
 
 }

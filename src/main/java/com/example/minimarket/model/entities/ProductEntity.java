@@ -56,6 +56,9 @@ public class ProductEntity {
     @Column(name = "is_on_promotion", nullable = false)
     private boolean isOnPromotion;
 
+    @Column(name = "is_least_interest", nullable = false)
+    private boolean isLeastInterest;
+
     @ManyToOne
     @JoinColumn(name = "brand_id", referencedColumnName = "id")
     private BrandEntity brand;
@@ -162,5 +165,13 @@ public class ProductEntity {
 
     public void setOnPromotion(boolean onPromotion) {
         isOnPromotion = onPromotion;
+    }
+
+    public boolean isLeastInterest() {
+        return isLeastInterest;
+    }
+
+    public void setLeastInterest(boolean leastInterest) {
+        isLeastInterest = leastInterest;
     }
 }

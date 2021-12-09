@@ -1,6 +1,5 @@
 package com.example.minimarket.services;
 
-
 import com.example.minimarket.model.entities.UserEntity;
 import com.example.minimarket.model.entities.UserRoleEntity;
 import com.example.minimarket.model.enums.UserRole;

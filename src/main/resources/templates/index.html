@@ -17,13 +17,12 @@
 
     <div class="row mt-5" id="productsList">
 
-    <div class="col-sm-12 my-auto ">
+    <div class="col-sm-12 my-auto " id="carousel">
         <div id="carouselExampleIndicators" class="carousel slide " data-ride="carousel">
             <ol class="carousel-indicators">
                 <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
                 <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
                 <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
-
             </ol>
             <div class="carousel-inner">
                 <div class="carousel-item active">
@@ -64,8 +63,8 @@
                 </div>
                 <div class="card-body">
                     <div class="text-center">
-                        <h6 th:if="${#strings.length(p.name) <= 120}" th:text="${p.name}" id="product-name-text" class="d-inline-block mb-2 text-primary"></h6>
-                        <h6 th:if="${#strings.length(p.name) > 120}" th:text="|${#strings.substring(p.name,0,117)}...|" id="product-name-text-1" class="d-inline-block mb-2 text-primary"></h6>
+                        <h6 th:if="${#strings.length(p.name) <= 118}" th:text="${p.name}" id="product-name-text" class="d-inline-block mb-2 text-primary"></h6>
+                        <h6 th:if="${#strings.length(p.name) > 118}" th:text="|${#strings.substring(p.name,0,115)}...|" id="product-name-text-1" class="d-inline-block mb-2 text-primary"></h6>
                         <!-- <p th:text="|Category: *{category}|" class="card-text border-bottom "></p> -->
                         <p th:text="|brand: *{brand}|" class="card-text border-bottom "></p>
                         <p th:if="*{!isOnPromotion}" th:text="|Price: *{price}|" class="card-text border-bottom"></p>

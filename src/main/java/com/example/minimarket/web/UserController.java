@@ -4,7 +4,6 @@ import com.example.minimarket.model.bindings.*;
 import com.example.minimarket.model.services.UserLoginServiceModel;
 import com.example.minimarket.model.services.UserRegisterServiceModel;
 import com.example.minimarket.services.UserService;
-import org.aspectj.lang.annotation.control.CodeGenerationHint;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.stereotype.Controller;
@@ -12,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import javax.validation.Valid;
 
 @Controller

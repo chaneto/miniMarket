@@ -42,11 +42,13 @@ public class AddressController {
     public String addAddressConfirm(@Valid AddressAddBindingModel addressAddBindingModel,
                                     BindingResult bindingResult,
                                     RedirectAttributes redirectAttributes, Model model){
+
         if(bindingResult.hasErrors()){
             redirectAttributes.addFlashAttribute("addressAddBindingModel", addressAddBindingModel);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.addressAddBindingModel", bindingResult);
             return "redirect:add";
         }
+
         AddressServiceModel addressServiceModel = this.mapper.map(addressAddBindingModel, AddressServiceModel.class);
         this.addressService.save(addressServiceModel);
         model.addAttribute("cart", this.userService.getCurrentCart());

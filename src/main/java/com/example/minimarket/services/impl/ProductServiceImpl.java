@@ -30,7 +30,6 @@ public class ProductServiceImpl implements ProductService {
     private final BrandService brandService;
     private final Gson gson;
     private final Resource productFile;
-    private List<ProductViewModel> currentList = new ArrayList<>();
 
     public ProductServiceImpl(ProductRepository productRepository, ModelMapper mapper, CategoryService categoryService
             , BrandService brandService, Gson gson,@Value("classpath:init/products.json") Resource productFile) {
@@ -73,6 +72,7 @@ public class ProductServiceImpl implements ProductService {
         productEntity.setCategory(categoryEntity);
         productEntity.setBrand(brandEntity);
         productEntity.setOnPromotion(false);
+        productEntity.setLeastInterest(false);
         productEntity.setDiscountRate(BigDecimal.valueOf(0));
         productEntity.setPromotionPrice(productServiceModel.getPrice());
         this.productRepository.save(productEntity);
@@ -232,20 +232,22 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void updatePriceTop4ByQuantityProduct(){
-        for(ProductViewModel product: currentList) {
+        for(ProductViewModel product: findTop4ByQuantity()) {
            setPromotionPriceAndDiscountRate(BigDecimal.valueOf(50), product.getName());
+            this.productRepository.setIsLeastInterest(true, product.getId());
         }
     }
 
     @Override
     public void updateTop4ByQuantityProduct(){
-            for(ProductViewModel product: currentList){
+            for(ProductEntity product: this.productRepository.findAllByIsLeastInterest(true)){
                 setPromotionPriceAndDiscountRate(BigDecimal.valueOf(0), product.getName());
+                this.productRepository.setIsLeastInterest(false, product.getId());
             }
 
-        currentList = findTop4ByQuantity();
     }
 
+   // @Scheduled(cron = "0 */3 * * * *")
     @Scheduled(cron = "0 0 0 * * *")
     public void refreshPromotionProduct() {
         updateTop4ByQuantityProduct();

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 
@@ -31,22 +30,25 @@ public class CartController {
 
     @GetMapping("/view/{id}")
     public String viewCart(@PathVariable Long id, Model model, HttpServletRequest request) {
+
         if(!model.containsAttribute("courierGetBindingModel")){
             model.addAttribute("courierGetBindingModel", new CourierGetBindingModel());
         }
+
         model.addAttribute("allOrders", this.userService.getAllUserOrderByIsOrdered(false, id));
         model.addAttribute("getCartTotalPrice", this.userService.getTotalPriceForAllOrders());
         model.addAttribute("allCouriers", this.courierService.findAll());
         String referer = request.getHeader("Referer");
+
         if(orderCount() == 0 && this.cartService.getCartById(id).getCourier() == null && this.cartService.getCartById(id).getAddress() == null){
             model.addAttribute("emptyCart", true);
             return "view-cart";
         }
+
         if(this.cartService.getCartById(id).getCourier() != null && this.cartService.getCartById(id).getAddress() != null){
            model.addAttribute("cart", this.cartService.getCartById(id));
            return "view-final-cart";
-       }
-       else if(this.cartService.getCartById(id).getCourier() != null){
+       } else if(this.cartService.getCartById(id).getCourier() != null){
             return "redirect:/addresses/add";
         }else {
         return "view-cart";

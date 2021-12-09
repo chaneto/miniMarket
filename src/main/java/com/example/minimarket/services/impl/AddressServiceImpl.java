@@ -1,6 +1,7 @@
 package com.example.minimarket.services.impl;
 
 import com.example.minimarket.model.entities.AddressEntity;
+import com.example.minimarket.model.entities.CartEntity;
 import com.example.minimarket.model.entities.UserEntity;
 import com.example.minimarket.model.services.AddressServiceModel;
 import com.example.minimarket.model.views.AddressViewModel;
@@ -66,7 +67,8 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public List<AddressViewModel> getAllNotDeliveredAddresses() {
         List<AddressViewModel> result = new ArrayList<>();
-        List<AddressViewModel> addresses = conversionToListViewModel(this.addressRepository.findAllByIsDeliveredOrderByDateTime(false));
+        List<AddressViewModel> addresses = conversionToListViewModel
+                (this.addressRepository.findAllByIsDeliveredOrderByDateTime(false));
         for (AddressViewModel address: addresses){
             address.setOrders(this.orderService.findAllByAddressId(address.getId()));
             result.add(address);
@@ -97,23 +99,23 @@ public class AddressServiceImpl implements AddressService {
         return this.addressRepository.findAllByUserId(userId);
     }
 
-    public List<AddressEntity> findAllWithDateIsSmaller6Months(){
+    public List<AddressEntity> findAllWithDateIsSmaller1Year(){
         return this.addressRepository.findAllWithDateIsSmaller(LocalDateTime.now().minus(1, ChronoUnit.YEARS));
-      //  return this.addressRepository.findAllWithDateIsSmaller(LocalDateTime.now().minus(1, ChronoUnit.MINUTES));
+       // return this.addressRepository.findAllWithDateIsSmaller(LocalDateTime.now().minus(3, ChronoUnit.MINUTES));
     }
 
-    public void deleteAllAddressesOlderThan6Months(){
-        for(AddressEntity address : findAllWithDateIsSmaller6Months()){
-            if(!cartService.cartWithOrderNotDeliveredToAddress(address)){
+    public void deleteAllAddressesOlderThan1Year(){
+        for(AddressEntity address : findAllWithDateIsSmaller1Year()){
+            if(!cartService.cartWithOrderNotDeliveredToAddress(address) && address.isDelivered()){
             deleteById(address.getId());
             }
         }
     }
 
-    @Scheduled(cron = "0 5 0 * * *")
    // @Scheduled(cron = "0 */3 * * * *")
+   @Scheduled(cron = "0 5 0 * * *")
     public void addressCleaning() {
-        deleteAllAddressesOlderThan6Months();
+        deleteAllAddressesOlderThan1Year();
         System.out.println("Address cleaning");
     }
 }

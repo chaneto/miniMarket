@@ -8,6 +8,8 @@ import org.hibernate.criterion.Order;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface OrderService {
@@ -16,6 +18,8 @@ public interface OrderService {
     void setAddressAndCourier(CartServiceModel cart);
 
     void deleteOrderById(Long id);
+
+    List<OrderViewModel> findAllOrdersByDate(LocalDate date);
 
     OrderEntity findOrderById(Long id);
 

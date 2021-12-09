@@ -33,6 +33,7 @@ public interface AddressRepository extends JpaRepository<AddressEntity, Long> {
     @Query("update AddressEntity as a set a.paymentAmount = :paymentAmount where a.id = :id")
     void setPaymentAmount(@Param("paymentAmount")BigDecimal paymentAmount, @Param("id") Long id);
 
+    @Query("select a from AddressEntity as a where a.isDelivered = :isDelivered and a.paymentAmount > 0 order by a.dateTime")
     List<AddressEntity> findAllByIsDeliveredOrderByDateTime(boolean isDelivered);
 
     List<AddressEntity> findAllByUserId(Long userId);

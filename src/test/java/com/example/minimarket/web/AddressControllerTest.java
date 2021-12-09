@@ -51,9 +51,11 @@ public class AddressControllerTest {
     @Test
     @WithMockUser
     public void testFindAllNotDelivered() throws Exception {
+        authenticate();
         this.userService.setUserRole(this.userService.getCurrentUser().getUsername(), "ADMIN");
         this.mockMvc
-                .perform(get("/addresses/findAllNotDelivered"))
+                .perform(get("/addresses/findAllNotDelivered")
+                .with(csrf()))
                 .andExpect(model().attributeExists("isNotDeliveredOrders"))
                 .andExpect(view().name("all-is-not-delivered-orders"));
     }
@@ -82,5 +84,23 @@ public class AddressControllerTest {
                 .andExpect(view().name("redirect:add"));
     }
 
+    public void authenticate(){
+
+        UserRegisterServiceModel userRegisterServiceModel = new UserRegisterServiceModel();
+        userRegisterServiceModel.setUsername("admin");
+        userRegisterServiceModel.setFirstName("Admin");
+        userRegisterServiceModel.setLastName("Adminov");
+        userRegisterServiceModel.setEmail("admin_80@abv.bg");
+        userRegisterServiceModel.setPassword("12345");
+        userRegisterServiceModel.setConfirmPassword("12345");
+        userRegisterServiceModel.setPhoneNumber("123456789");
+        if(!this.userService.userWithUsernameIsExists("admin_80@abv.bg") && !this.userService.userWithUsernameIsExists("admin")){
+            this.userService.registerUser(userRegisterServiceModel);
+        }
+        UserLoginServiceModel userLoginServiceModel = new UserLoginServiceModel();
+        userLoginServiceModel.setUsername("admin");
+        userLoginServiceModel.setPassword("12345");
+        this.userService.authenticate(userLoginServiceModel);
+    }
 
 }

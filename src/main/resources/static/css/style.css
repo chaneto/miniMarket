@@ -1,3 +1,13 @@
+#add-to-cart-button{
+margin-top: -14px;
+}
+
+#footer {
+    position:relative;
+    bottom:0;
+    width:100%;
+ }
+
 .bg-nav {
     background-color: rgb(0, 162, 226);
 }
@@ -82,13 +92,13 @@ margin-top: 10px;
 
 #product-name-text{
   padding: 1px;
-  height: 80px;
+  height: 70px;
   text-align: justify;
 }
 
 #product-name-text-1{
   padding: 1px;
-  height: 80px;
+  height: 70px;
   text-align: justify;
 }
 
@@ -141,10 +151,6 @@ background: rgb(0, 162, 226);
 
 #quantity-form{
 margin-top: 10px;
-}
-
-#quantity-all-products{
-margin-left: 25px;
 }
 
 .collapse ul li a {
@@ -320,6 +326,8 @@ background: #87CEFA;
     background: #ff0000;
     color: #fff;
     padding: 0 5px;
+    position:relative;
+    margin-left:9px;
 }
 
 #empty-cart {
@@ -388,6 +396,31 @@ background: #172b4d;
 
 .cta-btn p{ display:block; }
 .old-price{ font-size:0.8em;  text-decoration: line-through;  color:grey;}
+
+#orders-by-user{
+position: relative;
+width: 310px;
+margin-left: 391px;
+margin-top: -135px;
+}
+
+#view-orders-button{
+position: relative;
+margin-top: -39px;
+margin-right: 45px;
+}
+
+#orders-by-date{
+width: 310px;
+margin-left: 601px;
+margin-top: -137px;
+}
+
+#all-orders-by-date-button{
+position: relative;
+margin-top: -39px;
+margin-right: 45px;
+}
 
 #user-menu-delete{
 background:none;
@@ -459,6 +492,12 @@ margin-left:5px;
 
 .closebtn1:hover {
   color: black;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
 }
 
 /*start*/
@@ -563,7 +602,7 @@ h3,
 .col,
 .col-xl-6 {
     position: relative;
-    width: 80%;
+    width: 100%;
     min-height: 1px;
     padding-right: 15px;
     padding-left: 15px;
@@ -634,7 +673,8 @@ h3,
     width: 100%;
 }
 
-.card {
+.card1 {
+    table-layout: fixed;
     position: relative;
     display: flex;
     flex-direction: column;

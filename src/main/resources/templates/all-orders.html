@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"
-      xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 
 <head th:replace="fragments/fragment :: head">
 </head>
@@ -9,15 +8,54 @@
 <div class="main-content">
     <div  class="row mt-5">
         <div class="col">
-            <div class="card bg-default shadow">
+            <div class="card1 bg-default shadow" style="overflow:auto">
                 <div class="card-header bg-transparent border-0">
                     <h3 class="text-white mb-0">Orders</h3>
                     <a th:href="@{/orders/allDelivered}" id="delivered1" type="button" class="btn text-white">Delivered Orders</a>
                     <a th:href="@{/orders/allNotDelivered}" id="delivered2" type="button" class="btn text-white">Not Delivered Orders</a>
                     <a th:href="@{/orders/all}" id="delivered3" type="button" class="btn text-white">All Orders</a>
+
+                    <form th:action="@{/orders/selectByUser}" th:method="POST" th:object="${userDeleteBindingModel}"
+                          class="text-light" id="orders-by-user">
+                        <div class="form-row m-5">
+                            <div class="col">
+                                <!-- <label for="datalist">Select Username</label> -->
+                                <input list="datalist" name="username" required min="3" max="20" type="text"
+                                       id="inputUsername"
+                                       class="form-control"
+                                       aria-describedby="usernameHelpInline" placeholder="Select username">
+                                <small th:if="${#fields.hasErrors('username')}" th:errors="*{username}" id="usernameError"
+                                       class="invalid-feedback text-light form-text bg-danger rounded">Username length must be between 3 and 20 characters!!!</small>
+                                <small th:if="${userNotExists}" class="text-light form-text bg-danger rounded">Such a user does not exist!!!</small>
+                                <datalist th:field="*{username}" th:errorclass="is-invalid" required min="3" max="20"  size="3" name="username" style="width:100px;" id="datalist" class="custom-select">
+                                    <option th:each="a : ${allUsernames}" th:text="${a}" th:value="${a}"></option>
+                                </datalist>
+                                <small th:if="${#fields.hasErrors('username')}" th:errors="*{username}" id="usernameError1" class="form-text bg-danger rounded">You must select username!</small>
+                            </div>
+                        </div>
+                        <div sec:authorize="hasRole('ROLE_ADMIN')" class="d-flex justify-content-center mt-4">
+                            <button class="btn btn-primary btn-block w-50" id="view-orders-button" type="submit">View User Orders</button>
+                        </div>
+                    </form>
+
+                    <form th:action="@{/orders/selectByDate}" th:method="POST" th:object="${ordersByDateTimeBindingModel}"
+                          class="text-light" id="orders-by-date">
+                        <div class="form-row m-5">
+                            <div class="col">
+                                <!-- th:attr="max=${maxDate}" -->
+                                <input th:field="*{date}" th:errorclass="is-invalid" required th:attr="max=${maxDate}" name="date" id="date" type="date" class="form-control" placeholder="Select Date">
+                                <small th:if="${#fields.hasErrors('date')}" th:errors="*{date}" id="dateError" class="form-text bg-danger rounded">You must select date!</small>
+                            </div>
+                        </div>
+                        <div sec:authorize="hasRole('ROLE_ADMIN')" class="d-flex justify-content-center mt-4">
+                            <button class="btn btn-primary btn-block w-50" id="all-orders-by-date-button" type="submit">View Date Orders</button>
+                        </div>
+                    </form>
+
                 </div>
-                <div style="width: 1350px;">
-                    <table class="table align-items-center table-dark table-flush">
+                <div >
+
+                    <table class="table align-items-center table-dark">
                         <thead class="thead-dark">
                         <tr>
                             <th scope="col">Product Image</th>
@@ -27,7 +65,8 @@
                             <th scope="col">Date</th>
                             <th scope="col">Courier</th>
                             <th scope="col">User</th>
-                            <th scope="col">Address</th>
+                            <th scope="col">Shipping Address</th>
+                            <th scope="col">Is Ordered</th>
                             <th scope="col">Is Paid</th>
                             <th scope="col">Is Delivered</th>
                         </tr>
@@ -35,18 +74,22 @@
                         <tbody>
                         <tr th:each="p : ${orders}" th:object="${p}">
                             <th scope="row">
+                                <a th:href="@{'/orders/deleteByAdminPanel/{id}'(id = *{id})}" class="all-orders-delete-order">
+                                    <img src="/img/delete.png" width="20px" alt="Delete picture">
+                                </a>
                                 <p th:text="|ID: *{id}|"></p>
+
                                 <div class="media align-items-center">
                                     <a th:href="@{'/products/details/{name}' (name = *{product.name})}" class="avatar">
                                         <img alt="Image placeholder" th:src="*{product.image}">
                                     </a>
                                 </div>
                             </th>
-                            <td th:if="${#strings.length(p.product.name) <= 120}" style="font-size: 15px;">
-                                <textarea th:text="*{product.name}" class="order-history-name" disabled rows="4" cols="25"></textarea>
+                            <td th:if="${#strings.length(p.product.name) <= 111}" style="font-size: 15px;">
+                                <textarea th:text="*{product.name}" class="order-history-name" disabled rows="5" cols="20"></textarea>
                             </td>
-                            <td th:if="${#strings.length(p.product.name) > 120}" style="font-size: 15px;">
-                                <textarea th:text="|${#strings.substring(p.product.name,0,117)}...|" class="order-history-name" disabled rows="4" cols="25"></textarea>
+                            <td th:if="${#strings.length(p.product.name) > 111}" style="font-size: 15px;">
+                                <textarea th:text="|${#strings.substring(p.product.name,0,108)}...|" class="order-history-name" disabled rows="5" cols="20"></textarea>
                             </td>
                             <td style="font-size: 15px;" th:text="*{productCount}" ></td>
                             <td style="font-size: 15px;" th:text="*{totalPrice}"></td>
@@ -55,12 +98,13 @@
                             <td style="font-size: 15px;" th:text="*{username}"></td>
                             <td style="font-size: 15px;" th:if="*{address} == null" th:text="|not specified yet|"></td>
                             <td style="font-size: 15px;" th:unless="*{address} == null">
-                                <p th:text="|ID: *{address.id}|"></p>
-                                <p th:text="|*{address.zipCode} *{address.country}|"></p>
-                                <p th:text="|*{address.city}|"></p>
-                                <p th:text="|*{address.streetName} *{address.streetNumber}|"></p>
-                                <p th:if="*{address.apartmentNumber} != null" th:text="|Apartment Number: *{address.apartmentNumber}|"></p>
+                                  <p th:text="|ID: *{address.id}|"></p>
+                                  <p th:text="|*{address.zipCode} *{address.country}|"></p>
+                                  <p th:text="|*{address.city}|"></p>
+                                  <p th:text="|*{address.streetName} *{address.streetNumber}|"></p>
+                                  <p th:if="*{address.apartmentNumber} != null" th:text="|Apartment Number: *{address.apartmentNumber}|"></p>
                             </td>
+                            <td style="font-size: 15px;" th:text="*{isOrdered} ? 'ORDERED' : 'NOT ORDERED'"></td>
                             <td style="font-size: 15px;" th:text="*{isPaid} ? 'PAID' : 'NOT PAID'"></td>
                             <td style="font-size: 15px;" th:text="*{isDelivered} ? 'DELIVERED' : 'NOT DELIVERED'"></td>
                         </tr>

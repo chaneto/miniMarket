@@ -48,17 +48,21 @@ public class BrandController {
     public String addBrandConfirm(@Valid BrandAddBidingModel brandAddBidingModel,
                                   BindingResult bindingResult,
                                   RedirectAttributes redirectAttributes){
+
         if(bindingResult.hasErrors()){
             redirectAttributes.addFlashAttribute("brandAddBidingModel", brandAddBidingModel);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.brandAddBidingModel", bindingResult);
             return "redirect:add";
         }
+
         BrandServiceModel brandServiceModel = this.mapper.map(brandAddBidingModel, BrandServiceModel.class);
+
         if(this.brandService.findByName(brandServiceModel.getName()) != null){
             redirectAttributes.addFlashAttribute("brandAddBidingModel", brandAddBidingModel);
             redirectAttributes.addFlashAttribute("brandIsExists", true);
             return "redirect:add";
         }
+
         this.brandService.saveBrand(brandServiceModel);
         redirectAttributes.addFlashAttribute("brandAddBidingModel", brandAddBidingModel);
         redirectAttributes.addFlashAttribute("successfulAddedBrand", true);
@@ -73,7 +77,9 @@ public class BrandController {
 
     @GetMapping("/delete/{name}")
     public String deleteBrand(@PathVariable String name, HttpServletRequest request, RedirectAttributes redirectAttributes){
+
         String referer = request.getHeader("Referer");
+
         if(orderService.unpaidProductInBrand(name)){
             redirectAttributes.addFlashAttribute("unpaidProductInBrand", true);
             redirectAttributes.addFlashAttribute("brandName", name);

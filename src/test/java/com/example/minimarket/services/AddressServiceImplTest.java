@@ -4,8 +4,6 @@ import com.example.minimarket.model.entities.AddressEntity;
 import com.example.minimarket.model.entities.CartEntity;
 import com.example.minimarket.model.entities.CourierEntity;
 import com.example.minimarket.model.services.AddressServiceModel;
-import com.example.minimarket.model.services.UserLoginServiceModel;
-import com.example.minimarket.model.services.UserRegisterServiceModel;
 import com.example.minimarket.model.views.AddressViewModel;
 import com.example.minimarket.repositories.AddressRepository;
 import com.example.minimarket.repositories.CartRepository;
@@ -21,10 +19,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -119,7 +115,7 @@ public class AddressServiceImplTest {
         addressEntity1.setDateTime(LocalDateTime.of(2020, 3, 3,15, 35 ));
         this.addressRepository.save(addressEntity1);
         this.addressRepository.save(addressEntity3);
-        Assert.assertEquals(1, this.addressService.findAllWithDateIsSmaller6Months().size());
+        Assert.assertEquals(1, this.addressService.findAllWithDateIsSmaller1Year().size());
     }
 
     @Test
@@ -129,7 +125,7 @@ public class AddressServiceImplTest {
         this.addressRepository.save(addressEntity1);
         this.addressRepository.save(addressEntity3);
         Assert.assertEquals(2, this.addressRepository.count());
-        this.addressService.deleteAllAddressesOlderThan6Months();
+        this.addressService.deleteAllAddressesOlderThan1Year();
         Assert.assertEquals(1, this.addressRepository.count());
     }
 
