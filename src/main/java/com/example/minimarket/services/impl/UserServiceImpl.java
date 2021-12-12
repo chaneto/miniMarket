@@ -164,7 +164,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void setUserRole(String username, String roleName) {
-        if(getCurrentUser().getRole().getUserRole().name().equals("ADMIN")){
+        if(getCurrentUser().getRole().getUserRole().name().equals("ADMIN") && !username.equals("admin")){
         UserEntity userEntity = this.userRepository.findByUsername(username);
         UserRoleEntity userRoleEntity = this.userRoleService.findByUserRole(UserRole.valueOf(roleName));
         this.userRepository.setUserRole(userRoleEntity, userEntity.getId());
